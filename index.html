@@ -53,7 +53,8 @@ nav button .ico{font-size:19px}
 label{display:block;font-size:12px;color:var(--mu);margin-bottom:5px;font-weight:500}
 input[type=text],input[type=number],input[type=date]{width:100%;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px 12px;color:var(--tx);font-size:15px;-webkit-appearance:none;appearance:none}
 input:focus{outline:none;border-color:var(--ac)}
-input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5)}
+input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.7);opacity:.7;cursor:pointer}
+body.light input[type=date]::-webkit-calendar-picker-indicator{filter:none;opacity:.55}
 .back-row{display:flex;align-items:center;gap:8px;margin-bottom:14px}
 .bbtn{background:none;border:none;color:var(--ac);font-size:24px;cursor:pointer;padding:0 4px 0 0;line-height:1}
 .back-row h2{font-size:16px;font-weight:700}
@@ -99,7 +100,10 @@ let CUR={view:'col',id:null};
 let FS={editId:null};
 let darkMode=true;
 let sortMode='alpha';
+let lastRenderView=null;
+let scrollPositions={};
 
+// ── Storage ──
 function load(){
   try{DB=JSON.parse(localStorage.getItem(LS_KEY)||'{"jeans":[]}')}catch{DB={jeans:[]}}
   darkMode=localStorage.getItem('dt_dark')!=='0';
@@ -108,6 +112,8 @@ function load(){
   document.getElementById('themeBtn').textContent=darkMode?'☀️':'🌙';
 }
 function save(){localStorage.setItem(LS_KEY,JSON.stringify(DB))}
+
+// ── Helpers ──
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
 function today(){return new Date().toISOString().slice(0,10)}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
@@ -116,9 +122,11 @@ function daysSince(d){if(!d)return null;return Math.floor((Date.now()-new Date(d
 function lastOf(arr){return arr.length?[...arr].sort().at(-1):null}
 function haptic(){try{navigator.vibrate&&navigator.vibrate(30)}catch{}}
 
+// FIX 1: streak only counts if most recent wear was today or yesterday
 function wearStreak(wears){
   if(!wears.length)return 0;
   const sorted=[...new Set(wears)].sort().reverse();
+  if(daysSince(sorted[0])>1)return 0;
   let s=1;
   for(let i=0;i<sorted.length-1;i++){
     const diff=Math.round((new Date(sorted[i]+'T12:00:00')-new Date(sorted[i+1]+'T12:00:00'))/86400000);
@@ -126,6 +134,7 @@ function wearStreak(wears){
   }
   return s;
 }
+
 function washMeta(washes){
   const d=daysSince(lastOf(washes));
   if(d===null)return{cls:'wn',label:'Never washed'};
@@ -134,6 +143,7 @@ function washMeta(washes){
   if(d<=10)return{cls:'w1',label:d+'d since wash'};
   return{cls:'w2',label:d+'d since wash'};
 }
+
 function toast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
@@ -145,12 +155,9 @@ function toggleTheme(){
   document.getElementById('themeBtn').textContent=darkMode?'☀️':'🌙';
   localStorage.setItem('dt_dark',darkMode?'1':'0');
 }
-function setSort(m){
-  sortMode=m;
-  localStorage.setItem('dt_sort',m);
-  render();
-}
+function setSort(m){sortMode=m;localStorage.setItem('dt_sort',m);render();}
 
+// ── Navigation ──
 function go(view,id=null){
   CUR={view,id};
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.v===view));
@@ -162,14 +169,21 @@ function openForm(editId){
   document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
   render();
 }
+
+// FIX 6: preserve scroll position per view
 function render(){
+  if(lastRenderView!==null)scrollPositions[lastRenderView]=window.scrollY;
   const c=document.getElementById('content');
   if(CUR.view==='col')c.innerHTML=renderCol();
   else if(CUR.view==='ov')c.innerHTML=renderOverview();
   else if(CUR.view==='detail')c.innerHTML=renderDetail();
   else if(CUR.view==='form')c.innerHTML=renderForm();
+  const target=scrollPositions[CUR.view]||0;
+  window.scrollTo(0,target);
+  lastRenderView=CUR.view;
 }
 
+// ── Cards & Views ──
 function pill(m,label){
   const active=sortMode===m;
   return`<button class="sort-pill" onclick="setSort('${m}')" style="border:1px solid ${active?'var(--ac)':'var(--bd)'};background:${active?'rgba(79,125,245,.15)':'none'};color:${active?'var(--ac)':'var(--mu)'}">${label}</button>`;
@@ -179,15 +193,15 @@ function jCard(j){
   const wm=washMeta(j.washes);
   const streak=wearStreak(j.wears);
   const lastWorn=lastOf(j.wears);
-  const lastWornDays=daysSince(lastWorn);
-  const lastWornStr=lastWorn?(lastWornDays===0?'Worn today':lastWornDays===1?'Worn yesterday':`Worn ${lastWornDays}d ago`):'Never worn';
+  const lwd=daysSince(lastWorn);
+  const lwStr=lastWorn?(lwd===0?'Worn today':lwd===1?'Worn yesterday':`Worn ${lwd}d ago`):'Never worn';
   return`<div class="card">
     <div class="tap" onclick="go('detail','${j.id}')">
       <div class="c-head">
         <div>
           <div class="c-brand">${esc(j.brand)}</div>
           <div class="c-model">${esc(j.model)}</div>
-          <div class="c-sub">${lastWornStr}${j.price?' · CHF '+j.price:''}</div>
+          <div class="c-sub">${lwStr}${j.price?' · CHF '+j.price:''}</div>
         </div>
         ${streak>1?`<span class="streak-badge">🔥 ${streak}d</span>`:''}
       </div>
@@ -224,7 +238,9 @@ function renderOverview(){
   const totalSpent=DB.jeans.reduce((s,j)=>s+(j.price||0),0);
   const rows=DB.jeans.map(j=>{
     const wpw=j.washes.length?Math.round(j.wears.length/j.washes.length):'—';
-    return`<div style="display:grid;grid-template-columns:1fr repeat(3,52px);align-items:center;gap:4px;padding:9px 0;border-bottom:1px solid var(--bd)">
+    const lastWash=lastOf(j.washes);
+    const sinceWash=lastWash?j.wears.filter(d=>d>lastWash).length:j.wears.length;
+    return`<div style="display:grid;grid-template-columns:1fr repeat(4,44px);align-items:center;gap:4px;padding:9px 0;border-bottom:1px solid var(--bd)">
       <div>
         <div style="font-size:13px;font-weight:600;line-height:1.3">${esc(j.brand)}</div>
         <div style="font-size:11px;color:var(--mu)">${esc(j.model)}</div>
@@ -232,6 +248,7 @@ function renderOverview(){
       <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--gr)">${j.wears.length}</div><div style="font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">Wears</div></div>
       <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--bl)">${j.washes.length}</div><div style="font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">Washes</div></div>
       <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--ac)">${wpw}</div><div style="font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">W/W</div></div>
+      <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--or)">${sinceWash}</div><div style="font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">Since↓</div></div>
     </div>`;
   }).join('');
   return`
@@ -315,20 +332,28 @@ function renderForm(){
     <div class="fg"><label>Brand</label><input type="text" id="fBrand" placeholder="e.g. Oni Denim" value="${esc(j?.brand||'')}"></div>
     <div class="fg"><label>Model</label><input type="text" id="fModel" placeholder="e.g. Secret Denim 517" value="${esc(j?.model||'')}"></div>
     <div class="fg"><label>Purchase Date</label><input type="date" id="fDate" value="${j?.purchaseDate||''}"></div>
-    <div class="fg"><label>Price (CHF)</label><input type="number" id="fPrice" placeholder="e.g. 320" value="${j?.price||''}" min="0" step="0.01"></div>
+    <div class="fg"><label>Price (CHF)</label><input type="number" id="fPrice" inputmode="decimal" placeholder="e.g. 320" value="${j?.price||''}" min="0" step="0.01"></div>
+    ${isEdit?`
+    <div class="sep"></div>
+    <div style="font-size:11px;color:var(--mu);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.8px">Wears since last wash</div>
+    <div style="font-size:12px;color:var(--mu);margin-bottom:10px">${(()=>{const lw=lastOf(j.washes);const cur=lw?j.wears.filter(d=>d>lw).length:j.wears.length;return lw?`Currently <strong style="color:var(--tx)">${cur}</strong> wears since last wash on ${fmt(lw)}.`:'No washes logged yet — all <strong style="color:var(--tx)">${j.wears.length}</strong> wears count.';})()}</div>
+    <div class="fg"><label>Set new count</label><input type="number" id="editSince" inputmode="numeric" placeholder="Leave blank to keep unchanged" min="0" step="1"></div>`
+    :''}
     ${!isEdit?`
     <div class="sep"></div>
     <div style="font-size:11px;color:var(--mu);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.8px">Backfill History (optional)</div>
-    <div style="font-size:12px;color:var(--mu);margin-bottom:12px">Dates will be spread evenly from purchase date to today.</div>
+    <div style="font-size:12px;color:var(--mu);margin-bottom:12px">Dates spread evenly from purchase date to today. Max one entry per day.</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="fg"><label>Past Wears</label><input type="number" id="bfWears" placeholder="e.g. 45" min="0" step="1"></div>
-      <div class="fg"><label>Past Washes</label><input type="number" id="bfWashes" placeholder="e.g. 3" min="0" step="1"></div>
-    </div>`:''}
+      <div class="fg"><label>Past Wears</label><input type="number" id="bfWears" inputmode="numeric" placeholder="e.g. 45" min="0" step="1"></div>
+      <div class="fg"><label>Past Washes</label><input type="number" id="bfWashes" inputmode="numeric" placeholder="e.g. 3" min="0" step="1"></div>
+    </div>
+    <div class="fg"><label>Wears since last wash <span style="font-weight:400;color:var(--mu)">(optional)</span></label><input type="number" id="bfSince" inputmode="numeric" placeholder="e.g. 15" min="0" step="1"></div>`:''}
     <div style="height:8px"></div>
     <button class="btn bp" style="width:100%;padding:13px" onclick="saveForm()">${isEdit?'Save Changes':'Add Jeans'}</button>
     <div style="height:16px"></div>`;
 }
 
+// ── Actions ──
 function logWear(id){
   const j=DB.jeans.find(x=>x.id===id);if(!j)return;
   const t=today();
@@ -352,8 +377,7 @@ function addLog(id,type){
 function removeLast(id,type){
   const j=DB.jeans.find(x=>x.id===id);if(!j)return;
   const arr=type==='wear'?j.wears:j.washes;if(!arr.length)return;
-  const last=lastOf(arr);
-  arr.splice(arr.indexOf(last),1);
+  arr.splice(arr.indexOf(lastOf(arr)),1);
   save();toast('Removed last entry');render();
 }
 function delJeans(id){
@@ -371,6 +395,8 @@ function genDates(count,from,to){
   }
   return[...new Set(dates)];
 }
+
+// FIX 2: warn user when backfill count exceeds available days
 function saveForm(){
   const brand=document.getElementById('fBrand')?.value.trim();
   const model=document.getElementById('fModel')?.value.trim();
@@ -379,15 +405,47 @@ function saveForm(){
   if(!brand||!model){toast('Brand and model are required');return;}
   if(FS.editId){
     const j=DB.jeans.find(x=>x.id===FS.editId);
-    if(j){j.brand=brand;j.model=model;j.purchaseDate=date;j.price=price||null;save();toast('Saved');go('detail',FS.editId);}
+    if(j){
+      j.brand=brand;j.model=model;j.purchaseDate=date;j.price=price||null;
+      const editSince=parseInt(document.getElementById('editSince')?.value);
+      if(!isNaN(editSince)){
+        const lastWash=lastOf(j.washes);
+        if(lastWash){
+          const beforeWears=j.wears.filter(d=>d<=lastWash);
+          const sinceWears=genDates(editSince,lastWash,today());
+          j.wears=[...new Set([...beforeWears,...sinceWears])];
+        } else {
+          const from=j.purchaseDate||new Date(Date.now()-365*86400000).toISOString().slice(0,10);
+          j.wears=genDates(editSince,from,today());
+        }
+      }
+      save();toast('Saved');go('detail',FS.editId);
+    }
   } else {
     const wearCount=parseInt(document.getElementById('bfWears')?.value)||0;
     const washCount=parseInt(document.getElementById('bfWashes')?.value)||0;
+    const sinceCount=Math.min(parseInt(document.getElementById('bfSince')?.value)||0, wearCount);
     const from=date||new Date(Date.now()-365*86400000).toISOString().slice(0,10);
-    const j={id:uid(),brand,model,purchaseDate:date,price:price||null,wears:genDates(wearCount,from,today()),washes:genDates(washCount,from,today())};
+    const daysAvail=Math.max(1,Math.floor((new Date(today()+'T12:00:00').getTime()-new Date(from+'T12:00:00').getTime())/86400000)+1);
+    if(wearCount>daysAvail||washCount>daysAvail){
+      if(!confirm(`Your date range covers only ${daysAvail} days. Counts will be capped at ${daysAvail}. Continue?`))return;
+    }
+    const washDates=genDates(Math.min(washCount,daysAvail),from,today());
+    const lastWash=lastOf(washDates);
+    let wearDates;
+    if(sinceCount>0&&lastWash){
+      const beforeDates=genDates(Math.max(0,wearCount-sinceCount),from,lastWash);
+      const sinceDates=genDates(sinceCount,lastWash,today());
+      wearDates=[...new Set([...beforeDates,...sinceDates])];
+    } else {
+      wearDates=genDates(Math.min(wearCount,daysAvail),from,today());
+    }
+    const j={id:uid(),brand,model,purchaseDate:date,price:price||null,wears:wearDates,washes:washDates};
     DB.jeans.push(j);save();toast('👖 Added!');go('detail',j.id);
   }
 }
+
+// ── Export / Import ──
 function exportJSON(){
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}));
@@ -404,16 +462,30 @@ function exportCSV(){
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
   a.download='denim-tracker.csv';a.click();toast('⬇ CSV exported');
 }
+
+// FIX 5: deep validation of imported data
+function validateImport(data){
+  if(!data||typeof data!=='object'||!Array.isArray(data.jeans))return false;
+  const dateRe=/^\d{4}-\d{2}-\d{2}$/;
+  return data.jeans.every(j=>
+    j&&typeof j==='object'&&
+    typeof j.id==='string'&&
+    typeof j.brand==='string'&&
+    typeof j.model==='string'&&
+    Array.isArray(j.wears)&&j.wears.every(d=>typeof d==='string'&&dateRe.test(d))&&
+    Array.isArray(j.washes)&&j.washes.every(d=>typeof d==='string'&&dateRe.test(d))
+  );
+}
 function handleImport(input){
   const file=input.files[0];if(!file)return;
   const r=new FileReader();
   r.onload=e=>{
     try{
       const data=JSON.parse(e.target.result);
-      if(!data.jeans||!Array.isArray(data.jeans))throw 0;
+      if(!validateImport(data)){toast('❌ Invalid backup file');return;}
       if(!confirm(`Import ${data.jeans.length} jeans? This replaces your current data.`))return;
       DB=data;save();toast('✅ Imported!');go('col');
-    }catch{toast('❌ Invalid file');}
+    }catch{toast('❌ Could not read file');}
   };
   r.readAsText(file);input.value='';
 }
