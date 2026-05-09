@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#4f7df5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Denim">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Denim%20Tracker%22%2C%22short_name%22%3A%22Denim%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230d0d14%22%2C%22theme_color%22%3A%22%234f7df5%22%7D">
+<title>Denim Tracker</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d0d14;--sf:#131320;--card:#1a1a2e;--c2:#20203a;--bd:#2a2a45;--ac:#4f7df5;--tx:#e6e6f5;--mu:#7070a0;--gr:#4ade80;--bl:#38bdf8;--rd:#f87171;--or:#fb923c;--r:14px}
+body.light{--bg:#f4f4fa;--sf:#ffffff;--card:#ffffff;--c2:#ebebf5;--bd:#d8d8ee;--tx:#1a1a2e;--mu:#9090b8}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:74px;transition:background .2s,color .2s}
+header{position:sticky;top:0;z-index:10;background:var(--sf);border-bottom:1px solid var(--bd);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+header h1{font-size:17px;font-weight:700;flex:1}
+.hbtn{background:none;border:1px solid var(--bd);border-radius:9px;color:var(--tx);font-size:14px;padding:5px 9px;cursor:pointer}
+.fab{width:38px;height:38px;border-radius:50%;background:var(--ac);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(79,125,245,.45)}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--sf);border-top:1px solid var(--bd);display:flex;z-index:10}
+nav button{flex:1;padding:10px 0 8px;background:none;border:none;color:var(--mu);font-size:11px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:color .2s}
+nav button.active{color:var(--ac)}
+nav button .ico{font-size:19px}
+#content{padding:12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.tap{padding:12px 13px 9px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tap:active{background:var(--c2)}
+.c-head{display:flex;justify-content:space-between;align-items:flex-start}
+.c-brand{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:1.3px}
+.c-model{font-size:16px;font-weight:700;margin-top:2px}
+.c-sub{font-size:11px;color:var(--mu);margin-top:2px}
+.streak-badge{font-size:11px;font-weight:700;background:rgba(251,146,60,.15);color:var(--or);border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
+.cstats{display:flex;align-items:center;gap:8px;padding:7px 13px;border-top:1px solid var(--bd)}
+.cs .v{font-size:14px;font-weight:700}
+.cs .l{font-size:9px;color:var(--mu)}
+.dvdr{width:1px;height:24px;background:var(--bd)}
+.wpill{margin-left:auto;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.w0{background:rgba(74,222,128,.15);color:var(--gr)}
+.w1{background:rgba(251,146,60,.15);color:var(--or)}
+.w2{background:rgba(248,113,113,.15);color:var(--rd)}
+.wn{background:var(--bd);color:var(--mu)}
+.cacts{display:flex;border-top:1px solid var(--bd)}
+.cacts button{flex:1;padding:9px;background:none;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s}
+.cacts button:first-child{border-right:1px solid var(--bd);color:var(--gr)}
+.cacts button:last-child{color:var(--bl)}
+.cacts button:active{background:var(--c2)}
+.btn{padding:9px 15px;border-radius:10px;border:none;font-size:14px;font-weight:600;cursor:pointer}
+.bp{background:var(--ac);color:#fff}
+.bg2{background:var(--c2);color:var(--tx);border:1px solid var(--bd)}
+.sm{padding:6px 13px;font-size:13px;border-radius:9px}
+.bd-btn{background:transparent;color:var(--rd);border:1px solid var(--rd);font-size:13px;border-radius:9px;padding:6px 13px;cursor:pointer}
+.fg{margin-bottom:13px}
+label{display:block;font-size:12px;color:var(--mu);margin-bottom:5px;font-weight:500}
+input[type=text],input[type=number],input[type=date]{width:100%;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px 12px;color:var(--tx);font-size:15px;-webkit-appearance:none;appearance:none}
+input:focus{outline:none;border-color:var(--ac)}
+input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5)}
+.back-row{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.bbtn{background:none;border:none;color:var(--ac);font-size:24px;cursor:pointer;padding:0 4px 0 0;line-height:1}
+.back-row h2{font-size:16px;font-weight:700}
+.sgrid{display:grid;gap:8px;margin-bottom:12px}
+.sbox{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 6px;text-align:center}
+.sbox .sv{font-size:16px;font-weight:800;margin-bottom:1px}
+.sbox .sl{font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px}
+.stitle{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--mu);font-weight:600}
+.sh{display:flex;justify-content:space-between;align-items:center;margin-top:18px;margin-bottom:8px}
+.add-row{display:flex;gap:8px;margin-top:9px}
+.add-row input{flex:1}
+.dacts{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.d-meta{font-size:12px;color:var(--mu);margin-bottom:13px}
+.empty{text-align:center;padding:60px 20px;color:var(--mu)}
+.empty .ico{font-size:42px;margin-bottom:10px}
+.empty p{font-size:14px;line-height:1.6}
+.sep{height:1px;background:var(--bd);margin:16px 0}
+.toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%);background:var(--c2);border:1px solid var(--bd);border-radius:22px;padding:8px 18px;font-size:13px;font-weight:600;white-space:nowrap;opacity:0;transition:opacity .25s;z-index:100;pointer-events:none}
+.toast.show{opacity:1}
+.sort-pill{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.data-row{display:flex;gap:8px;margin-bottom:8px}
+.data-row button{flex:1}
+</style>
+</head>
+<body>
+<header>
+  <h1>👖 Denim</h1>
+  <button class="hbtn" id="themeBtn" onclick="toggleTheme()">☀️</button>
+  <button class="fab" onclick="openForm(null)">+</button>
+</header>
+<div id="content"></div>
+<nav>
+  <button data-v="col" onclick="go('col')"><span class="ico">👖</span>Collection</button>
+  <button data-v="ov" onclick="go('ov')"><span class="ico">📊</span>Overview</button>
+</nav>
+<div class="toast" id="toast"></div>
+<input type="file" id="importInput" accept=".json" style="display:none" onchange="handleImport(this)">
+
+<script>
+const LS_KEY='denim_tracker_v1';
+let DB={jeans:[]};
+let CUR={view:'col',id:null};
+let FS={editId:null};
+let darkMode=true;
+let sortMode='alpha';
+
+function load(){
+  try{DB=JSON.parse(localStorage.getItem(LS_KEY)||'{"jeans":[]}')}catch{DB={jeans:[]}}
+  darkMode=localStorage.getItem('dt_dark')!=='0';
+  sortMode=localStorage.getItem('dt_sort')||'alpha';
+  document.body.classList.toggle('light',!darkMode);
+  document.getElementById('themeBtn').textContent=darkMode?'☀️':'🌙';
+}
+function save(){localStorage.setItem(LS_KEY,JSON.stringify(DB))}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
+function today(){return new Date().toISOString().slice(0,10)}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function fmt(d){return new Date(d+'T12:00:00').toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'})}
+function daysSince(d){if(!d)return null;return Math.floor((Date.now()-new Date(d+'T12:00:00').getTime())/86400000)}
+function lastOf(arr){return arr.length?[...arr].sort().at(-1):null}
+function haptic(){try{navigator.vibrate&&navigator.vibrate(30)}catch{}}
+
+function wearStreak(wears){
+  if(!wears.length)return 0;
+  const sorted=[...new Set(wears)].sort().reverse();
+  let s=1;
+  for(let i=0;i<sorted.length-1;i++){
+    const diff=Math.round((new Date(sorted[i]+'T12:00:00')-new Date(sorted[i+1]+'T12:00:00'))/86400000);
+    if(diff===1)s++;else break;
+  }
+  return s;
+}
+function washMeta(washes){
+  const d=daysSince(lastOf(washes));
+  if(d===null)return{cls:'wn',label:'Never washed'};
+  if(d===0)return{cls:'w0',label:'Washed today'};
+  if(d<=5)return{cls:'w0',label:d+'d since wash'};
+  if(d<=10)return{cls:'w1',label:d+'d since wash'};
+  return{cls:'w2',label:d+'d since wash'};
+}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1800);
+}
+function toggleTheme(){
+  darkMode=!darkMode;
+  document.body.classList.toggle('light',!darkMode);
+  document.getElementById('themeBtn').textContent=darkMode?'☀️':'🌙';
+  localStorage.setItem('dt_dark',darkMode?'1':'0');
+}
+function setSort(m){
+  sortMode=m;
+  localStorage.setItem('dt_sort',m);
+  render();
+}
+
+function go(view,id=null){
+  CUR={view,id};
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.v===view));
+  render();
+}
+function openForm(editId){
+  FS={editId};
+  CUR={view:'form',id:editId};
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  render();
+}
+function render(){
+  const c=document.getElementById('content');
+  if(CUR.view==='col')c.innerHTML=renderCol();
+  else if(CUR.view==='ov')c.innerHTML=renderOverview();
+  else if(CUR.view==='detail')c.innerHTML=renderDetail();
+  else if(CUR.view==='form')c.innerHTML=renderForm();
+}
+
+function pill(m,label){
+  const active=sortMode===m;
+  return`<button class="sort-pill" onclick="setSort('${m}')" style="border:1px solid ${active?'var(--ac)':'var(--bd)'};background:${active?'rgba(79,125,245,.15)':'none'};color:${active?'var(--ac)':'var(--mu)'}">${label}</button>`;
+}
+
+function jCard(j){
+  const wm=washMeta(j.washes);
+  const streak=wearStreak(j.wears);
+  const lastWorn=lastOf(j.wears);
+  const lastWornDays=daysSince(lastWorn);
+  const lastWornStr=lastWorn?(lastWornDays===0?'Worn today':lastWornDays===1?'Worn yesterday':`Worn ${lastWornDays}d ago`):'Never worn';
+  return`<div class="card">
+    <div class="tap" onclick="go('detail','${j.id}')">
+      <div class="c-head">
+        <div>
+          <div class="c-brand">${esc(j.brand)}</div>
+          <div class="c-model">${esc(j.model)}</div>
+          <div class="c-sub">${lastWornStr}${j.price?' · CHF '+j.price:''}</div>
+        </div>
+        ${streak>1?`<span class="streak-badge">🔥 ${streak}d</span>`:''}
+      </div>
+    </div>
+    <div class="cstats">
+      <div class="cs"><div class="v">${j.wears.length}</div><div class="l">Wears</div></div>
+      <div class="dvdr"></div>
+      <div class="cs"><div class="v">${j.washes.length}</div><div class="l">Washes</div></div>
+      <span class="wpill ${wm.cls}">${wm.label}</span>
+    </div>
+    <div class="cacts">
+      <button onclick="event.stopPropagation();logWear('${j.id}')">✓ Worn Today</button>
+      <button onclick="event.stopPropagation();logWash('${j.id}')">💧 Washed Today</button>
+    </div>
+  </div>`;
+}
+
+function renderCol(){
+  if(!DB.jeans.length)return`<div class="empty"><div class="ico">👖</div><p>No jeans yet.<br>Tap <strong>+</strong> to add your first pair.</p></div>`;
+  const sortBar=`<div style="display:flex;gap:6px;margin-bottom:12px">
+    ${pill('alpha','A–Z')}${pill('mostworn','Most Worn')}${pill('lastworn','Last Worn')}
+  </div>`;
+  let list=[...DB.jeans];
+  if(sortMode==='mostworn')list.sort((a,b)=>b.wears.length-a.wears.length);
+  else if(sortMode==='lastworn')list.sort((a,b)=>(lastOf(b.wears)||'0').localeCompare(lastOf(a.wears)||'0'));
+  else list.sort((a,b)=>(a.brand+' '+a.model).localeCompare(b.brand+' '+b.model));
+  return sortBar+list.map(j=>jCard(j)).join('');
+}
+
+function renderOverview(){
+  if(!DB.jeans.length)return`<div class="empty"><div class="ico">📊</div><p>Add some jeans first<br>to see your stats.</p></div>`;
+  const totalWears=DB.jeans.reduce((s,j)=>s+j.wears.length,0);
+  const totalWashes=DB.jeans.reduce((s,j)=>s+j.washes.length,0);
+  const totalSpent=DB.jeans.reduce((s,j)=>s+(j.price||0),0);
+  const rows=DB.jeans.map(j=>{
+    const wpw=j.washes.length?Math.round(j.wears.length/j.washes.length):'—';
+    return`<div style="display:grid;grid-template-columns:1fr repeat(3,52px);align-items:center;gap:4px;padding:9px 0;border-bottom:1px solid var(--bd)">
+      <div>
+        <div style="font-size:13px;font-weight:600;line-height:1.3">${esc(j.brand)}</div>
+        <div style="font-size:11px;color:var(--mu)">${esc(j.model)}</div>
+      </div>
+      <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--gr)">${j.wears.length}</div><div style="font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">Wears</div></div>
+      <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--bl)">${j.washes.length}</div><div style="font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">Washes</div></div>
+      <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--ac)">${wpw}</div><div style="font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">W/W</div></div>
+    </div>`;
+  }).join('');
+  return`
+    <div style="font-size:13px;color:var(--mu);font-weight:600;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px">Collection Overview</div>
+    <div class="sgrid" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px">
+      <div class="sbox"><div class="sv" style="color:var(--gr)">${totalWears}</div><div class="sl">Total Wears</div></div>
+      <div class="sbox"><div class="sv" style="color:var(--bl)">${totalWashes}</div><div class="sl">Total Washes</div></div>
+      <div class="sbox"><div class="sv" style="font-size:13px">${totalSpent?'CHF '+totalSpent:'—'}</div><div class="sl">Total Spent</div></div>
+    </div>
+    <div class="sh" style="margin-top:0;margin-bottom:0"><span class="stitle">All Jeans</span></div>
+    ${rows}
+    <div class="sep"></div>
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--mu);font-weight:600;margin-bottom:8px">Data & Backup</div>
+    <div style="font-size:12px;color:var(--mu);margin-bottom:10px;line-height:1.5">Export and save to iCloud Drive or Google Drive. Import anytime to restore.</div>
+    <div class="data-row">
+      <button class="btn bg2 sm" onclick="exportJSON()">⬇ Export JSON</button>
+      <button class="btn bg2 sm" onclick="exportCSV()">⬇ Export CSV</button>
+    </div>
+    <div class="data-row">
+      <button class="btn bg2 sm" onclick="document.getElementById('importInput').click()">⬆ Import JSON</button>
+    </div>
+    <div style="height:10px"></div>`;
+}
+
+function renderDetail(){
+  const j=DB.jeans.find(x=>x.id===CUR.id);
+  if(!j)return`<p>Not found.</p>`;
+  const wm=washMeta(j.washes);
+  const streak=wearStreak(j.wears);
+  const wColor=wm.cls==='w2'?'var(--rd)':wm.cls==='w1'?'var(--or)':wm.cls==='w0'?'var(--gr)':'var(--mu)';
+  return`
+    <div class="back-row">
+      <button class="bbtn" onclick="go('col')">‹</button>
+      <h2>${esc(j.brand)} · ${esc(j.model)}</h2>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button style="flex:1;padding:11px;border-radius:11px;font-weight:700;font-size:13px;background:rgba(74,222,128,.1);color:var(--gr);border:1px solid rgba(74,222,128,.25);cursor:pointer" onclick="logWear('${j.id}')">✓ Worn Today</button>
+      <button style="flex:1;padding:11px;border-radius:11px;font-weight:700;font-size:13px;background:rgba(56,189,248,.1);color:var(--bl);border:1px solid rgba(56,189,248,.25);cursor:pointer" onclick="logWash('${j.id}')">💧 Washed Today</button>
+    </div>
+    <div class="sgrid" style="grid-template-columns:repeat(2,1fr)">
+      <div class="sbox"><div class="sv">${j.wears.length}</div><div class="sl">Total Wears</div></div>
+      <div class="sbox"><div class="sv" style="font-size:13px;color:${wColor}">${wm.label}</div><div class="sl">Last Wash</div></div>
+    </div>
+    <div class="sgrid" style="grid-template-columns:repeat(2,1fr)">
+      <div class="sbox"><div class="sv" style="color:var(--or)">${streak>0?streak+'d':'—'}</div><div class="sl">Wear Streak 🔥</div></div>
+      <div class="sbox"><div class="sv">${j.washes.length?Math.round(j.wears.length/j.washes.length):'—'}</div><div class="sl">Wears / Wash</div></div>
+    </div>
+    ${(j.purchaseDate||j.price)?`<div class="d-meta">${j.purchaseDate?'Bought '+fmt(j.purchaseDate):''}${j.purchaseDate&&j.price?' · ':''}${j.price?'CHF '+j.price:''}</div>`:''}
+    <div class="dacts">
+      <button class="btn bg2 sm" onclick="openForm('${j.id}')">✏️ Edit</button>
+      <button class="bd-btn" onclick="delJeans('${j.id}')">🗑 Delete</button>
+    </div>
+    <div class="sep"></div>
+    <div class="sh">
+      <span class="stitle">Log a Wear</span>
+      ${j.wears.length?`<button onclick="removeLast('${j.id}','wear')" style="background:none;border:none;color:var(--rd);font-size:12px;font-weight:600;cursor:pointer">− Remove last</button>`:''}
+    </div>
+    <div class="add-row">
+      <input type="date" id="addWearDate" value="${today()}">
+      <button class="btn bp sm" onclick="addLog('${j.id}','wear')">+ Add</button>
+    </div>
+    <div class="sh" style="margin-top:16px">
+      <span class="stitle">Log a Wash</span>
+      ${j.washes.length?`<button onclick="removeLast('${j.id}','wash')" style="background:none;border:none;color:var(--rd);font-size:12px;font-weight:600;cursor:pointer">− Remove last</button>`:''}
+    </div>
+    <div class="add-row">
+      <input type="date" id="addWashDate" value="${today()}">
+      <button class="btn sm" style="background:rgba(56,189,248,.15);color:var(--bl);border:1px solid rgba(56,189,248,.3);cursor:pointer" onclick="addLog('${j.id}','wash')">+ Add</button>
+    </div>
+    <div style="height:10px"></div>`;
+}
+
+function renderForm(){
+  const j=FS.editId?DB.jeans.find(x=>x.id===FS.editId):null;
+  const isEdit=!!j;
+  return`
+    <div class="back-row">
+      <button class="bbtn" onclick="go('col')">‹</button>
+      <h2>${isEdit?'Edit Jeans':'Add New Jeans'}</h2>
+    </div>
+    <div class="fg"><label>Brand</label><input type="text" id="fBrand" placeholder="e.g. Oni Denim" value="${esc(j?.brand||'')}"></div>
+    <div class="fg"><label>Model</label><input type="text" id="fModel" placeholder="e.g. Secret Denim 517" value="${esc(j?.model||'')}"></div>
+    <div class="fg"><label>Purchase Date</label><input type="date" id="fDate" value="${j?.purchaseDate||''}"></div>
+    <div class="fg"><label>Price (CHF)</label><input type="number" id="fPrice" placeholder="e.g. 320" value="${j?.price||''}" min="0" step="0.01"></div>
+    ${!isEdit?`
+    <div class="sep"></div>
+    <div style="font-size:11px;color:var(--mu);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.8px">Backfill History (optional)</div>
+    <div style="font-size:12px;color:var(--mu);margin-bottom:12px">Dates will be spread evenly from purchase date to today.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fg"><label>Past Wears</label><input type="number" id="bfWears" placeholder="e.g. 45" min="0" step="1"></div>
+      <div class="fg"><label>Past Washes</label><input type="number" id="bfWashes" placeholder="e.g. 3" min="0" step="1"></div>
+    </div>`:''}
+    <div style="height:8px"></div>
+    <button class="btn bp" style="width:100%;padding:13px" onclick="saveForm()">${isEdit?'Save Changes':'Add Jeans'}</button>
+    <div style="height:16px"></div>`;
+}
+
+function logWear(id){
+  const j=DB.jeans.find(x=>x.id===id);if(!j)return;
+  const t=today();
+  if(j.wears.includes(t)){toast('Already logged today');return;}
+  j.wears.push(t);save();haptic();toast('✓ Wear logged');render();
+}
+function logWash(id){
+  const j=DB.jeans.find(x=>x.id===id);if(!j)return;
+  const t=today();
+  if(j.washes.includes(t)){toast('Already logged today');return;}
+  j.washes.push(t);save();haptic();toast('💧 Wash logged');render();
+}
+function addLog(id,type){
+  const j=DB.jeans.find(x=>x.id===id);if(!j)return;
+  const inp=document.getElementById(type==='wear'?'addWearDate':'addWashDate');
+  const d=inp?.value;if(!d){toast('Pick a date first');return;}
+  const arr=type==='wear'?j.wears:j.washes;
+  if(arr.includes(d)){toast('Date already exists');return;}
+  arr.push(d);save();haptic();toast('Date added');render();
+}
+function removeLast(id,type){
+  const j=DB.jeans.find(x=>x.id===id);if(!j)return;
+  const arr=type==='wear'?j.wears:j.washes;if(!arr.length)return;
+  const last=lastOf(arr);
+  arr.splice(arr.indexOf(last),1);
+  save();toast('Removed last entry');render();
+}
+function delJeans(id){
+  if(!confirm('Delete this jeans? Cannot be undone.'))return;
+  DB.jeans=DB.jeans.filter(x=>x.id!==id);save();toast('Deleted');go('col');
+}
+function genDates(count,from,to){
+  if(count<=0)return[];
+  const f=new Date(from+'T12:00:00').getTime();
+  const t=new Date(to+'T12:00:00').getTime();
+  const dates=[];
+  for(let i=0;i<count;i++){
+    const ms=count===1?t:f+((t-f)*(i/(count-1)));
+    dates.push(new Date(ms).toISOString().slice(0,10));
+  }
+  return[...new Set(dates)];
+}
+function saveForm(){
+  const brand=document.getElementById('fBrand')?.value.trim();
+  const model=document.getElementById('fModel')?.value.trim();
+  const date=document.getElementById('fDate')?.value||'';
+  const price=parseFloat(document.getElementById('fPrice')?.value)||0;
+  if(!brand||!model){toast('Brand and model are required');return;}
+  if(FS.editId){
+    const j=DB.jeans.find(x=>x.id===FS.editId);
+    if(j){j.brand=brand;j.model=model;j.purchaseDate=date;j.price=price||null;save();toast('Saved');go('detail',FS.editId);}
+  } else {
+    const wearCount=parseInt(document.getElementById('bfWears')?.value)||0;
+    const washCount=parseInt(document.getElementById('bfWashes')?.value)||0;
+    const from=date||new Date(Date.now()-365*86400000).toISOString().slice(0,10);
+    const j={id:uid(),brand,model,purchaseDate:date,price:price||null,wears:genDates(wearCount,from,today()),washes:genDates(washCount,from,today())};
+    DB.jeans.push(j);save();toast('👖 Added!');go('detail',j.id);
+  }
+}
+function exportJSON(){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}));
+  a.download='denim-tracker-backup.json';a.click();toast('⬇ JSON exported');
+}
+function exportCSV(){
+  const rows=[['Brand','Model','Purchase Date','Price (CHF)','Wears','Washes','W/W']];
+  DB.jeans.forEach(j=>{
+    const wpw=j.washes.length?Math.round(j.wears.length/j.washes.length):'';
+    rows.push([j.brand,j.model,j.purchaseDate||'',j.price||'',j.wears.length,j.washes.length,wpw]);
+  });
+  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='denim-tracker.csv';a.click();toast('⬇ CSV exported');
+}
+function handleImport(input){
+  const file=input.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.jeans||!Array.isArray(data.jeans))throw 0;
+      if(!confirm(`Import ${data.jeans.length} jeans? This replaces your current data.`))return;
+      DB=data;save();toast('✅ Imported!');go('col');
+    }catch{toast('❌ Invalid file');}
+  };
+  r.readAsText(file);input.value='';
+}
+
+load();go('col');
+</script>
+</body>
+</html>
