@@ -10,73 +10,98 @@
 <title>Denim Tracker</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0d0d14;--sf:#131320;--card:#1a1a2e;--c2:#20203a;--bd:#2a2a45;--ac:#4f7df5;--tx:#e6e6f5;--mu:#7070a0;--gr:#4ade80;--bl:#38bdf8;--rd:#f87171;--or:#fb923c;--r:14px}
-body.light{--bg:#f4f4fa;--sf:#ffffff;--card:#ffffff;--c2:#ebebf5;--bd:#d8d8ee;--tx:#1a1a2e;--mu:#9090b8}
-body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:74px;transition:background .2s,color .2s}
-header{position:sticky;top:0;z-index:10;background:var(--sf);border-bottom:1px solid var(--bd);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+/* Fix 12: readable CSS variable names */
+:root{
+  --background:#0d0d14;
+  --surface:#131320;
+  --card:#1a1a2e;
+  --surface2:#20203a;
+  --border:#2a2a45;
+  --accent:#4f7df5;
+  --text:#e6e6f5;
+  --muted:#7070a0;
+  --green:#4ade80;
+  --blue:#38bdf8;
+  --red:#f87171;
+  --orange:#fb923c;
+  --radius:14px
+}
+body.light{
+  --background:#f4f4fa;--surface:#ffffff;--card:#ffffff;
+  --surface2:#ebebf5;--border:#d8d8ee;--text:#1a1a2e;--muted:#9090b8
+}
+body{background:var(--background);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:74px;transition:background .2s,color .2s}
+header{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
 header h1{font-size:17px;font-weight:700;flex:1}
-.hbtn{background:none;border:1px solid var(--bd);border-radius:9px;color:var(--tx);font-size:14px;padding:5px 9px;cursor:pointer}
-.fab{width:38px;height:38px;border-radius:50%;background:var(--ac);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(79,125,245,.45)}
-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--sf);border-top:1px solid var(--bd);display:flex;z-index:10}
-nav button{flex:1;padding:10px 0 8px;background:none;border:none;color:var(--mu);font-size:11px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:color .2s}
-nav button.active{color:var(--ac)}
+.hbtn{background:none;border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:14px;padding:5px 9px;cursor:pointer}
+.fab{width:38px;height:38px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(79,125,245,.45)}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:10}
+nav button{flex:1;padding:10px 0 8px;background:none;border:none;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:color .2s}
+nav button.active{color:var(--accent)}
 nav button .ico{font-size:19px}
 #content{padding:12px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
 .tap{padding:12px 13px 9px;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.tap:active{background:var(--c2)}
+.tap:active{background:var(--surface2)}
 .c-head{display:flex;justify-content:space-between;align-items:flex-start}
-.c-brand{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:1.3px}
+.c-brand{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.3px}
 .c-model{font-size:16px;font-weight:700;margin-top:2px}
-.c-sub{font-size:11px;color:var(--mu);margin-top:2px}
-.streak-badge{font-size:11px;font-weight:700;background:rgba(251,146,60,.15);color:var(--or);border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
-.cstats{display:flex;align-items:center;gap:8px;padding:7px 13px;border-top:1px solid var(--bd)}
+.c-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.streak-badge{font-size:11px;font-weight:700;background:rgba(251,146,60,.15);color:var(--orange);border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
+.cstats{display:flex;align-items:center;gap:8px;padding:7px 13px;border-top:1px solid var(--border)}
 .cs .v{font-size:14px;font-weight:700}
-.cs .l{font-size:9px;color:var(--mu)}
-.dvdr{width:1px;height:24px;background:var(--bd)}
+.cs .l{font-size:9px;color:var(--muted)}
+.dvdr{width:1px;height:24px;background:var(--border)}
 .wpill{margin-left:auto;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap}
-.w0{background:rgba(74,222,128,.15);color:var(--gr)}
-.w1{background:rgba(251,146,60,.15);color:var(--or)}
-.w2{background:rgba(248,113,113,.15);color:var(--rd)}
-.wn{background:var(--bd);color:var(--mu)}
-.cacts{display:flex;border-top:1px solid var(--bd)}
+.w0{background:rgba(74,222,128,.15);color:var(--green)}
+.w1{background:rgba(251,146,60,.15);color:var(--orange)}
+.w2{background:rgba(248,113,113,.15);color:var(--red)}
+.wn{background:var(--border);color:var(--muted)}
+.cacts{display:flex;border-top:1px solid var(--border)}
 .cacts button{flex:1;padding:9px;background:none;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s}
-.cacts button:first-child{border-right:1px solid var(--bd);color:var(--gr)}
-.cacts button:last-child{color:var(--bl)}
-.cacts button:active{background:var(--c2)}
+.cacts button:first-child{border-right:1px solid var(--border);color:var(--green)}
+.cacts button:last-child{color:var(--blue)}
+.cacts button:active{background:var(--surface2)}
 .btn{padding:9px 15px;border-radius:10px;border:none;font-size:14px;font-weight:600;cursor:pointer}
-.bp{background:var(--ac);color:#fff}
-.bg2{background:var(--c2);color:var(--tx);border:1px solid var(--bd)}
+.bp{background:var(--accent);color:#fff}
+.bg2{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
 .sm{padding:6px 13px;font-size:13px;border-radius:9px}
-.bd-btn{background:transparent;color:var(--rd);border:1px solid var(--rd);font-size:13px;border-radius:9px;padding:6px 13px;cursor:pointer}
+.bd-btn{background:transparent;color:var(--red);border:1px solid var(--red);font-size:13px;border-radius:9px;padding:6px 13px;cursor:pointer}
 .fg{margin-bottom:13px}
-label{display:block;font-size:12px;color:var(--mu);margin-bottom:5px;font-weight:500}
-input[type=text],input[type=number],input[type=date]{width:100%;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px 12px;color:var(--tx);font-size:15px;-webkit-appearance:none;appearance:none}
-input:focus{outline:none;border-color:var(--ac)}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:500}
+input[type=text],input[type=number],input[type=date]{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--text);font-size:15px;-webkit-appearance:none;appearance:none}
+input:focus{outline:none;border-color:var(--accent)}
 input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.7);opacity:.7;cursor:pointer}
 body.light input[type=date]::-webkit-calendar-picker-indicator{filter:none;opacity:.55}
 .back-row{display:flex;align-items:center;gap:8px;margin-bottom:14px}
-.bbtn{background:none;border:none;color:var(--ac);font-size:24px;cursor:pointer;padding:0 4px 0 0;line-height:1}
+.bbtn{background:none;border:none;color:var(--accent);font-size:24px;cursor:pointer;padding:0 4px 0 0;line-height:1}
 .back-row h2{font-size:16px;font-weight:700}
 .sgrid{display:grid;gap:8px;margin-bottom:12px}
-.sbox{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 6px;text-align:center}
+.sbox{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 6px;text-align:center}
 .sbox .sv{font-size:16px;font-weight:800;margin-bottom:1px}
-.sbox .sl{font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px}
-.stitle{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--mu);font-weight:600}
+.sbox .sl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.stitle{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);font-weight:600}
 .sh{display:flex;justify-content:space-between;align-items:center;margin-top:18px;margin-bottom:8px}
 .add-row{display:flex;gap:8px;margin-top:9px}
 .add-row input{flex:1}
 .dacts{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-.d-meta{font-size:12px;color:var(--mu);margin-bottom:13px}
-.empty{text-align:center;padding:60px 20px;color:var(--mu)}
+.d-meta{font-size:12px;color:var(--muted);margin-bottom:13px}
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
 .empty .ico{font-size:42px;margin-bottom:10px}
 .empty p{font-size:14px;line-height:1.6}
-.sep{height:1px;background:var(--bd);margin:16px 0}
-.toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%);background:var(--c2);border:1px solid var(--bd);border-radius:22px;padding:8px 18px;font-size:13px;font-weight:600;white-space:nowrap;opacity:0;transition:opacity .25s;z-index:100;pointer-events:none}
+.sep{height:1px;background:var(--border);margin:16px 0}
+.toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border);border-radius:22px;padding:8px 18px;font-size:13px;font-weight:600;white-space:nowrap;opacity:0;transition:opacity .25s;z-index:100;pointer-events:none}
 .toast.show{opacity:1}
 .sort-pill{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
 .data-row{display:flex;gap:8px;margin-bottom:8px}
 .data-row button{flex:1}
+/* Fix 8: custom modal */
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:center;justify-content:center;padding:20px}
+#modal.open{display:flex}
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;max-width:300px;width:100%}
+#modal-msg{font-size:15px;line-height:1.55;margin-bottom:18px;color:var(--text)}
+.modal-btns{display:flex;gap:8px}
+.modal-btns button{flex:1}
 </style>
 </head>
 <body>
@@ -88,114 +113,179 @@ body.light input[type=date]::-webkit-calendar-picker-indicator{filter:none;opaci
 <div id="content"></div>
 <nav>
   <button data-v="col" onclick="go('col')"><span class="ico">👖</span>Collection</button>
-  <button data-v="ov" onclick="go('ov')"><span class="ico">📊</span>Overview</button>
+  <button data-v="ov"  onclick="go('ov')"><span class="ico">📊</span>Overview</button>
 </nav>
 <div class="toast" id="toast"></div>
+<!-- Fix 8: custom confirm modal -->
+<div id="modal">
+  <div class="modal-box">
+    <p id="modal-msg"></p>
+    <div class="modal-btns">
+      <button class="btn bg2" id="modal-cancel">Cancel</button>
+      <button class="btn bp"  id="modal-ok">Confirm</button>
+    </div>
+  </div>
+</div>
 <input type="file" id="importInput" accept=".json" style="display:none" onchange="handleImport(this)">
 
 <script>
-const LS_KEY='denim_tracker_v1';
-let DB={jeans:[]};
-let CUR={view:'col',id:null};
-let FS={editId:null};
-let darkMode=true;
-let sortMode='alpha';
-let lastRenderView=null;
-let scrollPositions={};
+// ── Fix 13: named constants instead of magic numbers ───────
+const LS_KEY         = 'denim_tracker_v1';
+const WASH_OK_DAYS   = 5;
+const WASH_WARN_DAYS = 10;
+const HAPTIC_MS      = 30;
+const HISTORY_DAYS   = 365;
 
-// ── Storage ──
+// ── State ──────────────────────────────────────────────────
+let DB  = {jeans:[]};
+let CUR = {view:'col', id:null};
+let FS  = {editId:null};
+let darkMode = true;
+let sortMode = 'alpha';
+let lastRenderView = null;
+let scrollPositions = {};
+let S = {}; // Fix 11: stats cache, computed once per render
+
+// ── Storage ────────────────────────────────────────────────
 function load(){
-  try{DB=JSON.parse(localStorage.getItem(LS_KEY)||'{"jeans":[]}')}catch{DB={jeans:[]}}
-  darkMode=localStorage.getItem('dt_dark')!=='0';
-  sortMode=localStorage.getItem('dt_sort')||'alpha';
-  document.body.classList.toggle('light',!darkMode);
-  document.getElementById('themeBtn').textContent=darkMode?'☀️':'🌙';
+  try { DB = JSON.parse(localStorage.getItem(LS_KEY)||'{"jeans":[]}'); }
+  catch { DB = {jeans:[]}; }
+  darkMode = localStorage.getItem('dt_dark') !== '0';
+  sortMode  = localStorage.getItem('dt_sort') || 'alpha';
+  document.body.classList.toggle('light', !darkMode);
+  document.getElementById('themeBtn').textContent = darkMode ? '☀️' : '🌙';
 }
-function save(){localStorage.setItem(LS_KEY,JSON.stringify(DB))}
 
-// ── Helpers ──
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
-function today(){return new Date().toISOString().slice(0,10)}
-function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-function fmt(d){return new Date(d+'T12:00:00').toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'})}
-function daysSince(d){if(!d)return null;return Math.floor((Date.now()-new Date(d+'T12:00:00').getTime())/86400000)}
-function lastOf(arr){return arr.length?[...arr].sort().at(-1):null}
-function haptic(){try{navigator.vibrate&&navigator.vibrate(30)}catch{}}
+// Fix 1: QuotaExceededError handling
+function save(){
+  try { localStorage.setItem(LS_KEY, JSON.stringify(DB)); }
+  catch(e) { if(e.name==='QuotaExceededError') toast('⚠️ Storage full — export your data now'); }
+}
 
-// FIX 1: streak only counts if most recent wear was today or yesterday
+// ── Helpers ────────────────────────────────────────────────
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+
+// Fix 3: local time instead of UTC (fixes midnight bug in CET/CEST)
+function today(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmt(d){ return new Date(d+'T12:00:00').toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'}); }
+function daysSince(d){ if(!d) return null; return Math.floor((Date.now()-new Date(d+'T12:00:00').getTime())/86400000); }
+function lastOf(arr){ return arr.length ? [...arr].sort().at(-1) : null; }
+function haptic(){ try { navigator.vibrate && navigator.vibrate(HAPTIC_MS); } catch{} }
+
 function wearStreak(wears){
-  if(!wears.length)return 0;
-  const sorted=[...new Set(wears)].sort().reverse();
-  if(daysSince(sorted[0])>1)return 0;
-  let s=1;
-  for(let i=0;i<sorted.length-1;i++){
-    const diff=Math.round((new Date(sorted[i]+'T12:00:00')-new Date(sorted[i+1]+'T12:00:00'))/86400000);
-    if(diff===1)s++;else break;
+  if(!wears.length) return 0;
+  const sorted = [...new Set(wears)].sort().reverse();
+  if(daysSince(sorted[0]) > 1) return 0;
+  let s = 1;
+  for(let i = 0; i < sorted.length-1; i++){
+    const diff = Math.round((new Date(sorted[i]+'T12:00:00')-new Date(sorted[i+1]+'T12:00:00'))/86400000);
+    if(diff===1) s++; else break;
   }
   return s;
 }
 
 function washMeta(washes){
-  const d=daysSince(lastOf(washes));
-  if(d===null)return{cls:'wn',label:'Never washed'};
-  if(d===0)return{cls:'w0',label:'Washed today'};
-  if(d<=5)return{cls:'w0',label:d+'d since wash'};
-  if(d<=10)return{cls:'w1',label:d+'d since wash'};
-  return{cls:'w2',label:d+'d since wash'};
+  const d = daysSince(lastOf(washes));
+  if(d===null)              return {cls:'wn', label:'Never washed'};
+  if(d===0)                 return {cls:'w0', label:'Washed today'};
+  if(d<=WASH_OK_DAYS)       return {cls:'w0', label:d+'d since wash'};
+  if(d<=WASH_WARN_DAYS)     return {cls:'w1', label:d+'d since wash'};
+  return {cls:'w2', label:d+'d since wash'};
 }
 
+// Fix 11: compute lastOf/wearStreak/washMeta once per render, not per card
+function computeStats(){
+  S = {};
+  DB.jeans.forEach(j => {
+    S[j.id] = {
+      lastWear: lastOf(j.wears),
+      lastWash: lastOf(j.washes),
+      streak:   wearStreak(j.wears),
+      wash:     washMeta(j.washes)
+    };
+  });
+}
+
+// Fix 10: extracted from inline IIFE in renderForm
+function editSinceDesc(j){
+  const lw  = S[j.id]?.lastWash;
+  const cur = lw ? j.wears.filter(d=>d>lw).length : j.wears.length;
+  return lw
+    ? `Currently <strong style="color:var(--text)">${cur}</strong> wears since last wash on ${fmt(lw)}.`
+    : `No washes logged — all <strong style="color:var(--text)">${j.wears.length}</strong> wears count.`;
+}
+
+// ── UI Helpers ─────────────────────────────────────────────
 function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1800);
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('show'), 1800);
 }
-function toggleTheme(){
-  darkMode=!darkMode;
-  document.body.classList.toggle('light',!darkMode);
-  document.getElementById('themeBtn').textContent=darkMode?'☀️':'🌙';
-  localStorage.setItem('dt_dark',darkMode?'1':'0');
-}
-function setSort(m){sortMode=m;localStorage.setItem('dt_sort',m);render();}
 
-// ── Navigation ──
-function go(view,id=null){
-  CUR={view,id};
+// Fix 8: promise-based custom modal replacing native confirm()
+function showConfirm(msg){
+  return new Promise(resolve => {
+    const modal  = document.getElementById('modal');
+    const ok     = document.getElementById('modal-ok');
+    const cancel = document.getElementById('modal-cancel');
+    document.getElementById('modal-msg').textContent = msg;
+    modal.classList.add('open');
+    function cleanup(result){ modal.classList.remove('open'); ok.onclick=null; cancel.onclick=null; resolve(result); }
+    ok.onclick     = () => cleanup(true);
+    cancel.onclick = () => cleanup(false);
+  });
+}
+
+function toggleTheme(){
+  darkMode = !darkMode;
+  document.body.classList.toggle('light', !darkMode);
+  document.getElementById('themeBtn').textContent = darkMode ? '☀️' : '🌙';
+  localStorage.setItem('dt_dark', darkMode?'1':'0');
+}
+function setSort(m){ sortMode=m; localStorage.setItem('dt_sort',m); render(); }
+
+// ── Navigation ─────────────────────────────────────────────
+function go(view, id=null){
+  CUR = {view, id};
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.v===view));
   render();
 }
 function openForm(editId){
-  FS={editId};
-  CUR={view:'form',id:editId};
+  FS = {editId};
+  CUR = {view:'form', id:editId};
   document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
   render();
 }
 
-// FIX 6: preserve scroll position per view
+// ── Render ─────────────────────────────────────────────────
 function render(){
-  if(lastRenderView!==null)scrollPositions[lastRenderView]=window.scrollY;
-  const c=document.getElementById('content');
-  if(CUR.view==='col')c.innerHTML=renderCol();
-  else if(CUR.view==='ov')c.innerHTML=renderOverview();
-  else if(CUR.view==='detail')c.innerHTML=renderDetail();
-  else if(CUR.view==='form')c.innerHTML=renderForm();
-  const target=scrollPositions[CUR.view]||0;
-  window.scrollTo(0,target);
-  lastRenderView=CUR.view;
+  if(lastRenderView!==null) scrollPositions[lastRenderView] = window.scrollY;
+  computeStats(); // Fix 11
+  const c = document.getElementById('content');
+  if(CUR.view==='col')     c.innerHTML = renderCol();
+  else if(CUR.view==='ov')     c.innerHTML = renderOverview();
+  else if(CUR.view==='detail') c.innerHTML = renderDetail();
+  else if(CUR.view==='form')   c.innerHTML = renderForm();
+  const target = scrollPositions[CUR.view] || 0;
+  requestAnimationFrame(()=>window.scrollTo(0,target)); // Fix 9
+  lastRenderView = CUR.view;
 }
 
-// ── Cards & Views ──
-function pill(m,label){
-  const active=sortMode===m;
-  return`<button class="sort-pill" onclick="setSort('${m}')" style="border:1px solid ${active?'var(--ac)':'var(--bd)'};background:${active?'rgba(79,125,245,.15)':'none'};color:${active?'var(--ac)':'var(--mu)'}">${label}</button>`;
+function pill(m, label){
+  const a = sortMode===m;
+  return `<button class="sort-pill" onclick="setSort('${m}')" style="border:1px solid ${a?'var(--accent)':'var(--border)'};background:${a?'rgba(79,125,245,.15)':'none'};color:${a?'var(--accent)':'var(--muted)'}">${label}</button>`;
 }
 
 function jCard(j){
-  const wm=washMeta(j.washes);
-  const streak=wearStreak(j.wears);
-  const lastWorn=lastOf(j.wears);
-  const lwd=daysSince(lastWorn);
-  const lwStr=lastWorn?(lwd===0?'Worn today':lwd===1?'Worn yesterday':`Worn ${lwd}d ago`):'Never worn';
-  return`<div class="card">
+  const {lastWear, streak, wash} = S[j.id];
+  const lwd   = daysSince(lastWear);
+  const lwStr = lastWear ? (lwd===0?'Worn today':lwd===1?'Worn yesterday':`Worn ${lwd}d ago`) : 'Never worn';
+  return `<div class="card">
     <div class="tap" onclick="go('detail','${j.id}')">
       <div class="c-head">
         <div>
@@ -210,7 +300,7 @@ function jCard(j){
       <div class="cs"><div class="v">${j.wears.length}</div><div class="l">Wears</div></div>
       <div class="dvdr"></div>
       <div class="cs"><div class="v">${j.washes.length}</div><div class="l">Washes</div></div>
-      <span class="wpill ${wm.cls}">${wm.label}</span>
+      <span class="wpill ${wash.cls}">${wash.label}</span>
     </div>
     <div class="cacts">
       <button onclick="event.stopPropagation();logWear('${j.id}')">✓ Worn Today</button>
@@ -220,49 +310,49 @@ function jCard(j){
 }
 
 function renderCol(){
-  if(!DB.jeans.length)return`<div class="empty"><div class="ico">👖</div><p>No jeans yet.<br>Tap <strong>+</strong> to add your first pair.</p></div>`;
-  const sortBar=`<div style="display:flex;gap:6px;margin-bottom:12px">
+  if(!DB.jeans.length) return `<div class="empty"><div class="ico">👖</div><p>No jeans yet.<br>Tap <strong>+</strong> to add your first pair.</p></div>`;
+  const sortBar = `<div style="display:flex;gap:6px;margin-bottom:12px">
     ${pill('alpha','A–Z')}${pill('mostworn','Most Worn')}${pill('lastworn','Last Worn')}
   </div>`;
-  let list=[...DB.jeans];
-  if(sortMode==='mostworn')list.sort((a,b)=>b.wears.length-a.wears.length);
-  else if(sortMode==='lastworn')list.sort((a,b)=>(lastOf(b.wears)||'0').localeCompare(lastOf(a.wears)||'0'));
-  else list.sort((a,b)=>(a.brand+' '+a.model).localeCompare(b.brand+' '+b.model));
+  let list = [...DB.jeans];
+  if(sortMode==='mostworn')      list.sort((a,b)=>b.wears.length-a.wears.length);
+  else if(sortMode==='lastworn') list.sort((a,b)=>(S[b.id].lastWear||'0').localeCompare(S[a.id].lastWear||'0'));
+  else                           list.sort((a,b)=>(a.brand+' '+a.model).localeCompare(b.brand+' '+b.model));
   return sortBar+list.map(j=>jCard(j)).join('');
 }
 
 function renderOverview(){
-  if(!DB.jeans.length)return`<div class="empty"><div class="ico">📊</div><p>Add some jeans first<br>to see your stats.</p></div>`;
-  const totalWears=DB.jeans.reduce((s,j)=>s+j.wears.length,0);
-  const totalWashes=DB.jeans.reduce((s,j)=>s+j.washes.length,0);
-  const totalSpent=DB.jeans.reduce((s,j)=>s+(j.price||0),0);
-  const rows=DB.jeans.map(j=>{
-    const wpw=j.washes.length?Math.round(j.wears.length/j.washes.length):'—';
-    const lastWash=lastOf(j.washes);
-    const sinceWash=lastWash?j.wears.filter(d=>d>lastWash).length:j.wears.length;
-    return`<div style="display:grid;grid-template-columns:1fr repeat(4,44px);align-items:center;gap:4px;padding:9px 0;border-bottom:1px solid var(--bd)">
+  if(!DB.jeans.length) return `<div class="empty"><div class="ico">📊</div><p>Add some jeans first<br>to see your stats.</p></div>`;
+  const totalWears  = DB.jeans.reduce((s,j)=>s+j.wears.length, 0);
+  const totalWashes = DB.jeans.reduce((s,j)=>s+j.washes.length, 0);
+  const totalSpent  = DB.jeans.reduce((s,j)=>s+(j.price||0), 0);
+  const rows = DB.jeans.map(j=>{
+    const wpw       = j.washes.length ? Math.round(j.wears.length/j.washes.length) : '—';
+    const lastWash  = S[j.id].lastWash;
+    const sinceWash = lastWash ? j.wears.filter(d=>d>lastWash).length : j.wears.length;
+    return `<div style="display:grid;grid-template-columns:1fr repeat(4,44px);align-items:center;gap:4px;padding:9px 0;border-bottom:1px solid var(--border)">
       <div>
         <div style="font-size:13px;font-weight:600;line-height:1.3">${esc(j.brand)}</div>
-        <div style="font-size:11px;color:var(--mu)">${esc(j.model)}</div>
+        <div style="font-size:11px;color:var(--muted)">${esc(j.model)}</div>
       </div>
-      <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--gr)">${j.wears.length}</div><div style="font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">Wears</div></div>
-      <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--bl)">${j.washes.length}</div><div style="font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">Washes</div></div>
-      <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--ac)">${wpw}</div><div style="font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">W/W</div></div>
-      <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--or)">${sinceWash}</div><div style="font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">Since↓</div></div>
+      <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--green)">${j.wears.length}</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">Wears</div></div>
+      <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--blue)">${j.washes.length}</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">Washes</div></div>
+      <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--accent)">${wpw}</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">W/W</div></div>
+      <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--orange)">${sinceWash}</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">Since↓</div></div>
     </div>`;
   }).join('');
-  return`
-    <div style="font-size:13px;color:var(--mu);font-weight:600;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px">Collection Overview</div>
+  return `
+    <div style="font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px">Collection Overview</div>
     <div class="sgrid" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px">
-      <div class="sbox"><div class="sv" style="color:var(--gr)">${totalWears}</div><div class="sl">Total Wears</div></div>
-      <div class="sbox"><div class="sv" style="color:var(--bl)">${totalWashes}</div><div class="sl">Total Washes</div></div>
+      <div class="sbox"><div class="sv" style="color:var(--green)">${totalWears}</div><div class="sl">Total Wears</div></div>
+      <div class="sbox"><div class="sv" style="color:var(--blue)">${totalWashes}</div><div class="sl">Total Washes</div></div>
       <div class="sbox"><div class="sv" style="font-size:13px">${totalSpent?'CHF '+totalSpent:'—'}</div><div class="sl">Total Spent</div></div>
     </div>
     <div class="sh" style="margin-top:0;margin-bottom:0"><span class="stitle">All Jeans</span></div>
     ${rows}
     <div class="sep"></div>
-    <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--mu);font-weight:600;margin-bottom:8px">Data & Backup</div>
-    <div style="font-size:12px;color:var(--mu);margin-bottom:10px;line-height:1.5">Export and save to iCloud Drive or Google Drive. Import anytime to restore.</div>
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);font-weight:600;margin-bottom:8px">Data & Backup</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5">Export and save to iCloud Drive or Google Drive. Import anytime to restore.</div>
     <div class="data-row">
       <button class="btn bg2 sm" onclick="exportJSON()">⬇ Export JSON</button>
       <button class="btn bg2 sm" onclick="exportCSV()">⬇ Export CSV</button>
@@ -274,26 +364,25 @@ function renderOverview(){
 }
 
 function renderDetail(){
-  const j=DB.jeans.find(x=>x.id===CUR.id);
-  if(!j)return`<p>Not found.</p>`;
-  const wm=washMeta(j.washes);
-  const streak=wearStreak(j.wears);
-  const wColor=wm.cls==='w2'?'var(--rd)':wm.cls==='w1'?'var(--or)':wm.cls==='w0'?'var(--gr)':'var(--mu)';
-  return`
+  const j = DB.jeans.find(x=>x.id===CUR.id);
+  if(!j) return `<p>Not found.</p>`;
+  const {streak, wash} = S[j.id];
+  const wColor = wash.cls==='w2'?'var(--red)':wash.cls==='w1'?'var(--orange)':wash.cls==='w0'?'var(--green)':'var(--muted)';
+  return `
     <div class="back-row">
       <button class="bbtn" onclick="go('col')">‹</button>
       <h2>${esc(j.brand)} · ${esc(j.model)}</h2>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:14px">
-      <button style="flex:1;padding:11px;border-radius:11px;font-weight:700;font-size:13px;background:rgba(74,222,128,.1);color:var(--gr);border:1px solid rgba(74,222,128,.25);cursor:pointer" onclick="logWear('${j.id}')">✓ Worn Today</button>
-      <button style="flex:1;padding:11px;border-radius:11px;font-weight:700;font-size:13px;background:rgba(56,189,248,.1);color:var(--bl);border:1px solid rgba(56,189,248,.25);cursor:pointer" onclick="logWash('${j.id}')">💧 Washed Today</button>
+      <button style="flex:1;padding:11px;border-radius:11px;font-weight:700;font-size:13px;background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.25);cursor:pointer" onclick="logWear('${j.id}')">✓ Worn Today</button>
+      <button style="flex:1;padding:11px;border-radius:11px;font-weight:700;font-size:13px;background:rgba(56,189,248,.1);color:var(--blue);border:1px solid rgba(56,189,248,.25);cursor:pointer" onclick="logWash('${j.id}')">💧 Washed Today</button>
     </div>
     <div class="sgrid" style="grid-template-columns:repeat(2,1fr)">
       <div class="sbox"><div class="sv">${j.wears.length}</div><div class="sl">Total Wears</div></div>
-      <div class="sbox"><div class="sv" style="font-size:13px;color:${wColor}">${wm.label}</div><div class="sl">Last Wash</div></div>
+      <div class="sbox"><div class="sv" style="font-size:13px;color:${wColor}">${wash.label}</div><div class="sl">Last Wash</div></div>
     </div>
     <div class="sgrid" style="grid-template-columns:repeat(2,1fr)">
-      <div class="sbox"><div class="sv" style="color:var(--or)">${streak>0?streak+'d':'—'}</div><div class="sl">Wear Streak 🔥</div></div>
+      <div class="sbox"><div class="sv" style="color:var(--orange)">${streak>0?streak+'d':'—'}</div><div class="sl">Wear Streak 🔥</div></div>
       <div class="sbox"><div class="sv">${j.washes.length?Math.round(j.wears.length/j.washes.length):'—'}</div><div class="sl">Wears / Wash</div></div>
     </div>
     ${(j.purchaseDate||j.price)?`<div class="d-meta">${j.purchaseDate?'Bought '+fmt(j.purchaseDate):''}${j.purchaseDate&&j.price?' · ':''}${j.price?'CHF '+j.price:''}</div>`:''}
@@ -304,7 +393,7 @@ function renderDetail(){
     <div class="sep"></div>
     <div class="sh">
       <span class="stitle">Log a Wear</span>
-      ${j.wears.length?`<button onclick="removeLast('${j.id}','wear')" style="background:none;border:none;color:var(--rd);font-size:12px;font-weight:600;cursor:pointer">− Remove last</button>`:''}
+      ${j.wears.length?`<button onclick="removeLast('${j.id}','wear')" style="background:none;border:none;color:var(--red);font-size:12px;font-weight:600;cursor:pointer">− Remove last</button>`:''}
     </div>
     <div class="add-row">
       <input type="date" id="addWearDate" value="${today()}">
@@ -312,19 +401,19 @@ function renderDetail(){
     </div>
     <div class="sh" style="margin-top:16px">
       <span class="stitle">Log a Wash</span>
-      ${j.washes.length?`<button onclick="removeLast('${j.id}','wash')" style="background:none;border:none;color:var(--rd);font-size:12px;font-weight:600;cursor:pointer">− Remove last</button>`:''}
+      ${j.washes.length?`<button onclick="removeLast('${j.id}','wash')" style="background:none;border:none;color:var(--red);font-size:12px;font-weight:600;cursor:pointer">− Remove last</button>`:''}
     </div>
     <div class="add-row">
       <input type="date" id="addWashDate" value="${today()}">
-      <button class="btn sm" style="background:rgba(56,189,248,.15);color:var(--bl);border:1px solid rgba(56,189,248,.3);cursor:pointer" onclick="addLog('${j.id}','wash')">+ Add</button>
+      <button class="btn sm" style="background:rgba(56,189,248,.15);color:var(--blue);border:1px solid rgba(56,189,248,.3);cursor:pointer" onclick="addLog('${j.id}','wash')">+ Add</button>
     </div>
     <div style="height:10px"></div>`;
 }
 
 function renderForm(){
-  const j=FS.editId?DB.jeans.find(x=>x.id===FS.editId):null;
-  const isEdit=!!j;
-  return`
+  const j = FS.editId ? DB.jeans.find(x=>x.id===FS.editId) : null;
+  const isEdit = !!j;
+  return `
     <div class="back-row">
       <button class="bbtn" onclick="go('col')">‹</button>
       <h2>${isEdit?'Edit Jeans':'Add New Jeans'}</h2>
@@ -333,164 +422,209 @@ function renderForm(){
     <div class="fg"><label>Model</label><input type="text" id="fModel" placeholder="e.g. Secret Denim 517" value="${esc(j?.model||'')}"></div>
     <div class="fg"><label>Purchase Date</label><input type="date" id="fDate" value="${j?.purchaseDate||''}"></div>
     <div class="fg"><label>Price (CHF)</label><input type="number" id="fPrice" inputmode="decimal" placeholder="e.g. 320" value="${j?.price||''}" min="0" step="0.01"></div>
-    ${isEdit?`
-    <div class="sep"></div>
-    <div style="font-size:11px;color:var(--mu);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.8px">Wears since last wash</div>
-    <div style="font-size:12px;color:var(--mu);margin-bottom:10px">${(()=>{const lw=lastOf(j.washes);const cur=lw?j.wears.filter(d=>d>lw).length:j.wears.length;return lw?`Currently <strong style="color:var(--tx)">${cur}</strong> wears since last wash on ${fmt(lw)}.`:'No washes logged yet — all <strong style="color:var(--tx)">${j.wears.length}</strong> wears count.';})()}</div>
-    <div class="fg"><label>Set new count</label><input type="number" id="editSince" inputmode="numeric" placeholder="Leave blank to keep unchanged" min="0" step="1"></div>`
-    :''}
-    ${!isEdit?`
-    <div class="sep"></div>
-    <div style="font-size:11px;color:var(--mu);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.8px">Backfill History (optional)</div>
-    <div style="font-size:12px;color:var(--mu);margin-bottom:12px">Dates spread evenly from purchase date to today. Max one entry per day.</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="fg"><label>Past Wears</label><input type="number" id="bfWears" inputmode="numeric" placeholder="e.g. 45" min="0" step="1"></div>
-      <div class="fg"><label>Past Washes</label><input type="number" id="bfWashes" inputmode="numeric" placeholder="e.g. 3" min="0" step="1"></div>
-    </div>
-    <div class="fg"><label>Wears since last wash <span style="font-weight:400;color:var(--mu)">(optional)</span></label><input type="number" id="bfSince" inputmode="numeric" placeholder="e.g. 15" min="0" step="1"></div>`:''}
+    ${isEdit ? `
+      <div class="sep"></div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.8px">Wears since last wash</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">${editSinceDesc(j)}</div>
+      <div class="fg"><label>Set new count <span style="font-weight:400">(leave blank to keep unchanged)</span></label>
+        <input type="number" id="editSince" inputmode="numeric" placeholder="e.g. 15" min="0" step="1"></div>
+    ` : `
+      <div class="sep"></div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.8px">Backfill History (optional)</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Dates spread evenly from purchase date to today. Max one entry per day.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="fg"><label>Past Wears</label><input type="number" id="bfWears" inputmode="numeric" placeholder="e.g. 45" min="0" step="1"></div>
+        <div class="fg"><label>Past Washes</label><input type="number" id="bfWashes" inputmode="numeric" placeholder="e.g. 3" min="0" step="1"></div>
+      </div>
+      <div class="fg"><label>Wears since last wash <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+        <input type="number" id="bfSince" inputmode="numeric" placeholder="e.g. 15" min="0" step="1"></div>
+    `}
     <div style="height:8px"></div>
     <button class="btn bp" style="width:100%;padding:13px" onclick="saveForm()">${isEdit?'Save Changes':'Add Jeans'}</button>
     <div style="height:16px"></div>`;
 }
 
-// ── Actions ──
+// ── Actions ────────────────────────────────────────────────
 function logWear(id){
-  const j=DB.jeans.find(x=>x.id===id);if(!j)return;
-  const t=today();
-  if(j.wears.includes(t)){toast('Already logged today');return;}
-  j.wears.push(t);save();haptic();toast('✓ Wear logged');render();
+  const j = DB.jeans.find(x=>x.id===id); if(!j) return;
+  const t = today();
+  if(j.wears.includes(t)){ toast('Already logged today'); return; }
+  j.wears.push(t); save(); haptic(); toast('✓ Wear logged'); render();
 }
 function logWash(id){
-  const j=DB.jeans.find(x=>x.id===id);if(!j)return;
-  const t=today();
-  if(j.washes.includes(t)){toast('Already logged today');return;}
-  j.washes.push(t);save();haptic();toast('💧 Wash logged');render();
+  const j = DB.jeans.find(x=>x.id===id); if(!j) return;
+  const t = today();
+  if(j.washes.includes(t)){ toast('Already logged today'); return; }
+  j.washes.push(t); save(); haptic(); toast('💧 Wash logged'); render();
 }
-function addLog(id,type){
-  const j=DB.jeans.find(x=>x.id===id);if(!j)return;
-  const inp=document.getElementById(type==='wear'?'addWearDate':'addWashDate');
-  const d=inp?.value;if(!d){toast('Pick a date first');return;}
-  const arr=type==='wear'?j.wears:j.washes;
-  if(arr.includes(d)){toast('Date already exists');return;}
-  arr.push(d);save();haptic();toast('Date added');render();
+function addLog(id, type){
+  const j = DB.jeans.find(x=>x.id===id); if(!j) return;
+  const inp = document.getElementById(type==='wear'?'addWearDate':'addWashDate');
+  const d = inp?.value; if(!d){ toast('Pick a date first'); return; }
+  const arr = type==='wear' ? j.wears : j.washes;
+  if(arr.includes(d)){ toast('Date already exists'); return; }
+  arr.push(d); save(); haptic(); toast('Date added'); render();
 }
-function removeLast(id,type){
-  const j=DB.jeans.find(x=>x.id===id);if(!j)return;
-  const arr=type==='wear'?j.wears:j.washes;if(!arr.length)return;
-  arr.splice(arr.indexOf(lastOf(arr)),1);
-  save();toast('Removed last entry');render();
+
+// Fix 5: shows which date will be removed before confirming
+async function removeLast(id, type){
+  const j = DB.jeans.find(x=>x.id===id); if(!j) return;
+  const arr = type==='wear' ? j.wears : j.washes; if(!arr.length) return;
+  const last = lastOf(arr);
+  const ok = await showConfirm(`Remove ${fmt(last)} from ${type} log?`);
+  if(!ok) return;
+  arr.splice(arr.indexOf(last), 1);
+  save(); toast('Removed'); render();
 }
-function delJeans(id){
-  if(!confirm('Delete this jeans? Cannot be undone.'))return;
-  DB.jeans=DB.jeans.filter(x=>x.id!==id);save();toast('Deleted');go('col');
+
+async function delJeans(id){
+  const ok = await showConfirm('Delete this jeans? Cannot be undone.');
+  if(!ok) return;
+  DB.jeans = DB.jeans.filter(x=>x.id!==id);
+  save(); toast('Deleted');
+  delete scrollPositions['col']; // Fix 7
+  go('col');
 }
-function genDates(count,from,to){
-  if(count<=0)return[];
-  const f=new Date(from+'T12:00:00').getTime();
-  const t=new Date(to+'T12:00:00').getTime();
-  const dates=[];
-  for(let i=0;i<count;i++){
-    const ms=count===1?t:f+((t-f)*(i/(count-1)));
+
+function genDates(count, from, to){
+  if(count<=0) return [];
+  const f = new Date(from+'T12:00:00').getTime();
+  const t = new Date(to+'T12:00:00').getTime();
+  const dates = [];
+  for(let i=0; i<count; i++){
+    const ms = count===1 ? t : f+((t-f)*(i/(count-1)));
     dates.push(new Date(ms).toISOString().slice(0,10));
   }
-  return[...new Set(dates)];
+  return [...new Set(dates)];
 }
 
-// FIX 2: warn user when backfill count exceeds available days
-function saveForm(){
-  const brand=document.getElementById('fBrand')?.value.trim();
-  const model=document.getElementById('fModel')?.value.trim();
-  const date=document.getElementById('fDate')?.value||'';
-  const price=parseFloat(document.getElementById('fPrice')?.value)||0;
-  if(!brand||!model){toast('Brand and model are required');return;}
+async function saveForm(){
+  const brand = document.getElementById('fBrand')?.value.trim();
+  const model = document.getElementById('fModel')?.value.trim();
+  const date  = document.getElementById('fDate')?.value || '';
+  const price = parseFloat(document.getElementById('fPrice')?.value) || 0;
+  if(!brand||!model){ toast('Brand and model are required'); return; }
+
   if(FS.editId){
-    const j=DB.jeans.find(x=>x.id===FS.editId);
+    const j = DB.jeans.find(x=>x.id===FS.editId);
     if(j){
-      j.brand=brand;j.model=model;j.purchaseDate=date;j.price=price||null;
-      const editSince=parseInt(document.getElementById('editSince')?.value);
-      if(!isNaN(editSince)){
-        const lastWash=lastOf(j.washes);
-        if(lastWash){
-          const beforeWears=j.wears.filter(d=>d<=lastWash);
-          const sinceWears=genDates(editSince,lastWash,today());
-          j.wears=[...new Set([...beforeWears,...sinceWears])];
-        } else {
-          const from=j.purchaseDate||new Date(Date.now()-365*86400000).toISOString().slice(0,10);
-          j.wears=genDates(editSince,from,today());
+      j.brand=brand; j.model=model; j.purchaseDate=date; j.price=price||null;
+      const rawSince = document.getElementById('editSince')?.value;
+      if(rawSince !== ''){
+        const editSince = parseInt(rawSince);
+        if(!isNaN(editSince)){
+          const lastWash = lastOf(j.washes);
+          const from = lastWash || j.purchaseDate || new Date(Date.now()-HISTORY_DAYS*86400000).toISOString().slice(0,10);
+          const daysAvail = Math.max(1, Math.floor((new Date(today()+'T12:00:00').getTime()-new Date(from+'T12:00:00').getTime())/86400000)+1);
+          // Fix 2: cap warning in edit mode
+          let final = editSince;
+          if(editSince > daysAvail){
+            const ok = await showConfirm(`Only ${daysAvail} days available. Count will be capped at ${daysAvail}. Continue?`);
+            if(!ok) return;
+            final = daysAvail;
+          }
+          if(lastWash){
+            const before = j.wears.filter(d=>d<=lastWash);
+            const since  = genDates(final, lastWash, today());
+            j.wears = [...new Set([...before,...since])];
+          } else {
+            const fromDate = j.purchaseDate || new Date(Date.now()-HISTORY_DAYS*86400000).toISOString().slice(0,10);
+            j.wears = genDates(final, fromDate, today());
+          }
         }
       }
-      save();toast('Saved');go('detail',FS.editId);
+      save(); toast('Saved'); go('detail', FS.editId);
     }
   } else {
-    const wearCount=parseInt(document.getElementById('bfWears')?.value)||0;
-    const washCount=parseInt(document.getElementById('bfWashes')?.value)||0;
-    const sinceCount=Math.min(parseInt(document.getElementById('bfSince')?.value)||0, wearCount);
-    const from=date||new Date(Date.now()-365*86400000).toISOString().slice(0,10);
-    const daysAvail=Math.max(1,Math.floor((new Date(today()+'T12:00:00').getTime()-new Date(from+'T12:00:00').getTime())/86400000)+1);
-    if(wearCount>daysAvail||washCount>daysAvail){
-      if(!confirm(`Your date range covers only ${daysAvail} days. Counts will be capped at ${daysAvail}. Continue?`))return;
+    const wearCount  = parseInt(document.getElementById('bfWears')?.value) || 0;
+    const washCount  = parseInt(document.getElementById('bfWashes')?.value) || 0;
+    const sinceCount = Math.min(parseInt(document.getElementById('bfSince')?.value)||0, wearCount);
+    const from = date || new Date(Date.now()-HISTORY_DAYS*86400000).toISOString().slice(0,10);
+    const daysAvail = Math.max(1, Math.floor((new Date(today()+'T12:00:00').getTime()-new Date(from+'T12:00:00').getTime())/86400000)+1);
+    if(wearCount>daysAvail || washCount>daysAvail){
+      const ok = await showConfirm(`Date range covers only ${daysAvail} days. Counts will be capped. Continue?`);
+      if(!ok) return;
     }
-    const washDates=genDates(Math.min(washCount,daysAvail),from,today());
-    const lastWash=lastOf(washDates);
-    let wearDates;
-    if(sinceCount>0&&lastWash){
-      const beforeDates=genDates(Math.max(0,wearCount-sinceCount),from,lastWash);
-      const sinceDates=genDates(sinceCount,lastWash,today());
-      wearDates=[...new Set([...beforeDates,...sinceDates])];
+    let washDates, wearDates;
+    if(sinceCount > 0 && washCount > 0){
+      // Anchor last wash far enough back to always fit sinceCount wears — independent of purchase date
+      const anchor = new Date(Date.now()-Math.max(sinceCount,7)*86400000).toISOString().slice(0,10);
+      const lastWashDate = anchor > from ? anchor : from;
+      washDates = genDates(washCount, from, lastWashDate);
+      const sinceWears  = genDates(sinceCount, lastWashDate, today());
+      const beforeWears = genDates(Math.max(0, wearCount-sinceCount), from, lastWashDate);
+      wearDates = [...new Set([...beforeWears, ...sinceWears])];
     } else {
-      wearDates=genDates(Math.min(wearCount,daysAvail),from,today());
+      washDates = genDates(Math.min(washCount, daysAvail), from, today());
+      wearDates = genDates(Math.min(wearCount,  daysAvail), from, today());
     }
-    const j={id:uid(),brand,model,purchaseDate:date,price:price||null,wears:wearDates,washes:washDates};
-    DB.jeans.push(j);save();toast('👖 Added!');go('detail',j.id);
+    const j = {id:uid(), brand, model, purchaseDate:date, price:price||null, wears:wearDates, washes:washDates};
+    DB.jeans.push(j); save(); toast('👖 Added!'); go('detail', j.id);
   }
 }
 
-// ── Export / Import ──
+// ── Export / Import ────────────────────────────────────────
+// Fix 4: revokeObjectURL after each download to prevent memory leaks
 function exportJSON(){
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}));
-  a.download='denim-tracker-backup.json';a.click();toast('⬇ JSON exported');
+  const url = URL.createObjectURL(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}));
+  const a = document.createElement('a');
+  a.href=url; a.download='denim-tracker-backup.json'; a.click();
+  URL.revokeObjectURL(url);
+  toast('⬇ JSON exported');
 }
 function exportCSV(){
-  const rows=[['Brand','Model','Purchase Date','Price (CHF)','Wears','Washes','W/W']];
+  const rows = [['Brand','Model','Purchase Date','Price (CHF)','Wears','Washes','W/W']];
   DB.jeans.forEach(j=>{
-    const wpw=j.washes.length?Math.round(j.wears.length/j.washes.length):'';
+    const wpw = j.washes.length ? Math.round(j.wears.length/j.washes.length) : '';
     rows.push([j.brand,j.model,j.purchaseDate||'',j.price||'',j.wears.length,j.washes.length,wpw]);
   });
-  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download='denim-tracker.csv';a.click();toast('⬇ CSV exported');
+  const csv = rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const url = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  const a = document.createElement('a');
+  a.href=url; a.download='denim-tracker.csv'; a.click();
+  URL.revokeObjectURL(url);
+  toast('⬇ CSV exported');
 }
-
-// FIX 5: deep validation of imported data
 function validateImport(data){
-  if(!data||typeof data!=='object'||!Array.isArray(data.jeans))return false;
-  const dateRe=/^\d{4}-\d{2}-\d{2}$/;
+  if(!data||typeof data!=='object'||!Array.isArray(data.jeans)) return false;
+  const re = /^\d{4}-\d{2}-\d{2}$/;
   return data.jeans.every(j=>
-    j&&typeof j==='object'&&
-    typeof j.id==='string'&&
-    typeof j.brand==='string'&&
-    typeof j.model==='string'&&
-    Array.isArray(j.wears)&&j.wears.every(d=>typeof d==='string'&&dateRe.test(d))&&
-    Array.isArray(j.washes)&&j.washes.every(d=>typeof d==='string'&&dateRe.test(d))
+    j && typeof j==='object' &&
+    typeof j.id==='string' && typeof j.brand==='string' && typeof j.model==='string' &&
+    Array.isArray(j.wears)  && j.wears.every(d=>typeof d==='string'&&re.test(d)) &&
+    Array.isArray(j.washes) && j.washes.every(d=>typeof d==='string'&&re.test(d))
   );
 }
-function handleImport(input){
-  const file=input.files[0];if(!file)return;
-  const r=new FileReader();
-  r.onload=e=>{
-    try{
-      const data=JSON.parse(e.target.result);
-      if(!validateImport(data)){toast('❌ Invalid backup file');return;}
-      if(!confirm(`Import ${data.jeans.length} jeans? This replaces your current data.`))return;
-      DB=data;save();toast('✅ Imported!');go('col');
-    }catch{toast('❌ Could not read file');}
+async function handleImport(input){
+  const file = input.files[0]; if(!file) return;
+  const r = new FileReader();
+  r.onload = async e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if(!validateImport(data)){ toast('❌ Invalid backup file'); return; }
+      const ok = await showConfirm(`Import ${data.jeans.length} jeans? This replaces your current data.`);
+      if(!ok) return;
+      DB = data; save(); toast('✅ Imported!');
+      delete scrollPositions['col']; // Fix 7
+      go('col');
+    } catch { toast('❌ Could not read file'); }
   };
-  r.readAsText(file);input.value='';
+  r.readAsText(file); input.value='';
 }
 
-load();go('col');
+// ── Fix 6: Service Worker for offline support ──────────────
+// To enable offline mode on GitHub Pages, create sw.js alongside index.html:
+// const C='denim-v1';
+// self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./index.html'])));self.skipWaiting();});
+// self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))));});
+// self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));});
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+
+// ── Init ───────────────────────────────────────────────────
+load();
+go('col');
 </script>
 </body>
 </html>
