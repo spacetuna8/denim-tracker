@@ -547,13 +547,17 @@ async function saveForm(){
     }
     let washDates, wearDates;
     if(sinceCount > 0 && washCount > 0){
-      // Anchor last wash far enough back to always fit sinceCount wears — independent of purchase date
-      const anchor = new Date(Date.now()-Math.max(sinceCount,7)*86400000).toISOString().slice(0,10);
-      const lastWashDate = anchor > from ? anchor : from;
-      washDates = genDates(washCount, from, lastWashDate);
-      const sinceWears  = genDates(sinceCount, lastWashDate, today());
-      const beforeWears = genDates(Math.max(0, wearCount-sinceCount), from, lastWashDate);
-      wearDates = [...new Set([...beforeWears, ...sinceWears])];
+      // Split range in half: washes fill first half, since-wears fill second half
+      // No day counting — works for any date range
+      const fromMs  = new Date(from+'T12:00:00').getTime();
+      const todayMs = new Date(today()+'T12:00:00').getTime();
+      const mid     = new Date((fromMs+todayMs)/2).toISOString().slice(0,10);
+      washDates     = genDates(washCount, from, mid);
+      const lastWash = lastOf(washDates) || mid;
+      const sinceStart = new Date(new Date(lastWash+'T12:00:00').getTime()+86400000).toISOString().slice(0,10);
+      const sinceWears  = genDates(sinceCount, sinceStart, today());
+      const beforeWears = genDates(Math.max(0, wearCount-sinceCount), from, lastWash);
+      wearDates = [...new Set([...beforeWears,...sinceWears])];
     } else {
       washDates = genDates(Math.min(washCount, daysAvail), from, today());
       wearDates = genDates(Math.min(wearCount,  daysAvail), from, today());
