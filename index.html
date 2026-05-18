@@ -142,6 +142,7 @@ let CUR = {view:'col', id:null};
 let FS  = {editId:null};
 let darkMode = true;
 let sortMode = 'alpha';
+let ovSort   = 'alpha';
 let lastRenderView = null;
 let scrollPositions = {};
 let S = {}; // Fix 11: stats cache, computed once per render
@@ -173,6 +174,10 @@ function today(){
 
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function fmt(d){ return new Date(d+'T12:00:00').toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'}); }
+function yesterday(){
+  const d = new Date(); d.setDate(d.getDate()-1);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
 function daysSince(d){ if(!d) return null; return Math.floor((Date.now()-new Date(d+'T12:00:00').getTime())/86400000); }
 function lastOf(arr){ return arr.length ? [...arr].sort().at(-1) : null; }
 function haptic(){ try { navigator.vibrate && navigator.vibrate(HAPTIC_MS); } catch{} }
@@ -248,6 +253,7 @@ function toggleTheme(){
   localStorage.setItem('dt_dark', darkMode?'1':'0');
 }
 function setSort(m){ sortMode=m; localStorage.setItem('dt_sort',m); render(); }
+function setOvSort(m){ ovSort=m; render(); }
 
 // ── Navigation ─────────────────────────────────────────────
 function go(view, id=null){
@@ -326,7 +332,20 @@ function renderOverview(){
   const totalWears  = DB.jeans.reduce((s,j)=>s+j.wears.length, 0);
   const totalWashes = DB.jeans.reduce((s,j)=>s+j.washes.length, 0);
   const totalSpent  = DB.jeans.reduce((s,j)=>s+(j.price||0), 0);
-  const rows = DB.jeans.map(j=>{
+  function op(m,label){
+    const a = ovSort===m;
+    return `<button class="sort-pill" onclick="setOvSort('${m}')" style="border:1px solid ${a?'var(--accent)':'var(--border)'};background:${a?'rgba(79,125,245,.15)':'none'};color:${a?'var(--accent)':'var(--muted)'}">${label}</button>`;
+  }
+  let list = [...DB.jeans];
+  if(ovSort==='mostworn')    list.sort((a,b)=>b.wears.length-a.wears.length);
+  else if(ovSort==='mostwashed') list.sort((a,b)=>b.washes.length-a.washes.length);
+  else if(ovSort==='since')  list.sort((a,b)=>{
+    const sw = j => S[j.id].lastWash ? j.wears.filter(d=>d>S[j.id].lastWash).length : j.wears.length;
+    return sw(b)-sw(a);
+  });
+  else list.sort((a,b)=>(a.brand+' '+a.model).localeCompare(b.brand+' '+b.model));
+
+  const rows = list.map(j=>{
     const wpw       = j.washes.length ? Math.round(j.wears.length/j.washes.length) : '—';
     const lastWash  = S[j.id].lastWash;
     const sinceWash = lastWash ? j.wears.filter(d=>d>lastWash).length : j.wears.length;
@@ -348,7 +367,10 @@ function renderOverview(){
       <div class="sbox"><div class="sv" style="color:var(--blue)">${totalWashes}</div><div class="sl">Total Washes</div></div>
       <div class="sbox"><div class="sv" style="font-size:13px">${totalSpent?'CHF '+totalSpent:'—'}</div><div class="sl">Total Spent</div></div>
     </div>
-    <div class="sh" style="margin-top:0;margin-bottom:0"><span class="stitle">All Jeans</span></div>
+    <div class="sh" style="margin-top:0;margin-bottom:6px"><span class="stitle">All Jeans</span></div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+      ${op('alpha','A–Z')}${op('mostworn','Most Worn')}${op('mostwashed','Most Washed')}${op('since','Since Wash')}
+    </div>
     ${rows}
     <div class="sep"></div>
     <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);font-weight:600;margin-bottom:8px">Data & Backup</div>
@@ -555,12 +577,12 @@ async function saveForm(){
       washDates     = genDates(washCount, from, mid);
       const lastWash = lastOf(washDates) || mid;
       const sinceStart = new Date(new Date(lastWash+'T12:00:00').getTime()+86400000).toISOString().slice(0,10);
-      const sinceWears  = genDates(sinceCount, sinceStart, today());
+      const sinceWears  = genDates(sinceCount, sinceStart, yesterday());
       const beforeWears = genDates(Math.max(0, wearCount-sinceCount), from, lastWash);
       wearDates = [...new Set([...beforeWears,...sinceWears])];
     } else {
       washDates = genDates(Math.min(washCount, daysAvail), from, today());
-      wearDates = genDates(Math.min(wearCount,  daysAvail), from, today());
+      wearDates = genDates(Math.min(wearCount,  daysAvail), from, yesterday());
     }
     const j = {id:uid(), brand, model, purchaseDate:date, price:price||null, wears:wearDates, washes:washDates};
     DB.jeans.push(j); save(); toast('👖 Added!'); go('detail', j.id);
