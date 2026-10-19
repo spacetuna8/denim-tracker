@@ -26,8 +26,10 @@
 .ph-fill{font-family:"Phosphor-Fill"!important;font-style:normal;font-weight:normal;line-height:1;-webkit-font-smoothing:antialiased;display:inline-block}
 .ph-fill.ph-stack:before{content:"\e466"}.ph-fill.ph-chart-bar:before{content:"\e150"}.ph-fill.ph-trash:before{content:"\e4a6"}.ph-fill.ph-caret-left:before{content:"\e138"}.ph-fill.ph-caret-right:before{content:"\e13a"}.ph-fill.ph-check-circle:before{content:"\e184"}.ph-fill.ph-check:before{content:"\e182"}.ph-fill.ph-drop:before{content:"\e210"}.ph-fill.ph-plus:before{content:"\e3d4"}.ph-fill.ph-coat-hanger:before{content:"\e7fe"}.ph-fill.ph-camera:before{content:"\e10e"}.ph-fill.ph-pencil-simple:before{content:"\e3b4"}.ph-fill.ph-caret-down:before{content:"\e136"}.ph-fill.ph-download-simple:before{content:"\e20c"}.ph-fill.ph-table:before{content:"\e476"}.ph-fill.ph-upload-simple:before{content:"\e4c0"}
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#1b2a4a;--card:#15213b;--nav:#121c33;--ink:#efe6d2;--muted:#cfc6b2;--sub:#b3ab99;--copper:#d9a441;--red:#c8372d;--line:rgba(239,230,210,.14);--fill:rgba(239,230,210,.1);--edge-lo:rgba(239,230,210,.22);--edge:rgba(239,230,210,.35);--edge-hi:rgba(239,230,210,.6);--amber:#ecc36f;--on-amber:#1a1f2e;--copper-edge:rgba(217,164,65,.6);--copper-fill:rgba(217,164,65,.2);--danger-ink:#f0a59c;--nav-ink:#a39b8a;--placeholder:#9a9382;--press:#d9cdb2;--t-xs:11px;--t-sm:12px;--t-md:14px;--t-lg:16px;--t-xl:20px;--t-2xl:26px;--t-3xl:36px;--t-4xl:46px;--s-2xs:2px;--s-xs:4px;--s-sm:8px;--s-md:12px;--s-lg:16px;--s-xl:20px;--s-2xl:24px;--s-3xl:32px;--s-4xl:48px;--r-sm:3px;--r:4px;--r-lg:6px;--on-red:#fff;--scrim:rgba(8,12,24,.7);--scrim-hi:rgba(6,9,18,.96);--press-fill:rgba(239,230,210,.06);--weave:rgba(255,255,255,.025);--shadow:0 8px 20px rgba(0,0,0,.35);--mono:'JetBrains Mono',ui-monospace,Menlo,monospace;--cond:'Barlow Condensed','Arial Narrow',sans-serif}
-html{background:var(--bg)}
+:root{--bg:#1b2a4a;--card:#15213b;--nav:#121c33;--ink:#efe6d2;--muted:#cfc6b2;--sub:#b3ab99;--copper:#d9a441;--red:#c8372d;--line:rgba(239,230,210,.14);--fill:rgba(239,230,210,.1);--edge-lo:rgba(239,230,210,.22);--edge:rgba(239,230,210,.35);--edge-hi:rgba(239,230,210,.6);--amber:#ecc36f;--on-amber:#1a1f2e;--copper-edge:rgba(217,164,65,.6);--copper-fill:rgba(217,164,65,.2);--danger-ink:#f0a59c;--nav-ink:#a39b8a;--placeholder:#9a9382;--press:#d9cdb2;--t-xs:calc(11rem / 17);--t-sm:calc(12rem / 17);--t-md:calc(14rem / 17);--t-lg:calc(16rem / 17);--t-xl:min(calc(20rem / 17), 28px);--t-2xl:min(calc(26rem / 17), 34px);--t-3xl:min(calc(36rem / 17), 44px);--t-4xl:min(calc(46rem / 17), 54px);--grid:rgba(239,230,210,.42);--s-2xs:2px;--s-xs:4px;--s-sm:8px;--s-md:12px;--s-lg:16px;--s-xl:20px;--s-2xl:24px;--s-3xl:32px;--s-4xl:48px;--r-sm:3px;--r:4px;--r-lg:6px;--on-red:#fff;--scrim:rgba(8,12,24,.7);--scrim-hi:rgba(6,9,18,.96);--press-fill:rgba(239,230,210,.06);--weave:rgba(255,255,255,.025);--shadow:0 8px 20px rgba(0,0,0,.35);--mono:'JetBrains Mono',ui-monospace,Menlo,monospace;--cond:'Barlow Condensed','Arial Narrow',sans-serif}
+html{background:var(--bg);font-size:17px}
+/* iPhone: follow Settings → Display → Text Size. 17px is the default size, so the default look is unchanged. */
+@supports (font:-apple-system-body) and (-webkit-touch-callout:none){html{font:-apple-system-body}}
 body{background-color:var(--bg);background-image:repeating-linear-gradient(135deg,var(--weave) 0 2px,transparent 2px 5px);color:var(--ink);font-family:var(--mono);font-size:var(--t-md);max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:calc(84px + env(safe-area-inset-bottom));-webkit-text-size-adjust:100%}
 a{color:var(--copper)}
 button{font-family:var(--mono);color:inherit;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
@@ -47,9 +49,9 @@ h1[tabindex]:focus{outline:none}
 .sec.mt{margin-top:var(--s-3xl)}
 .help{font-size:var(--t-sm);color:var(--muted);line-height:1.55;margin:0 0 var(--s-md)}
 .seg{display:flex;gap:var(--s-2xs);padding:var(--s-xs);border-radius:var(--r);border:1px solid var(--edge-lo)}
-.seg button{flex:1;height:44px;border-radius:var(--r-sm);font-family:var(--cond);font-size:var(--t-lg);font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.seg button{flex:1;min-height:44px;border-radius:var(--r-sm);font-family:var(--cond);font-size:var(--t-lg);font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
 .seg button.on{background:var(--ink);color:var(--bg)}
-.bsel{position:relative;display:flex;align-items:center;gap:var(--s-sm);width:50%;min-width:170px;height:44px;margin-bottom:var(--s-md);padding:0 var(--s-md);border-radius:var(--r);border:1px solid var(--edge);background:var(--card)}
+.bsel{position:relative;display:flex;align-items:center;gap:var(--s-sm);width:max(50%, calc(170rem / 17));max-width:100%;min-height:44px;margin-bottom:var(--s-md);padding:0 var(--s-md);border-radius:var(--r);border:1px solid var(--edge);background:var(--card)}
 .bsel span{font-size:var(--t-xs);letter-spacing:.1em;text-transform:uppercase;color:var(--copper);flex:none}
 .bsel select{flex:1;min-width:0;height:100%;appearance:none;-webkit-appearance:none;background:none;border:0;color:var(--ink);font-family:var(--mono);font-size:var(--t-lg);padding-right:var(--s-2xl);outline:none}
 .bsel:focus-within{outline:2px solid var(--copper);outline-offset:2px}
@@ -59,7 +61,7 @@ h1[tabindex]:focus{outline:none}
 .pair .open{padding:var(--s-2xs) var(--s-xs) 0;cursor:pointer;border-radius:var(--r-sm)}
 .row{display:flex;gap:var(--s-md);align-items:flex-start}
 .grow{flex:1;min-width:0}
-.thumb{width:48px;height:60px;border-radius:var(--r-sm);flex:none;background:var(--fill) center/cover no-repeat}
+.thumb{width:48px;height:60px;border-radius:var(--r-sm);flex:none;background:var(--fill);object-fit:cover;display:block}
 .brand{font-size:var(--t-xs);letter-spacing:.14em;color:var(--copper);text-transform:uppercase;overflow-wrap:anywhere}
 .model{font-family:var(--cond);font-size:var(--t-2xl);font-weight:600;line-height:1.05;margin-top:var(--s-2xs);text-transform:uppercase;overflow-wrap:anywhere}
 .status{display:flex;gap:var(--s-sm);align-items:center;flex-wrap:wrap;margin-top:var(--s-xs);font-size:var(--t-sm);color:var(--muted)}
@@ -73,12 +75,12 @@ h1[tabindex]:focus{outline:none}
 .striplbl{display:flex;justify-content:space-between;font-size:var(--t-xs);color:var(--sub);margin-bottom:var(--s-md)}
 .cu{color:var(--copper)}
 .acts{display:flex;gap:var(--s-sm);padding:0 var(--s-xs) var(--s-xs)}
-.btn{height:46px;border-radius:var(--r);font-family:var(--cond);font-weight:600;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:var(--s-sm)}
+.btn{min-height:46px;border-radius:var(--r);font-family:var(--cond);font-weight:600;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:var(--s-sm)}
 .btn.wear{flex:1;font-size:var(--t-xl);letter-spacing:.08em;border:1.5px solid var(--edge-hi)}
 .btn.wear.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
-.btn.wash{width:96px;flex:none;font-size:var(--t-lg);letter-spacing:.06em;border:1px solid var(--edge);color:var(--muted)}
+.btn.wash{min-width:96px;padding:0 var(--s-sm);flex:none;font-size:var(--t-lg);letter-spacing:.06em;border:1px solid var(--edge);color:var(--muted)}
 .btn.wash.on{background:var(--red);border-color:var(--red);color:var(--on-red)}
-.detail .btn{height:50px}.detail .btn.wash{width:110px;font-size:var(--t-lg)}
+.detail .btn{min-height:50px}.detail .btn.wash{min-width:110px;font-size:var(--t-lg)}
 .legend{display:flex;gap:var(--s-lg);margin-top:var(--s-lg);font-size:var(--t-xs);letter-spacing:.06em;color:var(--muted);flex-wrap:wrap;text-transform:uppercase}
 .legend span{display:flex;gap:var(--s-sm);align-items:center}
 .legend b{width:10px;height:10px;display:inline-block}
@@ -86,10 +88,10 @@ h1[tabindex]:focus{outline:none}
 .empty h2{font-family:var(--cond);font-size:var(--t-2xl);font-weight:700;text-transform:uppercase;margin-top:var(--s-md)}
 .empty p{font-size:var(--t-md);line-height:1.6;color:var(--muted);margin:var(--s-sm) 0 var(--s-2xl)}
 .stack{display:flex;flex-direction:column;gap:var(--s-sm)}
-.primary{height:50px;border-radius:var(--r);background:var(--ink);color:var(--bg);font-family:var(--cond);font-size:var(--t-xl);font-weight:700;letter-spacing:.1em;text-transform:uppercase;width:100%}
+.primary{min-height:50px;border-radius:var(--r);background:var(--ink);color:var(--bg);font-family:var(--cond);font-size:var(--t-xl);font-weight:700;letter-spacing:.1em;text-transform:uppercase;width:100%}
 .primary:active{background:var(--press)}
-.ghost{height:44px;border-radius:var(--r);border:1px solid var(--edge);font-family:var(--cond);font-size:var(--t-lg);font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:0 var(--s-lg)}
-.back{height:44px;margin-left:calc(var(--s-md) * -1);padding:0 var(--s-md);color:var(--copper);font-family:var(--cond);font-size:var(--t-lg);font-weight:600;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:var(--s-xs)}
+.ghost{min-height:44px;border-radius:var(--r);border:1px solid var(--edge);font-family:var(--cond);font-size:var(--t-lg);font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:0 var(--s-lg)}
+.back{min-height:44px;margin-left:calc(var(--s-md) * -1);padding:0 var(--s-md);color:var(--copper);font-family:var(--cond);font-size:var(--t-lg);font-weight:600;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:var(--s-xs)}
 .back i{font-size:var(--t-xl)}
 .meta{font-size:var(--t-sm);color:var(--muted);line-height:1.5}
 #viewer{touch-action:none;overscroll-behavior:contain;overflow:hidden;display:none;position:fixed;inset:0;background:var(--scrim-hi);z-index:150;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
@@ -111,28 +113,31 @@ h1[tabindex]:focus{outline:none}
 .cal .col{display:flex;flex-direction:column;gap:var(--s-xs);flex:1}
 .cal .col i{height:14px;border-radius:1px}
 .cal .days{display:flex;flex-direction:column;gap:var(--s-xs);margin-right:var(--s-xs);flex:none}
-.cal .days span{height:14px;font-size:var(--t-xs);line-height:14px;color:var(--sub)}
+.cal .days span{height:14px;font-size:min(var(--t-xs), 12px);line-height:14px;color:var(--sub)}
 .photos{display:flex;gap:var(--s-sm);overflow-x:auto;margin:0 calc(var(--s-xl) * -1);padding:var(--s-2xs) var(--s-xl) var(--s-xs);scrollbar-width:none}
 .photos::-webkit-scrollbar{display:none}
 .photos .add{width:76px;height:96px;flex:none;border-radius:var(--r);border:1.5px solid var(--edge);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s-sm);font-size:var(--t-xs)}
 .photos .add i{font-size:var(--t-xl);color:var(--copper)}
 .photos .ph-item{width:76px;flex:none;display:flex;flex-direction:column;gap:var(--s-xs);font-size:var(--t-xs);text-align:left;color:var(--muted)}
-.photos .ph-item div{width:76px;height:96px;border-radius:var(--r);background:var(--fill) center/cover no-repeat}
-input[type=text],input[type=number],input[type=date]{width:100%;height:46px;background:var(--card);border:1px solid var(--edge);border-radius:var(--r);padding:0 var(--s-md);color:var(--ink);font-family:var(--mono);font-size:var(--t-lg);-webkit-appearance:none;appearance:none;color-scheme:dark}
+.photos .ph-item img{width:76px;height:96px;border-radius:var(--r);background:var(--fill);object-fit:cover;display:block}
+input[type=text],input[type=number],input[type=date]{width:100%;min-height:46px;background:var(--card);border:1px solid var(--edge);border-radius:var(--r);padding:0 var(--s-md);color:var(--ink);font-family:var(--mono);font-size:var(--t-lg);-webkit-appearance:none;appearance:none;color-scheme:dark}
 input::placeholder{color:var(--placeholder)}
 input[type=date]{min-height:46px;line-height:46px}
 input[type=date]::-webkit-date-and-time-value{text-align:left}
 .logrow{display:flex;gap:var(--s-sm)}
-@media (max-width:359px){.logrow{flex-wrap:wrap}.logrow input{flex-basis:100%}}
-.logrow input{flex:1;min-width:0;height:44px}
-.logrow button{height:44px;padding:0 var(--s-md);border-radius:var(--r);font-family:var(--cond);font-size:var(--t-lg);font-weight:600;letter-spacing:.06em;flex:none}
+.logrow{flex-wrap:wrap}
+.logrow input{flex:1 1 calc(150rem / 17);line-height:normal}
+.logrow .btns{display:flex;gap:var(--s-sm);flex:none}
+@media (max-width:359px){.logrow input{flex-basis:100%}}
+.logrow input{min-width:0;min-height:44px}
+.logrow button{min-height:44px;padding:0 var(--s-md);border-radius:var(--r);font-family:var(--cond);font-size:var(--t-lg);font-weight:600;letter-spacing:.06em;flex:none}
 .logrow .w{border:1.5px solid var(--edge-hi)}
 .logrow .a{border:1px solid var(--edge);color:var(--muted)}
 .links{display:flex;gap:var(--s-xl);margin-top:var(--s-sm)}
 .links button{min-height:44px;padding:0;color:var(--muted);font-size:var(--t-sm)}
 .hr{margin:var(--s-xl) 0;border-top:1px solid var(--line)}
-.edit{height:44px;padding:0 var(--s-lg);border-radius:var(--r);border:1px solid var(--edge);font-size:var(--t-md);display:flex;align-items:center;gap:var(--s-sm)}
-.del{height:44px;padding:0 var(--s-lg);color:var(--danger-ink);font-size:var(--t-md);display:flex;align-items:center;gap:var(--s-sm)}
+.edit{min-height:44px;padding:0 var(--s-lg);border-radius:var(--r);border:1px solid var(--edge);font-size:var(--t-md);display:flex;align-items:center;gap:var(--s-sm)}
+.del{min-height:44px;padding:0 var(--s-lg);color:var(--danger-ink);font-size:var(--t-md);display:flex;align-items:center;gap:var(--s-sm)}
 .lrow{padding:var(--s-lg) 0;border-bottom:1px solid var(--line);cursor:pointer;display:flex;flex-direction:column;gap:var(--s-sm)}
 .lrow .model{font-size:var(--t-xl);line-height:1.1}
 .lmain{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--s-md)}
@@ -146,7 +151,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left}
 .facts .sw b{color:var(--copper)}
 .facts .sw.due{background:var(--amber);border-color:var(--amber);color:var(--on-amber)}.facts .sw.due b{color:var(--on-amber)}
 .datalist{display:flex;flex-direction:column;background:var(--card);border-radius:var(--r-lg);overflow:hidden}
-.datalist button{height:50px;border-top:1px solid var(--line);font-size:var(--t-md);display:flex;align-items:center;gap:var(--s-md);padding:0 var(--s-lg);text-align:left}
+.datalist button{min-height:50px;border-top:1px solid var(--line);font-size:var(--t-md);display:flex;align-items:center;gap:var(--s-md);padding:0 var(--s-lg);text-align:left}
 .datalist button:first-child{border-top:0}
 .datalist button:active{background:var(--press-fill)}
 .datalist .i{font-size:var(--t-xl);color:var(--copper)}
@@ -156,20 +161,20 @@ input[type=date]::-webkit-date-and-time-value{text-align:left}
 .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-sm)}
 .grid3 .field{color:var(--muted);letter-spacing:.06em}
 nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--nav);display:flex;padding:var(--s-sm) var(--s-4xl) env(safe-area-inset-bottom);z-index:10}
-nav button{flex:1;height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s-2xs);font-family:var(--cond);font-size:var(--t-md);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--nav-ink)}
+nav button{flex:1;min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s-2xs);font-family:var(--cond);font-size:var(--t-md);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--nav-ink)}
 nav button.active{color:var(--ink)}
 nav button i{font-size:var(--t-xl)}
 #toastWrap{position:fixed;left:50%;transform:translateX(-50%);width:100%;max-width:480px;bottom:calc(94px + env(safe-area-inset-bottom));display:flex;justify-content:center;padding:0 var(--s-lg);z-index:100;pointer-events:none}
 #toast{display:none;pointer-events:auto;max-width:100%;align-items:center;gap:var(--s-lg);background:var(--ink);color:var(--bg);border-radius:var(--r);padding:var(--s-sm) var(--s-sm) var(--s-sm) var(--s-lg);font-size:var(--t-sm);font-weight:500;box-shadow:var(--shadow)}
 #toast.show{display:flex}
 #toast span{padding:var(--s-sm) 0}
-#toast button{height:44px;padding:0 var(--s-md);border-radius:var(--r-sm);background:var(--bg);color:var(--ink);font-family:var(--cond);font-size:var(--t-lg);font-weight:700;letter-spacing:.1em;flex:none}
+#toast button{min-height:44px;padding:0 var(--s-md);border-radius:var(--r-sm);background:var(--bg);color:var(--ink);font-family:var(--cond);font-size:var(--t-lg);font-weight:700;letter-spacing:.1em;flex:none}
 #modal{display:none;position:fixed;inset:0;background:var(--scrim);z-index:200;align-items:center;justify-content:center;padding:var(--s-3xl)}
 #modal.open{display:flex}
 .modal-box{background:var(--card);border:1px solid var(--edge-lo);border-radius:var(--r-lg);padding:var(--s-2xl);width:100%;max-width:360px}
 #modal-msg{font-size:var(--t-md);line-height:1.55;margin-bottom:var(--s-xl)}
 .modal-btns{display:flex;gap:var(--s-sm)}
-.modal-btns button{flex:1;height:44px;border-radius:var(--r);font-family:var(--cond);font-size:var(--t-lg);font-weight:600;letter-spacing:.08em}
+.modal-btns button{flex:1;min-height:44px;border-radius:var(--r);font-family:var(--cond);font-size:var(--t-lg);font-weight:600;letter-spacing:.08em}
 #modal-cancel{border:1px solid var(--edge)}
 #modal-ok{background:var(--red);color:var(--on-red)}
 @media (hover:hover){.iconbtn:hover,.ghost:hover,.edit:hover,.datalist button:hover,.logrow button:hover,#viewer .vnav button:not(:disabled):hover{background:var(--fill)}.seg button:not(.on):hover,nav button:hover,.links button:hover,.back:hover{color:var(--ink)}}
@@ -281,9 +286,12 @@ function setPref(k, v) { try { localStorage.setItem(k, String(v)); } catch (e) {
 
 // ── Photo store (IndexedDB: far more room than localStorage's ~5 MB) ──
 const PDB_NAME = 'denim_tracker_photos', PSTORE = 'photos';
+// PHOTOS holds image Blobs (stored as files, not loaded into memory as text). Inline p.src data URLs are only a fallback.
 let pdb = null, PHOTOS_READY = false; const PHOTOS = new Map(), URLS = new Map();
 const pkey = (id, date) => id + '|' + date;
-const photoSrc = (j, p) => p.src || PHOTOS.get(pkey(j.id, p.date)) || '';
+const photoData = (j, p) => p.src || PHOTOS.get(pkey(j.id, p.date)) || null;
+const blobToDataURL = b => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(r.error); r.readAsDataURL(b); });
+const asDataURL = v => typeof v === 'string' ? Promise.resolve(v) : blobToDataURL(v);
 function dataURLToBlob(d) {
   const comma = d.indexOf(','), type = d.slice(5, d.indexOf(';')), bin = atob(d.slice(comma + 1)), u = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
@@ -291,11 +299,11 @@ function dataURLToBlob(d) {
 }
 // Rendering uses cached object URLs so each re-render doesn't re-parse full images as text.
 function photoURL(j, p) {
-  const src = photoSrc(j, p); if (!src) return '';
+  const src = photoData(j, p); if (!src) return '';
   const k = pkey(j.id, p.date), hit = URLS.get(k);
   if (hit && hit.src === src) return hit.url;
   if (hit) URL.revokeObjectURL(hit.url);
-  try { const url = URL.createObjectURL(dataURLToBlob(src)); URLS.set(k, { src, url }); return url; } catch (e) { return src; }
+  try { const url = URL.createObjectURL(typeof src === 'string' ? dataURLToBlob(src) : src); URLS.set(k, { src, url }); return url; } catch (e) { return typeof src === 'string' ? src : ''; }
 }
 function openPDB() {
   return new Promise((res, rej) => {
@@ -316,14 +324,23 @@ const delPhotos = keys => ptx('readwrite', s => keys.forEach(k => s.delete(k)));
 function loadAllPhotos() {
   return ptx('readonly', s => { const r = s.openCursor(); r.onsuccess = () => { const c = r.result; if (c) { PHOTOS.set(c.key, c.value); c.continue(); } }; });
 }
-// Move inline images into IndexedDB; the inline copy is only dropped after the write is confirmed.
-async function migratePhotos(persist = true) {
+// Older versions stored images in IndexedDB as text; convert them to Blobs once. On failure the text copies stay and still show.
+async function upgradeStoredPhotos() {
   const entries = [];
-  DB.jeans.forEach(j => j.photos.forEach(p => { if (p.src) entries.push([pkey(j.id, p.date), p.src]); }));
+  PHOTOS.forEach((v, k) => { if (typeof v === 'string') { try { entries.push([k, dataURLToBlob(v)]); } catch (e) {} } });
   if (!entries.length) return;
   await putPhotos(entries);
+  entries.forEach(([k, b]) => PHOTOS.set(k, b));
+}
+// Move inline images into IndexedDB as Blobs; the inline copy is only dropped after the write is confirmed.
+async function migratePhotos(persist = true) {
+  const entries = [];
+  DB.jeans.forEach(j => j.photos.forEach(p => { if (p.src) { try { entries.push([pkey(j.id, p.date), dataURLToBlob(p.src)]); } catch (e) {} } }));
+  if (!entries.length) return;
+  await putPhotos(entries);
+  const done = new Set(entries.map(([k]) => k));
   entries.forEach(([k, v]) => PHOTOS.set(k, v));
-  DB.jeans.forEach(j => j.photos.forEach(p => { delete p.src; }));
+  DB.jeans.forEach(j => j.photos.forEach(p => { if (done.has(pkey(j.id, p.date))) delete p.src; }));
   if (persist) save();
 }
 // Images whose pair or photo was deleted are removed on the next launch, so Undo keeps working during a session.
@@ -334,9 +351,10 @@ function gcPhotos() {
 }
 
 // ── Stats ──
+// Unworn days are outlined (3:1 against the card) rather than filled, so the red wash bar stays visible on them.
 const cell = (worn, washed, future, isToday) => ({
-  bg: future ? 'transparent' : worn ? 'var(--ink)' : 'var(--fill)',
-  ring: [washed && 'inset 0 -3px 0 var(--red)', isToday && '0 0 0 1.5px var(--copper)'].filter(Boolean).join(', ') || 'none'
+  bg: worn && !future ? 'var(--ink)' : 'transparent',
+  ring: [washed && 'inset 0 -3px 0 var(--red)', !worn && !future && 'inset 0 0 0 1px var(--grid)', isToday && '0 0 0 1.5px var(--copper)'].filter(Boolean).join(', ') || 'none'
 });
 function stats(j) {
   const t = today(), ws = j.wears, wa = j.washes, W = new Set(ws), A = new Set(wa);
@@ -363,12 +381,12 @@ function calendar(s) {
 const cellsHTML = cells => cells.map(c => `<i style="background:${c.bg};box-shadow:${c.ring}"></i>`).join('');
 
 // ── UI helpers ──
-function toast(msg, undo = null, ms = 1800) {
-  const el = document.getElementById('toast');
+function toast(msg, undo = null, ms = 1800, label = 'UNDO') {
+  const el = document.getElementById('toast'), btn = document.getElementById('toast-undo');
   document.getElementById('toast-msg').textContent = msg;
-  document.getElementById('toast-undo').style.display = undo ? '' : 'none';
+  btn.style.display = undo ? '' : 'none'; btn.textContent = label;
   UNDO = undo; el.classList.add('show');
-  clearTimeout(toastT); toastT = setTimeout(() => { el.classList.remove('show'); UNDO = null; }, undo ? 4500 : ms);
+  clearTimeout(toastT); toastT = setTimeout(() => { el.classList.remove('show'); UNDO = null; }, undo ? Math.max(ms, 4500) : ms);
 }
 function doUndo() { const u = UNDO; UNDO = null; clearTimeout(toastT); document.getElementById('toast').classList.remove('show'); u && u(); }
 function showConfirm(msg, okLabel = 'Confirm') {
@@ -450,7 +468,7 @@ function renderRack() {
   h += list.map(j => {
     const s = S[j.id], ph = j.photos.at(-1), phSrc = ph ? photoURL(j, ph) : '';
     return `<article class="pair"><div class="open" ${openAttrs(j, s)}>
-      <div class="row">${phSrc ? `<div class="thumb" aria-hidden="true" style="background-image:url('${phSrc}')"></div>` : ph && !PHOTOS_READY ? '<div class="thumb" aria-hidden="true"></div>' : ''}
+      <div class="row">${phSrc ? `<img class="thumb" alt="" loading="lazy" decoding="async" src="${phSrc}">` : ph && !PHOTOS_READY ? '<div class="thumb" aria-hidden="true"></div>' : ''}
         <div class="grow"><div class="brand">${esc(j.brand)}</div><div class="model">${esc(j.model)}</div>
           <div class="status"><span>${s.wornLabel}</span><span class="badge ${s.due ? 'due' : ''}">${s.due ? 'Wash due · ' + s.since : s.badge}</span></div></div>
         <div class="count"><div class="big">${s.total}</div><div class="lbl">WEARS</div></div></div>
@@ -458,7 +476,7 @@ function renderRack() {
       <div class="striplbl" aria-hidden="true"><span>2 wks ago</span><span class="cu">Today</span></div>
     </div><div class="acts">${wearBtn(j, s)}${washBtn(j, s)}</div></article>`;
   }).join('');
-  return h + `</div><div class="legend" aria-hidden="true"><span><b style="background:var(--ink)"></b>Worn</span><span><b style="background:var(--fill);box-shadow:inset 0 -3px 0 var(--red)"></b>Washed</span><span><b style="box-shadow:0 0 0 1.5px var(--copper)"></b>Today</span></div>`;
+  return h + `</div><div class="legend" aria-hidden="true"><span><b style="background:var(--ink)"></b>Worn</span><span><b style="box-shadow:inset 0 -3px 0 var(--red),inset 0 0 0 1px var(--grid)"></b>Washed</span><span><b style="box-shadow:0 0 0 1.5px var(--copper)"></b>Today</span></div>`;
 }
 
 function renderDetail() {
@@ -488,13 +506,13 @@ function renderDetail() {
     <h2 class="sec mt"><span class="l">Fade photos</span><span class="r">${photos.length ? plural(photos.length, 'photo') : 'Track your fades'}</span></h2>
     <div class="photos">
       <button class="add" aria-label="Add a fade photo" onclick="document.getElementById('photoInput').click()"><i class="ph ph-camera" aria-hidden="true"></i>Add</button>
-      ${photos.map((p, i) => ({ p, i })).reverse().map(({ p, i }) => `<button class="ph-item" aria-label="Open photo from ${fmt(p.date)}, ${plural(wearsAt(p.date), 'wear')}" onclick="openViewer(${i})"><div style="background-image:url('${photoURL(j, p)}')"></div><span>${fmtShort(p.date)} · ${wearsAt(p.date)}</span></button>`).join('')}
+      ${photos.map((p, i) => ({ p, i })).reverse().map(({ p, i }) => `<button class="ph-item" aria-label="Open photo from ${fmt(p.date)}, ${plural(wearsAt(p.date), 'wear')}" onclick="openViewer(${i})"><img alt="" loading="lazy" decoding="async" src="${photoURL(j, p)}"><span>${fmtShort(p.date)} · ${wearsAt(p.date)}</span></button>`).join('')}
     </div>
     <h2 class="sec mt"><span class="l">Log another day</span></h2>
     <div class="logrow">
       <input type="date" id="logDate" aria-label="Date to log" value="${t}" max="${t}">
-      <button class="w" onclick="addLog('${j.id}','wears')">+ WEAR</button>
-      <button class="a" onclick="addLog('${j.id}','washes')">+ WASH</button>
+      <div class="btns"><button class="w" onclick="addLog('${j.id}','wears')">+ WEAR</button>
+      <button class="a" onclick="addLog('${j.id}','washes')">+ WASH</button></div>
     </div>
     <div class="links"><button onclick="removeLast('${j.id}','wears')">Remove last wear</button><button onclick="removeLast('${j.id}','washes')">Remove last wash</button></div>
     <div class="hr"></div>
@@ -715,14 +733,16 @@ async function saveForm() {
 }
 
 // ── Photos (images in IndexedDB; inline in the pair only as a fallback) ──
-function resizeImage(file, max = 640, quality = 0.7) {
+function resizeImage(file, max = 640, quality = 0.7, asBlob = false) {
   return new Promise((res, rej) => {
     const url = URL.createObjectURL(file), img = new Image();
     img.onload = () => {
       const sc = Math.min(1, max / Math.max(img.width, img.height)), c = document.createElement('canvas');
       c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
       c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', quality));
+      URL.revokeObjectURL(url);
+      if (!asBlob) return res(c.toDataURL('image/jpeg', quality));
+      c.toBlob(b => b ? res(b) : rej(), 'image/jpeg', quality);
     };
     img.onerror = () => { URL.revokeObjectURL(url); rej(); };
     img.src = url;
@@ -733,10 +753,11 @@ async function handlePhoto(input) {
   const j = findJ(CUR.id); if (!file || !j) return;
   if (!/^image\//.test(file.type) && !/\.(heic|heif|jpe?g|png|webp)$/i.test(file.name)) return toast('Choose an image file');
   // With IndexedDB there is room for sharper photos; the localStorage fallback keeps them small.
-  let src; try { src = pdb ? await resizeImage(file, 1440, 0.82) : await resizeImage(file); } catch (e) { return toast('Could not read that image'); }
+  let img; try { img = pdb ? await resizeImage(file, 1440, 0.82, true) : await resizeImage(file); } catch (e) { return toast('Could not read that image'); }
   const snap = clone(j), d = today(), key = pkey(j.id, d);
-  let entry = { date: d, src }, stored = false; const prevSrc = PHOTOS.get(key);
-  if (pdb) { try { await putPhotos([[key, src]]); PHOTOS.set(key, src); entry = { date: d }; stored = true; } catch (e) { /* fall back to inline */ } }
+  let entry = null, stored = false; const prevSrc = PHOTOS.get(key);
+  if (pdb) { try { await putPhotos([[key, img]]); PHOTOS.set(key, img); entry = { date: d }; stored = true; } catch (e) { /* fall back to inline */ } }
+  if (!entry) { try { entry = { date: d, src: await asDataURL(img) }; } catch (e) { return toast('Could not read that image'); } }
   const replaced = j.photos.some(p => p.date === d);
   j.photos = [...j.photos.filter(p => p.date !== d), entry].sort((a, b) => a.date.localeCompare(b.date));
   if (!save()) {
@@ -762,19 +783,27 @@ function download(name, text, type) {
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 // iPhone home-screen apps can't save blob downloads reliably; use the share sheet (Save to Files) when available.
-async function deliver(name, text, type) {
+async function deliver(name, text, type, done = '') {
   try {
     const file = new File([text], name, { type });
     if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file] }); return true; }
-  } catch (e) { if (e && e.name === 'AbortError') return false; }
+  } catch (e) {
+    if (e && e.name === 'AbortError') return false;
+    // Preparing photos can outlast the tap that started the export; iOS then needs one more tap to open the share sheet.
+    if (e && e.name === 'NotAllowedError') { toast('Backup ready', () => deliver(name, text, type, done).then(ok => ok && done && toast(done)), 10000, 'SAVE'); return false; }
+  }
   download(name, text, type); return true;
 }
 // Backups always embed the images, so they restore on any device.
-function exportData() { return { ...DB, jeans: DB.jeans.map(j => ({ ...j, photos: j.photos.map(p => ({ date: p.date, src: photoSrc(j, p) })).filter(p => p.src) })) }; }
-function exportJSON() {
-  const data = exportData(), count = list => list.reduce((a, j) => a + j.photos.length, 0), missing = count(DB.jeans) - count(data.jeans);
-  deliver('denim-tracker-backup-' + today() + '.json', JSON.stringify(data, null, 2), 'application/json')
-    .then(ok => ok && toast(missing ? `JSON exported · ${plural(missing, 'photo')} unavailable` : 'JSON exported', null, missing ? 3600 : 1800));
+async function exportData() {
+  const one = async (j, p) => { const v = photoData(j, p); if (!v) return null; try { return { date: p.date, src: await asDataURL(v) }; } catch (e) { return null; } };
+  const jeans = await Promise.all(DB.jeans.map(async j => ({ ...j, photos: (await Promise.all(j.photos.map(p => one(j, p)))).filter(Boolean) })));
+  return { ...DB, jeans };
+}
+async function exportJSON() {
+  const data = await exportData(), count = list => list.reduce((a, j) => a + j.photos.length, 0), missing = count(DB.jeans) - count(data.jeans);
+  const msg = missing ? `JSON exported · ${plural(missing, 'photo')} unavailable` : 'JSON exported';
+  if (await deliver('denim-tracker-backup-' + today() + '.json', JSON.stringify(data, null, 2), 'application/json', msg)) toast(msg, null, missing ? 3600 : 1800);
 }
 function exportCSV() {
   // Quote per RFC 4180; prefix formula-like cells so spreadsheets don't execute them.
@@ -829,6 +858,7 @@ if ('serviceWorker' in navigator) {
 async function init() {
   load(); go('col');
   try { pdb = await openPDB(); await loadAllPhotos(); } catch (e) { pdb = null; PHOTOS_READY = true; render(); return; }
+  try { await upgradeStoredPhotos(); } catch (e) {}
   // Migration failures leave photos inline (still visible); the store stays usable.
   // Cleanup only runs when the saved data was read successfully, so a failed read can never delete photos.
   try { await migratePhotos(); if (LOAD_OK && DB.jeans.length) gcPhotos(); } catch (e) {}
