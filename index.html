@@ -484,9 +484,9 @@ function renderLedger() {
       <div class="tile"><div class="v" style="overflow:visible;text-overflow:clip;font-size:${spentTxt.length > 8 ? 24 : spentTxt.length > 5 ? 28 : 36}px">${spentTxt}</div><div class="l">Spent · ${currency}</div></div>
     </div>
     ${js.length ? `<div style="margin-bottom:6px">${seg('Sort ledger', [['alpha', 'A–Z'], ['mostworn', 'Worn'], ['mostwashed', 'Washed'], ['since', 'Since wash']], ovSort, 'setOvSort')}</div>` : '<p class="help">No pairs yet. Add one from the Rack.</p>'}
-    ${list.map(j => { const s = S[j.id], sinceAct = ovSort === 'since'; return `<div class="lrow" ${openAttrs(j, s)}>
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px"><div style="min-width:0"><div class="brand">${esc(j.brand)}</div><div class="model">${esc(j.model)}</div></div>${sinceAct ? `<div class="n"><b style="color:${s.due ? 'var(--amber)' : 'var(--ink)'}">${s.since}</b><span>since wash</span></div>` : `<div class="n"><b>${s.total}</b><span>wears</span></div>`}</div>
-      <div class="facts">${sinceAct ? `<span><b>${s.total}</b> wears</span>` : ''}<span><b>${s.washes}</b> ${s.washes === 1 ? 'wash' : 'washes'}</span><span><b>${s.wpw}</b> per wash</span>${sinceAct ? '' : `<span class="sw ${s.due ? 'due' : ''}"><b>${s.since}</b> since wash${s.due ? ' · due' : ''}</span>`}</div>
+    ${list.map(j => { const s = S[j.id], sinceAct = ovSort === 'since', washAct = ovSort === 'mostwashed'; return `<div class="lrow" ${openAttrs(j, s)}>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px"><div style="min-width:0"><div class="brand">${esc(j.brand)}</div><div class="model">${esc(j.model)}</div></div>${sinceAct ? `<div class="n"><b style="color:${s.due ? 'var(--amber)' : 'var(--ink)'}">${s.since}</b><span>since wash</span></div>` : washAct ? `<div class="n"><b>${s.washes}</b><span>${s.washes === 1 ? 'wash' : 'washes'}</span></div>` : `<div class="n"><b>${s.total}</b><span>wears</span></div>`}</div>
+      <div class="facts">${sinceAct || washAct ? `<span><b>${s.total}</b> wears</span>` : ''}${washAct ? '' : `<span><b>${s.washes}</b> ${s.washes === 1 ? 'wash' : 'washes'}</span>`}<span><b>${s.wpw}</b> per wash</span>${sinceAct ? '' : `<span class="sw ${s.due ? 'due' : ''}"><b>${s.since}</b> since wash${s.due ? ' · due' : ''}</span>`}</div>
     </div>`; }).join('')}
     <h2 class="sec" style="margin-top:32px"><span class="l">Data &amp; backup</span></h2>
     <p class="help">Export and save to iCloud Drive or Google Drive. Import anytime to restore.</p>
