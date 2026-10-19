@@ -12,6 +12,7 @@
 <title>Denim Tracker</title>
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 <link rel="preload" href="fonts/Phosphor.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Phosphor-Fill.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/BarlowCondensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:500;font-display:swap;src:url("fonts/BarlowCondensed-500.woff2") format("woff2");unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
@@ -20,7 +21,7 @@
 @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 600;font-display:swap;src:url("fonts/JetBrainsMono-400.woff2") format("woff2");unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
 @font-face{font-family:"Phosphor";src:url("fonts/Phosphor.woff2") format("woff2");font-display:block}
 .ph{font-family:"Phosphor"!important;font-style:normal;font-weight:normal;line-height:1;-webkit-font-smoothing:antialiased;display:inline-block}
-.ph.ph-stack:before{content:"\e466"}.ph.ph-chart-bar:before{content:"\e150"}.ph.ph-trash:before{content:"\e4a6"}.ph.ph-caret-left:before{content:"\e138"}.ph.ph-caret-right:before{content:"\e13a"}.ph.ph-check-circle:before{content:"\e184"}.ph.ph-check:before{content:"\e182"}.ph.ph-drop:before{content:"\e210"}.ph.ph-plus:before{content:"\e3d4"}.ph.ph-coat-hanger:before{content:"\e7fe"}.ph.ph-camera:before{content:"\e10e"}.ph.ph-pencil-simple:before{content:"\e3b4"}.ph.ph-caret-down:before{content:"\e136"}.ph.ph-download-simple:before{content:"\e20c"}.ph.ph-table:before{content:"\e476"}.ph.ph-upload-simple:before{content:"\e4c0"}
+.ph.ph-stack:before{content:"\e466"}.ph.ph-chart-bar:before{content:"\e150"}.ph.ph-trash:before{content:"\e4a6"}.ph.ph-caret-left:before{content:"\e138"}.ph.ph-caret-right:before{content:"\e13a"}.ph.ph-check-circle:before{content:"\e184"}.ph.ph-check:before{content:"\e182"}.ph.ph-drop:before{content:"\e210"}.ph.ph-plus:before{content:"\e3d4"}.ph.ph-coat-hanger:before{content:"\e7fe"}.ph.ph-camera:before{content:"\e10e"}.ph.ph-pencil-simple:before{content:"\e3b4"}.ph.ph-caret-down:before{content:"\e136"}.ph.ph-download-simple:before{content:"\e20c"}.ph.ph-table:before{content:"\e476"}.ph.ph-upload-simple:before{content:"\e4c0"}.ph.ph-x:before{content:"\e4f6"}
 @font-face{font-family:"Phosphor-Fill";src:url("fonts/Phosphor-Fill.woff2") format("woff2");font-display:block}
 .ph-fill{font-family:"Phosphor-Fill"!important;font-style:normal;font-weight:normal;line-height:1;-webkit-font-smoothing:antialiased;display:inline-block}
 .ph-fill.ph-stack:before{content:"\e466"}.ph-fill.ph-chart-bar:before{content:"\e150"}.ph-fill.ph-trash:before{content:"\e4a6"}.ph-fill.ph-caret-left:before{content:"\e138"}.ph-fill.ph-caret-right:before{content:"\e13a"}.ph-fill.ph-check-circle:before{content:"\e184"}.ph-fill.ph-check:before{content:"\e182"}.ph-fill.ph-drop:before{content:"\e210"}.ph-fill.ph-plus:before{content:"\e3d4"}.ph-fill.ph-coat-hanger:before{content:"\e7fe"}.ph-fill.ph-camera:before{content:"\e10e"}.ph-fill.ph-pencil-simple:before{content:"\e3b4"}.ph-fill.ph-caret-down:before{content:"\e136"}.ph-fill.ph-download-simple:before{content:"\e20c"}.ph-fill.ph-table:before{content:"\e476"}.ph-fill.ph-upload-simple:before{content:"\e4c0"}
@@ -37,13 +38,13 @@ button:focus-visible,input:focus-visible,[role=button]:focus-visible{outline:2px
 .eyebrow{font-size:var(--t-xs);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 .h1{font-family:var(--cond);font-weight:700;font-size:var(--t-4xl);line-height:1;margin-top:var(--s-sm);text-transform:uppercase;overflow-wrap:anywhere}
 h1[tabindex]:focus{outline:none}
-.h1.sm{font-size:var(--t-4xl);margin:var(--s-xs) 0 var(--s-sm)}
+.h1.sm{margin:var(--s-xs) 0 var(--s-sm)}
 .headrow{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-md)}
 .iconbtn{width:44px;height:44px;border-radius:var(--r);border:1.5px solid var(--edge-hi);font-size:var(--t-xl);display:flex;align-items:center;justify-content:center}
 .iconbtn:active{background:var(--fill)}
 .sec{font-weight:400;display:flex;justify-content:space-between;align-items:baseline;margin:var(--s-2xl) 0 var(--s-md);font-size:var(--t-xs);letter-spacing:.12em;text-transform:uppercase}
 .sec .l{color:var(--copper)}.sec .r{color:var(--muted)}
-.sec.mt{margin-top:var(--s-3xl)}.sec.mt-xl{margin-top:var(--s-3xl)}
+.sec.mt{margin-top:var(--s-3xl)}
 .help{font-size:var(--t-sm);color:var(--muted);line-height:1.55;margin:0 0 var(--s-md)}
 .seg{display:flex;gap:var(--s-2xs);padding:var(--s-xs);border-radius:var(--r);border:1px solid var(--edge-lo)}
 .seg button{flex:1;height:44px;border-radius:var(--r-sm);font-family:var(--cond);font-size:var(--t-lg);font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
@@ -91,9 +92,9 @@ h1[tabindex]:focus{outline:none}
 .back{height:44px;margin-left:calc(var(--s-md) * -1);padding:0 var(--s-md);color:var(--copper);font-family:var(--cond);font-size:var(--t-lg);font-weight:600;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:var(--s-xs)}
 .back i{font-size:var(--t-xl)}
 .meta{font-size:var(--t-sm);color:var(--muted);line-height:1.5}
-#viewer{touch-action:none;overscroll-behavior:contain;display:none;position:fixed;inset:0;background:var(--scrim-hi);z-index:150;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+#viewer{touch-action:none;overscroll-behavior:contain;overflow:hidden;display:none;position:fixed;inset:0;background:var(--scrim-hi);z-index:150;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 #viewer.open{display:flex}
-#viewer{overflow:hidden}#viewer .vimg{transform-origin:center;will-change:transform}
+#viewer .vimg{transform-origin:center;will-change:transform}
 #viewer .vbar{display:flex;align-items:center;justify-content:space-between;gap:var(--s-md);padding:var(--s-sm) var(--s-md);font-size:var(--t-md);color:var(--ink)}
 #viewer .vbar button{width:44px;height:44px;flex:none;border-radius:var(--r);font-size:var(--t-xl);display:flex;align-items:center;justify-content:center}
 #viewer .vimg{flex:1;min-height:0;background:center/contain no-repeat;margin:0 var(--s-md)}
@@ -350,7 +351,7 @@ function stats(j) {
     wpw: wa.length ? Math.round(ws.length / wa.length) : '—', wornToday: W.has(t), washedToday: A.has(t),
     due: since >= WASH_AT,
     wornLabel: !lastWear ? 'Never worn' : lw <= 0 ? 'Worn today' : lw === 1 ? 'Worn yesterday' : `Worn ${lw} days ago`,
-    washLabel: dw === null ? 'Never washed' : dw <= 0 ? 'Washed today' : `Washed ${dw}d ago`,
+    washLabel: dw === null ? 'Never washed' : dw <= 0 ? 'Washed today' : dw === 1 ? 'Washed yesterday' : `Washed ${dw} days ago`,
     badge: lastWash ? since + ' since wash' : 'Unwashed',
     cpw: j.price && ws.length ? j.price / ws.length : null };
 }
@@ -370,11 +371,11 @@ function toast(msg, undo = null, ms = 1800) {
   clearTimeout(toastT); toastT = setTimeout(() => { el.classList.remove('show'); UNDO = null; }, undo ? 4500 : ms);
 }
 function doUndo() { const u = UNDO; UNDO = null; clearTimeout(toastT); document.getElementById('toast').classList.remove('show'); u && u(); }
-function showConfirm(msg) {
+function showConfirm(msg, okLabel = 'Confirm') {
   return new Promise(resolve => {
     const modal = document.getElementById('modal'), ok = document.getElementById('modal-ok'), cancel = document.getElementById('modal-cancel');
     const opener = document.activeElement;
-    document.getElementById('modal-msg').textContent = msg; modal.classList.add('open'); ok.focus();
+    document.getElementById('modal-msg').textContent = msg; ok.textContent = okLabel.toUpperCase(); modal.classList.add('open'); ok.focus();
     const done = r => { modal.classList.remove('open'); ok.onclick = cancel.onclick = null; document.removeEventListener('keydown', onKey); if (opener && opener.isConnected) opener.focus({ preventScroll: true }); resolve(r); };
     const onKey = e => { if (e.key === 'Escape') done(false); else trapTab(e, modal); };
     document.addEventListener('keydown', onKey);
@@ -440,7 +441,7 @@ function renderRack() {
     <button class="iconbtn" aria-label="Add a pair" onclick="openForm(null)"><i class="ph ph-plus" aria-hidden="true"></i></button></div>`;
   if (!n) return h + `<div class="empty"><i class="ph ph-coat-hanger" aria-hidden="true" style="font-size:var(--t-3xl);color:var(--copper)"></i>
     <h2>Nothing on the rack yet</h2><p>Add your first pair to start logging wears and washes.</p>
-    <div class="stack"><button class="primary" onclick="openForm(null)">Add a pair</button><button class="ghost" onclick="document.getElementById('importInput').click()">Restore a backup</button></div></div>`;
+    <div class="stack"><button class="primary" onclick="openForm(null)">Add a pair</button><button class="ghost" onclick="document.getElementById('importInput').click()">Import JSON backup</button></div></div>`;
   const list = [...DB.jeans];
   if (sortMode === 'mostworn') list.sort((a, b) => b.wears.length - a.wears.length || byName(a, b));
   else if (sortMode === 'lastworn') list.sort((a, b) => (S[b.id].lastWear || '').localeCompare(S[a.id].lastWear || '') || byName(a, b));
@@ -523,12 +524,12 @@ function renderLedger() {
     ${js.length ? `<div style="margin-bottom:var(--s-sm)">${seg('Sort ledger', [['alpha', 'A–Z'], ['mostworn', 'Worn'], ['mostwashed', 'Washed'], ['since', 'Since wash']], ovSort, 'setOvSort')}</div>` : '<p class="help">No pairs yet. Add one from the Rack.</p>'}
     ${list.map(j => {
       const s = S[j.id], sinceAct = ovSort === 'since', washAct = ovSort === 'mostwashed';
-      const [num, unit, due] = sinceAct ? [s.since, 'since wash', s.due] : washAct ? [s.washes, word(s.washes, 'wash', 'washes'), false] : [s.total, word(s.total, 'wear'), false];
+      const [n, unit, due] = sinceAct ? [s.since, 'since wash', s.due] : washAct ? [s.washes, word(s.washes, 'wash', 'washes'), false] : [s.total, word(s.total, 'wear'), false];
       return `<div class="lrow" ${openAttrs(j, s)}>
-      <div class="lmain"><div class="grow"><div class="brand">${esc(j.brand)}</div><div class="model">${esc(j.model)}</div></div><div class="n ${due ? 'due' : ''}"><b>${num}</b><span>${unit}</span></div></div>
+      <div class="lmain"><div class="grow"><div class="brand">${esc(j.brand)}</div><div class="model">${esc(j.model)}</div></div><div class="n ${due ? 'due' : ''}"><b>${n}</b><span>${unit}</span></div></div>
       <div class="facts">${sinceAct || washAct ? `<span><b>${s.total}</b> ${word(s.total, 'wear')}</span>` : ''}${washAct ? '' : `<span><b>${s.washes}</b> ${word(s.washes, 'wash', 'washes')}</span>`}<span><b>${s.wpw}</b> per wash</span>${sinceAct ? '' : `<span class="sw ${s.due ? 'due' : ''}"><b>${s.since}</b> since wash${s.due ? ' · due' : ''}</span>`}</div>
     </div>`; }).join('')}
-    <h2 class="sec mt-xl"><span class="l">Data &amp; backup</span></h2>
+    <h2 class="sec mt"><span class="l">Data &amp; backup</span></h2>
     <p class="help">Export and save to iCloud Drive or Google Drive. Import anytime to restore.</p>
     <div class="datalist">
       <button onclick="exportJSON()"><i class="ph ph-download-simple i" aria-hidden="true"></i>Export JSON<i class="ph ph-caret-right c" aria-hidden="true"></i></button>
@@ -544,20 +545,20 @@ function renderForm() {
   if (j) {
     const s = S[j.id];
     since = `<h2 class="sec mt"><span class="l">Wears since last wash</span></h2>
-      <p class="help">${s.lastWash ? `Currently ${s.since} wears since the wash on ${fmt(s.lastWash)}.` : `No washes logged, so all ${s.total} wears count.`} Leave blank to keep unchanged.</p>
+      <p class="help">${s.lastWash ? `Currently ${plural(s.since, 'wear')} since the wash on ${fmt(s.lastWash)}.` : `No washes logged, so all ${plural(s.total, 'wear')} count.`} Leave blank to keep unchanged.</p>
       ${f('editSince', 'Set new count', 'number', 'e.g. 15', '', 'inputmode="numeric" min="0" step="1"')}`;
   }
   return `<button class="back" onclick="goBack()"><i class="ph ph-caret-left" aria-hidden="true"></i>CANCEL</button>
     <h1 class="h1 sm" tabindex="-1" style="margin:var(--s-sm) 0 var(--s-2xl)">${j ? 'Edit pair' : 'Add a pair'}</h1>
     <form onsubmit="event.preventDefault();saveForm()" novalidate>
     <div class="fields">
-      ${f('fBrand', 'Brand', 'text', 'e.g. Oni Denim', j?.brand || '', 'autocomplete="off" autocapitalize="words" maxlength="60" enterkeyhint="next"')}
-      ${f('fModel', 'Model', 'text', 'e.g. Secret Denim 517', j?.model || '', 'autocomplete="off" autocapitalize="words" maxlength="80" enterkeyhint="next"')}
+      ${f('fBrand', 'Brand', 'text', 'e.g. Oni Denim', j?.brand || '', 'autocomplete="off" autocapitalize="words" maxlength="60" enterkeyhint="next" onkeydown="if(event.key===\'Enter\'){event.preventDefault();document.getElementById(\'fModel\').focus()}"')}
+      ${f('fModel', 'Model', 'text', 'e.g. Secret Denim 517', j?.model || '', 'autocomplete="off" autocapitalize="words" maxlength="80" enterkeyhint="next" onkeydown="if(event.key===\'Enter\'){event.preventDefault();document.getElementById(\'fPrice\').focus()}"')}
       ${f('fDate', 'Purchase date', 'date', '', j?.purchaseDate || '', `max="${t}"`)}
-      ${f('fPrice', `Price (${currency})`, 'number', 'e.g. 320', j?.price || '', 'inputmode="decimal" min="0" step="0.01"')}
+      ${f('fPrice', `Price (${currency})`, 'number', 'e.g. 320', j?.price || '', 'inputmode="decimal" min="0" step="0.01" enterkeyhint="done"')}
     </div>
     ${j ? since : `<h2 class="sec mt"><span class="l">Backfill history · optional</span></h2>
-      <p class="help">Dates spread evenly from purchase date to today. Max one entry per day.</p>
+      <p class="help">Dates spread evenly from the purchase date (or 12 months ago) to yesterday. Max one entry per day.</p>
       <div class="grid3">
         ${f('bfWears', 'Past wears', 'number', 'e.g. 45', '', 'inputmode="numeric" min="0" step="1"')}
         ${f('bfWashes', 'Past washes', 'number', 'e.g. 3', '', 'inputmode="numeric" min="0" step="1"')}
@@ -643,13 +644,13 @@ async function removeLast(id, key) {
   const j = findJ(id); if (!j) return;
   if (!j[key].length) return toast('Nothing to remove');
   const last = j[key].at(-1);
-  if (!await showConfirm(`Remove ${fmt(last)} from ${key === 'wears' ? 'wear' : 'wash'} log?`)) return;
+  if (!await showConfirm(`Remove ${fmt(last)} from ${key === 'wears' ? 'wear' : 'wash'} log?`, 'Remove')) return;
   const snap = clone(j); j[key] = j[key].filter(d => d !== last);
   if (!save()) return rollback(snap);
   render(); toast('Removed', () => restore(snap));
 }
 async function delJeans(id) {
-  if (!await showConfirm('Delete this pair? This cannot be undone.')) return;
+  if (!await showConfirm('Delete this pair? This cannot be undone.', 'Delete')) return;
   const prev = DB.jeans; DB.jeans = DB.jeans.filter(x => x.id !== id);
   if (!save()) { DB.jeans = prev; return; }
   toast('Deleted'); delete scrollPos.col; go(PREV);
@@ -666,11 +667,11 @@ function genDates(count, from, to) {
 async function saveForm() {
   const t = today(), val = id => document.getElementById(id)?.value ?? '';
   const brand = val('fBrand').trim(), model = val('fModel').trim(), date = val('fDate'), priceRaw = String(val('fPrice')).trim();
-  if (!brand || !model) return toast('Brand and model are required');
+  if (!brand || !model) { document.getElementById(brand ? 'fModel' : 'fBrand')?.focus(); return toast('Brand and model are required'); }
   if (date && !ISO_RE.test(date)) return toast('Purchase date is invalid');
   if (date && date > t) return toast("Purchase date can't be in the future");
   const price = priceRaw === '' ? null : Number(priceRaw);
-  if (price !== null && (!Number.isFinite(price) || price < 0)) return toast('Price must be a positive number');
+  if (price !== null && (!Number.isFinite(price) || price < 0)) return toast('Price must be 0 or more');
   const int = id => { const v = String(val(id)).trim(); if (v === '') return null; const n = parseInt(v, 10); return Number.isFinite(n) ? n : NaN; };
 
   if (FS.editId) {
@@ -684,7 +685,7 @@ async function saveForm() {
       const start = lastWash ? shift(lastWash, 1) : (date || j.purchaseDate || shift(t, -HISTORY_DAYS));
       const avail = Math.max(0, between(start, end) + 1);
       let final = n;
-      if (n > avail) { if (!await showConfirm(`Only ${avail} days available. The count will be capped at ${avail}. Continue?`)) return; final = avail; }
+      if (n > avail) { if (!await showConfirm(`Only ${plural(avail, 'day')} available. The count will be capped at ${avail}. Continue?`, 'Continue')) return; final = avail; }
       const before = lastWash ? j.wears.filter(d => d <= lastWash) : [];
       j.wears = [...new Set([...before, ...genDates(final, start, end)])].sort();
     }
@@ -747,7 +748,7 @@ async function handlePhoto(input) {
 }
 async function removePhoto(id, date) {
   const j = findJ(id); if (!j) return;
-  if (!await showConfirm(`Remove the photo from ${fmt(date)}?`)) return;
+  if (!await showConfirm(`Remove the photo from ${fmt(date)}?`, 'Remove')) return;
   const snap = clone(j); j.photos = j.photos.filter(p => p.date !== date);
   if (!save()) return rollback(snap);
   render(); toast('Photo removed', () => restore(snap));
@@ -795,7 +796,7 @@ function handleImport(input) {
     const jeans = arr.map(normalize).filter(Boolean);
     if (!jeans.length) return toast('No valid pairs found in file');
     const seen = new Set(); jeans.forEach(j => { if (seen.has(j.id)) j.id = uid(); seen.add(j.id); });
-    if (DB.jeans.length && !await showConfirm(`Replace your ${plural(DB.jeans.length, 'pair')} with ${plural(jeans.length, 'pair')} from this backup?`)) return;
+    if (DB.jeans.length && !await showConfirm(`Replace your ${plural(DB.jeans.length, 'pair')} with ${plural(jeans.length, 'pair')} from this backup?`, 'Replace')) return;
     const prev = DB; DB = { ...(Array.isArray(data) ? {} : data), jeans };
     const keys = []; jeans.forEach(j => j.photos.forEach(p => { if (p.src) keys.push(pkey(j.id, p.date)); }));
     const before = new Map(keys.filter(k => PHOTOS.has(k)).map(k => [k, PHOTOS.get(k)]));
