@@ -1,9 +1,11 @@
 // Bump CACHE whenever you deploy so iPhones drop the old app shell.
 // Clearing caches never touches localStorage, so your denim data is safe.
-const CACHE = 'denim-v25';
+const CACHE = 'denim-v27';
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './index.html', './icon-180.png', './icon-512.png', './manifest.json'])));
+  // The app page is required; icons/manifest are optional so a missing file can't block updates.
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './index.html'])
+    .then(() => Promise.all(['./icon-180.png', './icon-512.png', './manifest.json', './fonts/Phosphor.woff2', './fonts/Phosphor-Fill.woff2', './fonts/BarlowCondensed-500.woff2', './fonts/BarlowCondensed-600.woff2', './fonts/BarlowCondensed-700.woff2', './fonts/JetBrainsMono-400.woff2'].map(u => c.add(u).catch(() => {}))))));
   self.skipWaiting();
 });
 
@@ -29,7 +31,7 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // Fonts, icons: serve from cache, refresh in background.
+  // Fonts, icons, manifest: serve from cache, refresh in background.
   e.respondWith(
     caches.match(req).then(hit => {
       const net = fetch(req).then(res => {
