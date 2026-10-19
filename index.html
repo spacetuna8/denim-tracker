@@ -5,17 +5,19 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1b2a4a">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Denim">
 <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Denim%20Tracker%22%2C%22short_name%22%3A%22Denim%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%231b2a4a%22%2C%22theme_color%22%3A%22%231b2a4a%22%7D">
 <title>Denim Tracker</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#1b2a4a;--card:#15213b;--nav:#121c33;--ink:#efe6d2;--muted:#cfc6b2;--sub:#b3ab99;--copper:#d9a441;--red:#c8372d;--line:rgba(239,230,210,.14);--mono:'JetBrains Mono',ui-monospace,Menlo,monospace;--cond:'Barlow Condensed','Arial Narrow',sans-serif}
+:root{--bg:#1b2a4a;--card:#15213b;--nav:#121c33;--ink:#efe6d2;--muted:#cfc6b2;--sub:#b3ab99;--copper:#d9a441;--red:#c8372d;--line:rgba(239,230,210,.14);--fill:rgba(239,230,210,.1);--edge-lo:rgba(239,230,210,.22);--edge:rgba(239,230,210,.35);--edge-hi:rgba(239,230,210,.6);--amber:#ecc36f;--on-amber:#1a1f2e;--copper-edge:rgba(217,164,65,.6);--copper-fill:rgba(217,164,65,.2);--danger-ink:#f0a59c;--nav-ink:#a39b8a;--placeholder:#9a9382;--press:#d9cdb2;--r:4px;--r-lg:6px;--mono:'JetBrains Mono',ui-monospace,Menlo,monospace;--cond:'Barlow Condensed','Arial Narrow',sans-serif}
 html{background:var(--bg)}
 body{background-color:var(--bg);background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 2px,transparent 2px 5px);color:var(--ink);font-family:var(--mono);font-size:14px;max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:calc(84px + env(safe-area-inset-bottom));-webkit-text-size-adjust:100%}
 a{color:var(--copper)}
@@ -24,21 +26,25 @@ button:focus-visible,input:focus-visible,[role=button]:focus-visible{outline:2px
 .top{position:sticky;top:0;z-index:10;background:var(--bg);padding-top:env(safe-area-inset-top)}
 .selv{height:6px;background:linear-gradient(var(--ink) 0 33.3%,var(--red) 33.3% 66.6%,var(--ink) 66.6%)}
 #content{padding:20px 20px 28px}
-.cond{font-family:var(--cond)}
 .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 .h1{font-family:var(--cond);font-weight:700;font-size:46px;line-height:1;margin-top:6px;text-transform:uppercase}
 .h1.sm{font-size:42px;margin:4px 0 8px}
 .headrow{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
-.iconbtn{width:44px;height:44px;border-radius:4px;border:1.5px solid rgba(239,230,210,.6);font-size:20px;display:flex;align-items:center;justify-content:center}
-.iconbtn:active{background:rgba(239,230,210,.1)}
-.sec{display:flex;justify-content:space-between;align-items:baseline;margin:26px 0 10px;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.iconbtn{width:44px;height:44px;border-radius:var(--r);border:1.5px solid var(--edge-hi);font-size:20px;display:flex;align-items:center;justify-content:center}
+.iconbtn:active{background:var(--fill)}
+.sec{font-weight:400;display:flex;justify-content:space-between;align-items:baseline;margin:26px 0 10px;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
 .sec .l{color:var(--copper)}.sec .r{color:var(--muted)}
 .help{font-size:12px;color:var(--muted);line-height:1.55;margin:0 0 10px}
-.seg{display:flex;gap:2px;padding:3px;border-radius:4px;border:1px solid rgba(239,230,210,.25)}
-.seg button{flex:1;height:36px;border-radius:2px;font-family:var(--cond);font-size:15px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.seg{display:flex;gap:2px;padding:3px;border-radius:var(--r);border:1px solid var(--edge-lo)}
+.seg button{flex:1;height:40px;border-radius:2px;font-family:var(--cond);font-size:15px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
 .seg button.on{background:var(--ink);color:var(--bg)}
+.bsel{position:relative;display:flex;align-items:center;gap:8px;width:50%;min-width:170px;height:44px;margin-bottom:12px;padding:0 12px;border-radius:var(--r);border:1px solid var(--edge);background:var(--card)}
+.bsel span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--copper);flex:none}
+.bsel select{flex:1;min-width:0;height:100%;appearance:none;-webkit-appearance:none;background:none;border:0;color:var(--ink);font-family:var(--mono);font-size:16px;padding-right:24px;outline:none}
+.bsel:focus-within{outline:2px solid var(--copper);outline-offset:2px}
+.bsel i{position:absolute;right:14px;color:var(--copper);pointer-events:none;font-size:16px}
 .list{display:flex;flex-direction:column;gap:12px}
-.pair{background:var(--card);border-radius:6px;padding:14px;outline:1.5px dashed rgba(239,230,210,.35);outline-offset:-6px}
+.pair{background:var(--card);border-radius:var(--r-lg);padding:14px;outline:1.5px dashed var(--edge);outline-offset:-6px}
 .pair .open{padding:2px 4px 0;cursor:pointer;border-radius:3px}
 .row{display:flex;gap:12px;align-items:flex-start}
 .grow{flex:1;min-width:0}
@@ -46,8 +52,8 @@ button:focus-visible,input:focus-visible,[role=button]:focus-visible{outline:2px
 .brand{font-size:11px;letter-spacing:.14em;color:var(--copper);text-transform:uppercase}
 .model{font-family:var(--cond);font-size:26px;font-weight:600;line-height:1.05;margin-top:2px;text-transform:uppercase;overflow-wrap:anywhere}
 .status{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:5px;font-size:12px;color:var(--muted)}
-.badge{font-size:11px;font-weight:500;padding:2px 7px;border-radius:2px;white-space:nowrap;background:rgba(239,230,210,.1);color:var(--muted)}
-.badge.due{background:rgba(217,164,65,.2);color:#ecc36f}
+.badge{font-size:11px;font-weight:500;padding:2px 7px;border-radius:2px;white-space:nowrap;background:var(--fill);color:var(--muted)}
+.badge.due{background:var(--copper-fill);color:var(--amber)}
 .count{text-align:right;flex:none}
 .count .big{font-family:var(--cond);font-size:48px;font-weight:700;line-height:.9}
 .count .lbl{font-size:11px;letter-spacing:.12em;color:var(--muted);margin-top:3px}
@@ -56,33 +62,37 @@ button:focus-visible,input:focus-visible,[role=button]:focus-visible{outline:2px
 .striplbl{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-bottom:12px}
 .cu{color:var(--copper)}
 .acts{display:flex;gap:8px;padding:0 4px 4px}
-.btn{height:46px;border-radius:4px;font-family:var(--cond);font-weight:600;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:6px}
-.btn.wear{flex:1;font-size:18px;letter-spacing:.08em;border:1.5px solid rgba(239,230,210,.6)}
+.btn{height:46px;border-radius:var(--r);font-family:var(--cond);font-weight:600;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn.wear{flex:1;font-size:18px;letter-spacing:.08em;border:1.5px solid var(--edge-hi)}
 .btn.wear.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
-.btn.wash{width:96px;flex:none;font-size:15px;letter-spacing:.06em;border:1px solid rgba(239,230,210,.3);color:var(--muted)}
+.btn.wash{width:96px;flex:none;font-size:15px;letter-spacing:.06em;border:1px solid var(--edge);color:var(--muted)}
 .btn.wash.on{background:var(--red);border-color:var(--red);color:#fff}
 .detail .btn{height:50px}.detail .btn.wash{width:110px;font-size:16px}
 .legend{display:flex;gap:14px;margin-top:16px;font-size:11px;letter-spacing:.06em;color:var(--muted);flex-wrap:wrap;text-transform:uppercase}
 .legend span{display:flex;gap:6px;align-items:center}
 .legend b{width:10px;height:10px;display:inline-block}
-.empty{margin-top:28px;background:var(--card);border-radius:6px;padding:32px 24px 26px;outline:1.5px dashed rgba(239,230,210,.4);outline-offset:-7px;text-align:center}
+.empty{margin-top:28px;background:var(--card);border-radius:var(--r-lg);padding:32px 24px 26px;outline:1.5px dashed var(--edge);outline-offset:-7px;text-align:center}
 .empty h2{font-family:var(--cond);font-size:28px;font-weight:700;text-transform:uppercase;margin-top:10px}
 .empty p{font-size:13px;line-height:1.6;color:var(--muted);margin:8px 0 22px}
 .stack{display:flex;flex-direction:column;gap:8px}
-.primary{height:50px;border-radius:4px;background:var(--ink);color:var(--bg);font-family:var(--cond);font-size:19px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;width:100%}
-.primary:active{background:#d9cdb2}
-.ghost{height:44px;border-radius:4px;border:1px solid rgba(239,230,210,.4);font-family:var(--cond);font-size:16px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:0 14px}
+.primary{height:50px;border-radius:var(--r);background:var(--ink);color:var(--bg);font-family:var(--cond);font-size:19px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;width:100%}
+.primary:active{background:var(--press)}
+.ghost{height:44px;border-radius:var(--r);border:1px solid var(--edge);font-family:var(--cond);font-size:16px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:0 14px}
 .back{height:44px;margin-left:-10px;padding:0 10px;color:var(--copper);font-family:var(--cond);font-size:16px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:4px}
 .meta{font-size:12px;color:var(--muted);line-height:1.5}
-.hero{position:relative;margin-top:18px;border-radius:6px;overflow:hidden;aspect-ratio:4/3;background:var(--card) center/cover no-repeat}
-.hero .cap{position:absolute;left:0;right:0;bottom:0;padding:28px 12px 10px;background:linear-gradient(transparent,rgba(10,16,30,.85));display:flex;justify-content:space-between;align-items:flex-end;gap:8px;font-size:12px}
-.hero .cap button{width:44px;height:44px;flex:none;border-radius:4px;background:rgba(10,16,30,.6);font-size:16px;display:flex;align-items:center;justify-content:center}
+#viewer{touch-action:none;overscroll-behavior:contain;display:none;position:fixed;inset:0;background:rgba(6,9,18,.96);z-index:150;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+#viewer.open{display:flex}
+#viewer .vbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px;font-size:13px;color:var(--ink)}
+#viewer .vbar button{width:44px;height:44px;flex:none;border-radius:var(--r);font-size:20px;display:flex;align-items:center;justify-content:center}
+#viewer .vimg{flex:1;min-height:0;background:center/contain no-repeat;margin:0 12px}
+#viewer .vnav{display:flex;justify-content:center;gap:24px;padding:10px 0 14px}
+#viewer .vnav button{width:52px;height:44px;border-radius:var(--r);border:1px solid var(--edge);font-size:20px;display:flex;align-items:center;justify-content:center}
+#viewer .vnav button:disabled{opacity:.3}
 .dacts{display:flex;gap:8px;margin:20px 0 22px}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.tile{background:var(--card);border-radius:6px;padding:14px 16px}
+.tile{background:var(--card);border-radius:var(--r-lg);padding:14px 16px}
 .tile .v{font-family:var(--cond);font-size:36px;font-weight:700;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tile .l{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:5px}
-.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}.tiles.three .tile{padding:14px 12px}.tiles.three .v{font-size:28px}
 .cal{display:flex;gap:3px}
 .cal .col{display:flex;flex-direction:column;gap:3px;flex:1}
 .cal .col i{height:14px;border-radius:1px}
@@ -90,32 +100,35 @@ button:focus-visible,input:focus-visible,[role=button]:focus-visible{outline:2px
 .cal .days span{height:14px;font-size:10px;line-height:14px;color:var(--sub)}
 .photos{display:flex;gap:8px;overflow-x:auto;margin:0 -20px;padding:2px 20px 4px;scrollbar-width:none}
 .photos::-webkit-scrollbar{display:none}
-.photos .add{width:76px;height:96px;flex:none;border-radius:4px;border:1.5px solid rgba(239,230,210,.35);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:11px}
+.photos .add{width:76px;height:96px;flex:none;border-radius:var(--r);border:1.5px solid var(--edge);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:11px}
 .photos .add i{font-size:22px;color:var(--copper)}
 .photos .ph-item{width:76px;flex:none;display:flex;flex-direction:column;gap:5px;font-size:11px;text-align:left;color:var(--muted)}
-.photos .ph-item div{width:76px;height:96px;border-radius:4px;background:center/cover no-repeat}
-.photos .ph-item[aria-pressed=true] div{box-shadow:0 0 0 2px var(--copper)}
-input[type=text],input[type=number],input[type=date]{width:100%;height:46px;background:var(--card);border:1px solid rgba(239,230,210,.3);border-radius:4px;padding:0 12px;color:var(--ink);font-family:var(--mono);font-size:16px;-webkit-appearance:none;appearance:none;color-scheme:dark}
-input::placeholder{color:#8f8878}
+.photos .ph-item div{width:76px;height:96px;border-radius:var(--r);background:center/cover no-repeat}
+input[type=text],input[type=number],input[type=date]{width:100%;height:46px;background:var(--card);border:1px solid var(--edge);border-radius:var(--r);padding:0 12px;color:var(--ink);font-family:var(--mono);font-size:16px;-webkit-appearance:none;appearance:none;color-scheme:dark}
+input::placeholder{color:var(--placeholder)}
 input[type=date]{min-height:46px;line-height:46px}
 .logrow{display:flex;gap:8px}
+@media (max-width:359px){.logrow{flex-wrap:wrap}.logrow input{flex-basis:100%}}
 .logrow input{flex:1;min-width:0;height:44px}
-.logrow button{height:44px;padding:0 12px;border-radius:4px;font-family:var(--cond);font-size:16px;font-weight:600;letter-spacing:.06em;flex:none}
-.logrow .w{border:1.5px solid rgba(239,230,210,.6)}
-.logrow .a{border:1px solid rgba(239,230,210,.35);color:var(--muted)}
+.logrow button{height:44px;padding:0 12px;border-radius:var(--r);font-family:var(--cond);font-size:16px;font-weight:600;letter-spacing:.06em;flex:none}
+.logrow .w{border:1.5px solid var(--edge-hi)}
+.logrow .a{border:1px solid var(--edge);color:var(--muted)}
 .links{display:flex;gap:18px;margin-top:6px}
-.links button{padding:12px 0;color:var(--muted);font-size:12px}
-.hr{margin:18px 0;border-top:1px solid rgba(239,230,210,.15)}
-.edit{height:44px;padding:0 16px;border-radius:4px;border:1px solid rgba(239,230,210,.4);font-size:13px;display:flex;align-items:center;gap:7px}
-.del{height:44px;padding:0 16px;color:#f0a59c;font-size:13px;display:flex;align-items:center;gap:7px}
-.lrow{padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.links button{min-height:44px;padding:0;color:var(--muted);font-size:12px}
+.hr{margin:18px 0;border-top:1px solid var(--line)}
+.edit{height:44px;padding:0 16px;border-radius:var(--r);border:1px solid var(--edge);font-size:13px;display:flex;align-items:center;gap:7px}
+.del{height:44px;padding:0 16px;color:var(--danger-ink);font-size:13px;display:flex;align-items:center;gap:7px}
+.lrow{padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer;display:flex;flex-direction:column;gap:8px}
 .lrow .model{font-size:21px;line-height:1.1}
 .lrow .n{display:flex;align-items:baseline;gap:5px;flex:none}
 .lrow .n b{font-family:var(--cond);font-size:28px;font-weight:700;line-height:1}
 .lrow .n span{font-size:11px;color:var(--muted)}
-.facts{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
-.facts b{font-weight:500;color:var(--ink)}.facts b.due{color:#ecc36f}
-.datalist{display:flex;flex-direction:column;background:var(--card);border-radius:6px;overflow:hidden}
+.facts{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted)}
+.facts b{font-weight:500;color:var(--ink)}
+.facts .sw{display:flex;align-items:baseline;gap:5px;padding:1px 6px;border-radius:3px;border:1px solid var(--copper-edge);color:var(--copper);font-weight:600}
+.facts .sw b{color:var(--copper)}
+.facts .sw.due{background:var(--amber);border-color:var(--amber);color:var(--on-amber)}.facts .sw.due b{color:var(--on-amber)}
+.datalist{display:flex;flex-direction:column;background:var(--card);border-radius:var(--r-lg);overflow:hidden}
 .datalist button{height:50px;border-top:1px solid var(--line);font-size:13px;display:flex;align-items:center;gap:12px;padding:0 16px;text-align:left}
 .datalist button:first-child{border-top:0}
 .datalist button:active{background:rgba(239,230,210,.06)}
@@ -126,21 +139,21 @@ input[type=date]{min-height:46px;line-height:46px}
 .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .grid3 .field{color:var(--muted);letter-spacing:.06em}
 nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--nav);display:flex;padding:8px 48px env(safe-area-inset-bottom);z-index:10}
-nav button{flex:1;height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:var(--cond);font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#a39b8a}
+nav button{flex:1;height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:var(--cond);font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--nav-ink)}
 nav button.active{color:var(--ink)}
 nav button i{font-size:22px}
 #toastWrap{position:fixed;left:50%;transform:translateX(-50%);width:100%;max-width:480px;bottom:calc(94px + env(safe-area-inset-bottom));display:flex;justify-content:center;padding:0 16px;z-index:100;pointer-events:none}
-#toast{display:none;pointer-events:auto;max-width:100%;align-items:center;gap:14px;background:var(--ink);color:var(--bg);border-radius:4px;padding:6px 6px 6px 16px;font-size:12px;font-weight:500;box-shadow:0 8px 20px rgba(0,0,0,.35)}
+#toast{display:none;pointer-events:auto;max-width:100%;align-items:center;gap:14px;background:var(--ink);color:var(--bg);border-radius:var(--r);padding:6px 6px 6px 16px;font-size:12px;font-weight:500;box-shadow:0 8px 20px rgba(0,0,0,.35)}
 #toast.show{display:flex}
 #toast span{padding:7px 0}
 #toast button{height:44px;padding:0 12px;border-radius:3px;background:var(--bg);color:var(--ink);font-family:var(--cond);font-size:15px;font-weight:700;letter-spacing:.1em;flex:none}
 #modal{display:none;position:fixed;inset:0;background:rgba(8,12,24,.7);z-index:200;align-items:center;justify-content:center;padding:28px}
 #modal.open{display:flex}
-.modal-box{background:var(--card);border:1px solid rgba(239,230,210,.2);border-radius:6px;padding:22px;width:100%;max-width:360px}
+.modal-box{background:var(--card);border:1px solid var(--edge-lo);border-radius:var(--r-lg);padding:22px;width:100%;max-width:360px}
 #modal-msg{font-size:14px;line-height:1.55;margin-bottom:18px}
 .modal-btns{display:flex;gap:8px}
-.modal-btns button{flex:1;height:44px;border-radius:4px;font-family:var(--cond);font-size:16px;font-weight:600;letter-spacing:.08em}
-#modal-cancel{border:1px solid rgba(239,230,210,.4)}
+.modal-btns button{flex:1;height:44px;border-radius:var(--r);font-family:var(--cond);font-size:16px;font-weight:600;letter-spacing:.08em}
+#modal-cancel{border:1px solid var(--edge)}
 #modal-ok{background:var(--red);color:#fff}
 </style>
 </head>
@@ -156,28 +169,41 @@ nav button i{font-size:22px}
   <p id="modal-msg"></p>
   <div class="modal-btns"><button id="modal-cancel">CANCEL</button><button id="modal-ok">CONFIRM</button></div>
 </div></div>
+<div id="viewer" role="dialog" aria-modal="true" aria-label="Fade photo">
+  <div class="vbar"><button aria-label="Close photo" onclick="closeViewer()"><i class="ph ph-x" aria-hidden="true"></i></button><span id="vcap"></span><button aria-label="Remove this photo" onclick="viewerRemove()"><i class="ph ph-trash" aria-hidden="true"></i></button></div>
+  <div class="vimg" id="vimg" role="img" aria-label="" onclick="closeViewer()"></div>
+  <div class="vnav" id="vnav"><button id="vprev" aria-label="Older photo" onclick="stepViewer(-1)"><i class="ph ph-caret-left" aria-hidden="true"></i></button><button id="vnext" aria-label="Newer photo" onclick="stepViewer(1)"><i class="ph ph-caret-right" aria-hidden="true"></i></button></div>
+</div>
 <input type="file" id="importInput" accept=".json,application/json,text/plain" style="display:none" onchange="handleImport(this)">
 <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhoto(this)">
 
 <script>
 if (!Array.prototype.at) Array.prototype.at = function (i) { i = Math.trunc(i) || 0; if (i < 0) i += this.length; return this[i]; };
+// Enables :active styles on iOS Safari.
 document.addEventListener('touchstart', () => {}, { passive: true });
 // Same storage key and {jeans:[…]} shape as the previous app, so existing data loads as-is.
 const LS_KEY = 'denim_tracker_v1';
 const LS_BACKUP = 'denim_tracker_v1_backup_pre_selvedge';
 const ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
-const WASH_OPTS = [0, 30, 60, 100];
+const ID_RE = /^[A-Za-z0-9_.-]{1,64}$/;
+const IMG_RE = /^data:image\/[a-z0-9.+-]+(?:;[a-z0-9=.-]+)*;base64,[A-Za-z0-9+/]+=*$/i;
+const WASH_AT = 15;
 const DAY = 86400000, HISTORY_DAYS = 365, HAPTIC_MS = 30;
-const C = { ink: '#efe6d2', copper: '#d9a441', red: '#c8372d' };
 
 let DB = { jeans: [] }, CUR = { view: 'col', id: null }, PREV = 'col', FS = { editId: null };
 const currency = 'CHF';
-let sortMode = 'alpha', ovSort = 'alpha', washAt = 0, photoIdx = null;
+let sortMode = 'alpha', ovSort = 'alpha', ovBrand = '', BRANDS = [], photoIdx = null;
 let S = {}, scrollPos = {}, lastKey = null, UNDO = null, toastT = null;
 
 // ── Dates ──
 const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const today = () => iso(new Date());
+// Home-screen apps stay suspended in the background; redraw when reopened on a new day.
+let shownDay = today();
+const checkDay = () => { if (document.visibilityState === 'visible' && today() !== shownDay && CUR.view !== 'form') render(); };
+document.addEventListener('visibilitychange', checkDay);
+window.addEventListener('pageshow', checkDay);
+setInterval(checkDay, 60000);
 const noon = s => new Date(s + 'T12:00:00');
 const shift = (s, n) => { const d = noon(s); d.setDate(d.getDate() + n); return iso(d); };
 const between = (a, b) => Math.round((noon(b) - noon(a)) / DAY);
@@ -193,12 +219,14 @@ const clone = j => JSON.parse(JSON.stringify(j));
 
 // ── Storage ──
 // Lenient: never drops a pair from existing data; only normalises shape.
+// Ids and photo sources are interpolated into markup, so anything not matching a strict pattern is replaced or dropped.
 function normalize(p) {
   if (!p || typeof p !== 'object') return null;
   const dates = a => Array.isArray(a) ? [...new Set(a.filter(d => typeof d === 'string' && ISO_RE.test(d)))].sort() : [];
   const price = Number(p.price);
-  const photos = Array.isArray(p.photos) ? p.photos.filter(x => x && typeof x.src === 'string' && x.src.startsWith('data:image/') && ISO_RE.test(x.date || '')).map(x => ({ date: x.date, src: x.src })).sort((a, b) => a.date.localeCompare(b.date)) : [];
-  return { ...p, id: typeof p.id === 'string' && p.id ? p.id : uid(),
+  // A photo either carries its image inline (old data, imports) or only a date, with the image in IndexedDB.
+  const photos = Array.isArray(p.photos) ? p.photos.filter(x => x && ISO_RE.test(x.date || '') && (x.src === undefined || (typeof x.src === 'string' && IMG_RE.test(x.src)))).map(x => x.src ? { date: x.date, src: x.src } : { date: x.date }).sort((a, b) => a.date.localeCompare(b.date)) : [];
+  return { ...p, id: typeof p.id === 'string' && ID_RE.test(p.id) ? p.id : uid(),
     brand: String(p.brand ?? '').trim() || 'Unknown brand', model: String(p.model ?? '').trim() || 'Unnamed pair',
     purchaseDate: typeof p.purchaseDate === 'string' && ISO_RE.test(p.purchaseDate) ? p.purchaseDate : '',
     price: Number.isFinite(price) && price > 0 ? price : null, wears: dates(p.wears), washes: dates(p.washes), photos };
@@ -215,7 +243,6 @@ function load() {
   const seen = new Set(); DB.jeans.forEach(j => { if (seen.has(j.id)) j.id = uid(); seen.add(j.id); });
   try {
     const s = localStorage.getItem('dt_sort'); if (['alpha', 'mostworn', 'lastworn'].includes(s)) sortMode = s;
-    const w = Number(localStorage.getItem('dt_washat')); if (WASH_OPTS.includes(w)) washAt = w;
   } catch (e) {}
 }
 function save() {
@@ -229,10 +256,51 @@ function save() {
 }
 function setPref(k, v) { try { localStorage.setItem(k, String(v)); } catch (e) {} }
 
+// ── Photo store (IndexedDB: far more room than localStorage's ~5 MB) ──
+const PDB_NAME = 'denim_tracker_photos', PSTORE = 'photos';
+let pdb = null; const PHOTOS = new Map();
+const pkey = (id, date) => id + '|' + date;
+const photoSrc = (j, p) => p.src || PHOTOS.get(pkey(j.id, p.date)) || '';
+function openPDB() {
+  return new Promise((res, rej) => {
+    if (!('indexedDB' in window)) return rej(new Error('no indexedDB'));
+    const r = indexedDB.open(PDB_NAME, 1);
+    r.onupgradeneeded = () => r.result.createObjectStore(PSTORE);
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); r.onblocked = () => rej(new Error('blocked'));
+  });
+}
+function ptx(mode, fn) {
+  return new Promise((res, rej) => {
+    const t = pdb.transaction(PSTORE, mode); fn(t.objectStore(PSTORE));
+    t.oncomplete = () => res(); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
+  });
+}
+const putPhotos = entries => ptx('readwrite', s => entries.forEach(([k, v]) => s.put(v, k)));
+const delPhotos = keys => ptx('readwrite', s => keys.forEach(k => s.delete(k)));
+function loadAllPhotos() {
+  return ptx('readonly', s => { const r = s.openCursor(); r.onsuccess = () => { const c = r.result; if (c) { PHOTOS.set(c.key, c.value); c.continue(); } }; });
+}
+// Move inline images into IndexedDB; the inline copy is only dropped after the write is confirmed.
+async function migratePhotos(persist = true) {
+  const entries = [];
+  DB.jeans.forEach(j => j.photos.forEach(p => { if (p.src) entries.push([pkey(j.id, p.date), p.src]); }));
+  if (!entries.length) return;
+  await putPhotos(entries);
+  entries.forEach(([k, v]) => PHOTOS.set(k, v));
+  DB.jeans.forEach(j => j.photos.forEach(p => { delete p.src; }));
+  if (persist) save();
+}
+// Images whose pair or photo was deleted are removed on the next launch, so Undo keeps working during a session.
+function gcPhotos() {
+  const live = new Set(); DB.jeans.forEach(j => j.photos.forEach(p => live.add(pkey(j.id, p.date))));
+  const dead = [...PHOTOS.keys()].filter(k => !live.has(k));
+  if (dead.length) delPhotos(dead).then(() => dead.forEach(k => PHOTOS.delete(k))).catch(() => {});
+}
+
 // ── Stats ──
 const cell = (worn, washed, future, isToday) => ({
-  bg: future ? 'transparent' : worn ? C.ink : 'rgba(239,230,210,.1)',
-  ring: [washed && 'inset 0 -3px 0 ' + C.red, isToday && '0 0 0 1.5px ' + C.copper].filter(Boolean).join(', ') || 'none'
+  bg: future ? 'transparent' : worn ? 'var(--ink)' : 'var(--fill)',
+  ring: [washed && 'inset 0 -3px 0 var(--red)', isToday && '0 0 0 1.5px var(--copper)'].filter(Boolean).join(', ') || 'none'
 });
 function stats(j) {
   const t = today(), ws = j.wears, wa = j.washes, W = new Set(ws), A = new Set(wa);
@@ -245,7 +313,7 @@ function stats(j) {
   for (let k = 13; k >= 0; k--) { const d = shift(t, -k); if (W.has(d)) worn14++; strip.push(cell(W.has(d), A.has(d), false, k === 0)); }
   return { W, A, lastWear, lastWash, since, streak, strip, worn14, total: ws.length, washes: wa.length,
     wpw: wa.length ? Math.round(ws.length / wa.length) : '—', wornToday: W.has(t), washedToday: A.has(t),
-    due: washAt > 0 && since >= washAt,
+    due: since >= WASH_AT,
     wornLabel: !lastWear ? 'Never worn' : lw <= 0 ? 'Worn today' : lw === 1 ? 'Worn yesterday' : `Worn ${lw} days ago`,
     washLabel: dw === null ? 'Never washed' : dw <= 0 ? 'Washed today' : `Washed ${dw}d ago`,
     badge: lastWash ? since + ' since wash' : 'Unwashed',
@@ -270,20 +338,32 @@ function doUndo() { const u = UNDO; UNDO = null; clearTimeout(toastT); document.
 function showConfirm(msg) {
   return new Promise(resolve => {
     const modal = document.getElementById('modal'), ok = document.getElementById('modal-ok'), cancel = document.getElementById('modal-cancel');
+    const opener = document.activeElement;
     document.getElementById('modal-msg').textContent = msg; modal.classList.add('open'); ok.focus();
-    const done = r => { modal.classList.remove('open'); ok.onclick = cancel.onclick = null; resolve(r); };
+    const done = r => { modal.classList.remove('open'); ok.onclick = cancel.onclick = null; document.removeEventListener('keydown', onKey); if (opener && opener.isConnected) opener.focus({ preventScroll: true }); resolve(r); };
+    const onKey = e => { if (e.key === 'Escape') done(false); else trapTab(e, modal); };
+    document.addEventListener('keydown', onKey);
     ok.onclick = () => done(true); cancel.onclick = () => done(false);
   });
 }
+// Keep Tab focus inside an open dialog.
+function trapTab(e, root) {
+  if (e.key !== 'Tab') return;
+  const f = [...root.querySelectorAll('button:not([disabled])')].filter(b => b.offsetParent !== null); if (!f.length) return;
+  const first = f[0], last = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+}
 const seg = (label, opts, cur, fn) => `<div class="seg" role="group" aria-label="${label}">${opts.map(([v, l]) => `<button class="${cur === v ? 'on' : ''}" aria-pressed="${cur === v}" onclick="${fn}('${v}')">${l}</button>`).join('')}</div>`;
 const findJ = id => DB.jeans.find(x => x.id === id);
-function restore(snapshot) { const i = DB.jeans.findIndex(x => x.id === snapshot.id); if (i >= 0) DB.jeans[i] = snapshot; else DB.jeans.push(snapshot); save(); toast('Undone'); render(); }
+function restore(snapshot) { const i = DB.jeans.findIndex(x => x.id === snapshot.id); const prev = DB.jeans.slice(); if (i >= 0) DB.jeans[i] = snapshot; else DB.jeans.push(snapshot); if (!save()) { DB.jeans = prev; return render(); } toast('Undone'); render(); }
+// After a failed save: storage still holds the previous state, so only revert memory.
+function rollback(snapshot) { const i = DB.jeans.findIndex(x => x.id === snapshot.id); if (i >= 0) DB.jeans[i] = snapshot; else DB.jeans.push(snapshot); render(); }
 
 // ── Navigation ──
 function go(view, id = null) {
   if ((view === 'detail' || view === 'form') && (CUR.view === 'col' || CUR.view === 'ov')) PREV = CUR.view;
   if (view === 'col' || view === 'ov') PREV = view;
-  if (id !== CUR.id) photoIdx = null;
   CUR = { view, id };
   document.querySelectorAll('nav button').forEach(b => {
     const on = b.dataset.v === view || (b.dataset.v === PREV && (view === 'detail' || view === 'form'));
@@ -299,6 +379,7 @@ function openForm(editId) { FS = { editId }; go('form', editId); }
 // ── Render ──
 function render() {
   const key = CUR.view + (CUR.id || '');
+  shownDay = today();
   if (lastKey !== null) scrollPos[lastKey] = window.scrollY;
   S = {}; DB.jeans.forEach(j => { S[j.id] = stats(j); });
   const c = document.getElementById('content');
@@ -329,9 +410,9 @@ function renderRack() {
   else list.sort((a, b) => (a.brand + ' ' + a.model).localeCompare(b.brand + ' ' + b.model));
   h += `<div style="margin:18px 0 16px">${seg('Sort pairs', [['alpha', 'A–Z'], ['mostworn', 'Most worn'], ['lastworn', 'Last worn']], sortMode, 'setSort')}</div><div class="list">`;
   h += list.map(j => {
-    const s = S[j.id], ph = j.photos.at(-1);
+    const s = S[j.id], ph = j.photos.at(-1), phSrc = ph ? photoSrc(j, ph) : '';
     return `<article class="pair"><div class="open" ${openAttrs(j, s)}>
-      <div class="row">${ph ? `<div class="thumb" aria-hidden="true" style="background-image:url('${ph.src}')"></div>` : ''}
+      <div class="row">${phSrc ? `<div class="thumb" aria-hidden="true" style="background-image:url('${phSrc}')"></div>` : ''}
         <div class="grow"><div class="brand">${esc(j.brand)}</div><div class="model">${esc(j.model)}</div>
           <div class="status"><span>${s.wornLabel}</span><span class="badge ${s.due ? 'due' : ''}">${s.due ? 'Wash due · ' + s.since : s.badge}</span></div></div>
         <div class="count"><div class="big">${s.total}</div><div class="lbl">WEARS</div></div></div>
@@ -339,7 +420,7 @@ function renderRack() {
       <div class="striplbl" aria-hidden="true"><span>2 wks ago</span><span class="cu">Today</span></div>
     </div><div class="acts">${wearBtn(j, s)}${washBtn(j, s)}</div></article>`;
   }).join('');
-  return h + `</div><div class="legend" aria-hidden="true"><span><b style="background:var(--ink)"></b>Worn</span><span><b style="background:rgba(239,230,210,.1);box-shadow:inset 0 -3px 0 var(--red)"></b>Washed</span><span><b style="box-shadow:0 0 0 1.5px var(--copper)"></b>Today</span></div>`;
+  return h + `</div><div class="legend" aria-hidden="true"><span><b style="background:var(--ink)"></b>Worn</span><span><b style="background:var(--fill);box-shadow:inset 0 -3px 0 var(--red)"></b>Washed</span><span><b style="box-shadow:0 0 0 1.5px var(--copper)"></b>Today</span></div>`;
 }
 
 function renderDetail() {
@@ -348,14 +429,12 @@ function renderDetail() {
   if (j.purchaseDate) meta.push('Bought ' + fmt(j.purchaseDate));
   if (j.price) meta.push(money(j.price));
   if (s.cpw) meta.push(money(s.cpw) + ' per wear');
-  const idx = photoIdx != null && photoIdx < photos.length ? photoIdx : photos.length - 1, hero = photos[idx];
   const cal = calendar(s), t = today();
   return `<div class="detail">
     <button class="back" onclick="goBack()"><i class="ph ph-caret-left" aria-hidden="true" style="font-size:18px"></i>${PREV === 'ov' ? 'Ledger' : 'Rack'}</button>
     <div class="brand" style="margin-top:6px">${esc(j.brand)}</div>
     <h1 class="h1 sm">${esc(j.model)}</h1>
     <div class="meta">${meta.join(' · ')}</div>
-    ${hero ? `<div class="hero" role="img" aria-label="${esc(j.model)} on ${fmt(hero.date)}" style="background-image:url('${hero.src}')"><div class="cap"><span>${fmt(hero.date)} · ${plural(wearsAt(hero.date), 'wear')}</span><button aria-label="Remove this photo" onclick="removePhoto('${j.id}','${hero.date}')"><i class="ph ph-trash" aria-hidden="true"></i></button></div></div>` : ''}
     <div class="dacts">${wearBtn(j, s)}${washBtn(j, s)}</div>
     <div class="tiles">
       <div class="tile"><div class="v">${s.total}</div><div class="l">Total wears</div></div>
@@ -363,17 +442,17 @@ function renderDetail() {
       <div class="tile"><div class="v">${s.streak ? s.streak + 'd' : '—'}</div><div class="l">Wear streak</div></div>
       <div class="tile"><div class="v">${s.wpw}</div><div class="l">Wears per wash</div></div>
     </div>
-    <div class="sec"><span class="l">Last 18 weeks</span><span class="r">${s.washLabel}</span></div>
+    <h2 class="sec"><span class="l">Last 18 weeks</span><span class="r">${s.washLabel}</span></h2>
     <div class="cal" role="img" aria-label="Worn ${cal.worn} days in the last 18 weeks">
       <div class="days" aria-hidden="true">${['M', '', 'W', '', 'F', '', 'S'].map(d => `<span>${d}</span>`).join('')}</div>
       ${cal.weeks.map(w => `<div class="col">${cellsHTML(w)}</div>`).join('')}
     </div>
-    <div class="sec" style="margin-top:28px"><span class="l">Fade photos</span><span class="r">${photos.length ? plural(photos.length, 'photo') : 'Track your fades'}</span></div>
+    <h2 class="sec" style="margin-top:28px"><span class="l">Fade photos</span><span class="r">${photos.length ? plural(photos.length, 'photo') : 'Track your fades'}</span></h2>
     <div class="photos">
       <button class="add" aria-label="Add a fade photo" onclick="document.getElementById('photoInput').click()"><i class="ph ph-camera" aria-hidden="true"></i>Add</button>
-      ${photos.map((p, i) => ({ p, i })).reverse().map(({ p, i }) => `<button class="ph-item" aria-pressed="${i === idx}" aria-label="Photo from ${fmt(p.date)}, ${plural(wearsAt(p.date), 'wear')}" onclick="photoIdx=${i};render()"><div style="background-image:url('${p.src}')"></div><span>${fmtShort(p.date)} · ${wearsAt(p.date)}</span></button>`).join('')}
+      ${photos.map((p, i) => ({ p, i })).reverse().map(({ p, i }) => `<button class="ph-item" aria-label="Open photo from ${fmt(p.date)}, ${plural(wearsAt(p.date), 'wear')}" onclick="openViewer(${i})"><div style="background-image:url('${photoSrc(j, p)}')"></div><span>${fmtShort(p.date)} · ${wearsAt(p.date)}</span></button>`).join('')}
     </div>
-    <div class="sec" style="margin-top:28px"><span class="l">Log another day</span></div>
+    <h2 class="sec" style="margin-top:28px"><span class="l">Log another day</span></h2>
     <div class="logrow">
       <input type="date" id="logDate" aria-label="Date to log" value="${t}" max="${t}">
       <button class="w" onclick="addLog('${j.id}','wears')">+ WEAR</button>
@@ -386,27 +465,30 @@ function renderDetail() {
 }
 
 function renderLedger() {
-  const js = DB.jeans, totalW = js.reduce((a, j) => a + j.wears.length, 0), totalA = js.reduce((a, j) => a + j.washes.length, 0), spent = js.reduce((a, j) => a + (j.price || 0), 0);
+  const bkey = b => b.trim().toLowerCase();
+  const bmap = new Map(); DB.jeans.forEach(j => { const k = bkey(j.brand); if (!bmap.has(k)) bmap.set(k, j.brand.trim()); });
+  BRANDS = [...bmap.entries()].sort((a, b) => a[1].localeCompare(b[1]));
+  if (ovBrand && !bmap.has(ovBrand)) ovBrand = '';
+  const js = ovBrand ? DB.jeans.filter(j => bkey(j.brand) === ovBrand) : DB.jeans, totalW = js.reduce((a, j) => a + j.wears.length, 0), spent = js.reduce((a, j) => a + (j.price || 0), 0);
+  const chips = BRANDS.length ? `<label class="bsel"><span>Brand</span><select aria-label="Filter by brand" onchange="setOvBrand(Number(this.value))"><option value="-1" ${ovBrand ? '' : 'selected'}>All brands</option>${BRANDS.map(([k, name], i) => `<option value="${i}" ${ovBrand === k ? 'selected' : ''}>${esc(name)}</option>`).join('')}</select><i class="ph ph-caret-down" aria-hidden="true"></i></label>` : '';
+  const spentTxt = spent ? String(Number.isInteger(spent) ? spent : spent.toFixed(2)) : '—';
   const list = [...js];
   if (ovSort === 'mostworn') list.sort((a, b) => b.wears.length - a.wears.length);
   else if (ovSort === 'mostwashed') list.sort((a, b) => b.washes.length - a.washes.length);
   else if (ovSort === 'since') list.sort((a, b) => S[b.id].since - S[a.id].since);
   else list.sort((a, b) => (a.brand + ' ' + a.model).localeCompare(b.brand + ' ' + b.model));
-  return `<div class="eyebrow">ALL PAIRS</div><h1 class="h1" style="margin-bottom:18px">Ledger</h1>
-    <div class="tiles three" style="margin-bottom:22px">
+  return `<h1 class="h1" style="margin-bottom:18px">Ledger</h1>
+    ${chips}
+    <div class="tiles" style="margin-bottom:22px">
       <div class="tile"><div class="v">${totalW}</div><div class="l">Wears</div></div>
-      <div class="tile"><div class="v">${totalA}</div><div class="l">Washes</div></div>
-      <div class="tile"><div class="v">${spent ? money(spent) : '—'}</div><div class="l">Spent</div></div>
+      <div class="tile"><div class="v" style="overflow:visible;text-overflow:clip;font-size:${spentTxt.length > 8 ? 24 : spentTxt.length > 5 ? 28 : 36}px">${spentTxt}</div><div class="l">Spent · ${currency}</div></div>
     </div>
     ${js.length ? `<div style="margin-bottom:6px">${seg('Sort ledger', [['alpha', 'A–Z'], ['mostworn', 'Worn'], ['mostwashed', 'Washed'], ['since', 'Since wash']], ovSort, 'setOvSort')}</div>` : '<p class="help">No pairs yet. Add one from the Rack.</p>'}
-    ${list.map(j => { const s = S[j.id]; return `<div class="lrow" ${openAttrs(j, s)}>
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px"><div style="min-width:0"><div class="brand">${esc(j.brand)}</div><div class="model">${esc(j.model)}</div></div><div class="n"><b>${s.total}</b><span>wears</span></div></div>
-      <div class="facts"><span><b>${s.washes}</b> ${s.washes === 1 ? 'wash' : 'washes'}</span><span><b>${s.wpw}</b> per wash</span><span><b class="${s.due ? 'due' : ''}">${s.since}</b> since wash</span></div>
+    ${list.map(j => { const s = S[j.id], sinceAct = ovSort === 'since'; return `<div class="lrow" ${openAttrs(j, s)}>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px"><div style="min-width:0"><div class="brand">${esc(j.brand)}</div><div class="model">${esc(j.model)}</div></div>${sinceAct ? `<div class="n"><b style="color:${s.due ? 'var(--amber)' : 'var(--ink)'}">${s.since}</b><span>since wash</span></div>` : `<div class="n"><b>${s.total}</b><span>wears</span></div>`}</div>
+      <div class="facts">${sinceAct ? `<span><b>${s.total}</b> wears</span>` : ''}<span><b>${s.washes}</b> ${s.washes === 1 ? 'wash' : 'washes'}</span><span><b>${s.wpw}</b> per wash</span>${sinceAct ? '' : `<span class="sw ${s.due ? 'due' : ''}"><b>${s.since}</b> since wash${s.due ? ' · due' : ''}</span>`}</div>
     </div>`; }).join('')}
-    <div class="sec" style="margin-top:32px"><span class="l">Wash reminder</span></div>
-    <p class="help">Highlight a pair once its wears since the last wash reach this number.</p>
-    ${seg('Wash reminder', WASH_OPTS.map(n => [String(n), n ? n + ' wears' : 'Off']), String(washAt), 'setWashAt')}
-    <div class="sec"><span class="l">Data &amp; backup</span></div>
+    <h2 class="sec" style="margin-top:32px"><span class="l">Data &amp; backup</span></h2>
     <p class="help">Export and save to iCloud Drive or Google Drive. Import anytime to restore.</p>
     <div class="datalist">
       <button onclick="exportJSON()"><i class="ph ph-download-simple i" aria-hidden="true"></i>Export JSON<i class="ph ph-caret-right c" aria-hidden="true"></i></button>
@@ -421,38 +503,63 @@ function renderForm() {
   let since = '';
   if (j) {
     const s = S[j.id];
-    since = `<div class="sec" style="margin-top:28px"><span class="l">Wears since last wash</span></div>
+    since = `<h2 class="sec" style="margin-top:28px"><span class="l">Wears since last wash</span></h2>
       <p class="help">${s.lastWash ? `Currently ${s.since} wears since the wash on ${fmt(s.lastWash)}.` : `No washes logged, so all ${s.total} wears count.`} Leave blank to keep unchanged.</p>
       ${f('editSince', 'Set new count', 'number', 'e.g. 15', '', 'inputmode="numeric" min="0" step="1"')}`;
   }
   return `<button class="back" onclick="goBack()"><i class="ph ph-caret-left" aria-hidden="true" style="font-size:18px"></i>CANCEL</button>
     <h1 class="h1 sm" style="margin:8px 0 22px">${j ? 'Edit pair' : 'Add a pair'}</h1>
+    <form onsubmit="event.preventDefault();saveForm()" novalidate>
     <div class="fields">
-      ${f('fBrand', 'Brand', 'text', 'e.g. Oni Denim', j?.brand || '')}
-      ${f('fModel', 'Model', 'text', 'e.g. Secret Denim 517', j?.model || '')}
+      ${f('fBrand', 'Brand', 'text', 'e.g. Oni Denim', j?.brand || '', 'autocomplete="off" autocapitalize="words" maxlength="60" enterkeyhint="next"')}
+      ${f('fModel', 'Model', 'text', 'e.g. Secret Denim 517', j?.model || '', 'autocomplete="off" autocapitalize="words" maxlength="80" enterkeyhint="next"')}
       ${f('fDate', 'Purchase date', 'date', '', j?.purchaseDate || '', `max="${t}"`)}
       ${f('fPrice', `Price (${currency})`, 'number', 'e.g. 320', j?.price || '', 'inputmode="decimal" min="0" step="0.01"')}
     </div>
-    ${j ? since : `<div class="sec" style="margin-top:28px"><span class="l">Backfill history · optional</span></div>
+    ${j ? since : `<h2 class="sec" style="margin-top:28px"><span class="l">Backfill history · optional</span></h2>
       <p class="help">Dates spread evenly from purchase date to today. Max one entry per day.</p>
       <div class="grid3">
         ${f('bfWears', 'Past wears', 'number', 'e.g. 45', '', 'inputmode="numeric" min="0" step="1"')}
         ${f('bfWashes', 'Past washes', 'number', 'e.g. 3', '', 'inputmode="numeric" min="0" step="1"')}
         ${f('bfSince', 'Since wash', 'number', 'e.g. 15', '', 'inputmode="numeric" min="0" step="1"')}
       </div>`}
-    <button class="primary" style="margin-top:28px" onclick="saveForm()">${j ? 'Save changes' : 'Add to the rack'}</button>`;
+    <button type="submit" class="primary" style="margin-top:28px">${j ? 'Save changes' : 'Add to the rack'}</button>
+    </form>`;
 }
 
 // ── Actions ──
 function setSort(m) { sortMode = m; setPref('dt_sort', m); render(); }
 function setOvSort(m) { ovSort = m; render(); }
-function setWashAt(n) { washAt = Number(n); setPref('dt_washat', washAt); render(); }
+function setOvBrand(i) { ovBrand = i < 0 ? '' : BRANDS[i]?.[0] || ''; render(); }
+function openViewer(i) {
+  const j = findJ(CUR.id); if (!j || !j.photos[i]) return;
+  photoIdx = i; const p = j.photos[i], n = j.wears.filter(x => x <= p.date).length;
+  document.getElementById('vimg').style.backgroundImage = `url('${photoSrc(j, p)}')`;
+  const cap = fmt(p.date) + ' · ' + plural(n, 'wear');
+  document.getElementById('vcap').textContent = cap;
+  document.getElementById('vimg').setAttribute('aria-label', `${j.brand} ${j.model}, ${cap}`);
+  document.getElementById('vnav').style.visibility = j.photos.length > 1 ? 'visible' : 'hidden';
+  document.getElementById('vprev').disabled = i === 0;
+  document.getElementById('vnext').disabled = i === j.photos.length - 1;
+  const v = document.getElementById('viewer'), wasOpen = v.classList.contains('open');
+  v.classList.add('open'); document.body.style.overflow = 'hidden';
+  if (!wasOpen) v.querySelector('.vbar button').focus({ preventScroll: true });
+}
+function closeViewer() { const wasOpen = photoIdx != null; photoIdx = null; document.getElementById('viewer').classList.remove('open'); document.body.style.overflow = ''; if (wasOpen) document.querySelector('.photos .add')?.focus({ preventScroll: true }); }
+function stepViewer(d) { const j = findJ(CUR.id); if (j && photoIdx != null) openViewer(Math.max(0, Math.min(j.photos.length - 1, photoIdx + d))); }
+async function viewerRemove() { const j = findJ(CUR.id); if (!j || photoIdx == null) return; const p = j.photos[photoIdx]; closeViewer(); await removePhoto(j.id, p.date); }
+(() => {
+  let x0 = null; const v = document.getElementById('viewer');
+  v.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+  v.addEventListener('touchend', e => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 50) stepViewer(dx < 0 ? 1 : -1); }, { passive: true });
+  document.addEventListener('keydown', e => { if (!v.classList.contains('open')) return; if (document.getElementById('modal').classList.contains('open')) return; if (e.key === 'Escape') closeViewer(); else if (e.key === 'ArrowLeft') stepViewer(-1); else if (e.key === 'ArrowRight') stepViewer(1); else trapTab(e, v); });
+})();
 
 function toggleToday(id, key) {
   const j = findJ(id); if (!j) return;
   const snap = clone(j), t = today(), had = j[key].includes(t);
   j[key] = had ? j[key].filter(d => d !== t) : [...j[key], t].sort();
-  if (!save()) { restore(snap); return; }
+  if (!save()) return rollback(snap);
   haptic(); render();
   toast(`${key === 'wears' ? 'Wear' : 'Wash'} ${had ? 'removed' : 'logged'} · ${j.model}`, () => restore(snap));
 }
@@ -463,7 +570,7 @@ function addLog(id, key) {
   if (d > today()) return toast("Can't log a future date");
   if (j[key].includes(d)) return toast('Date already logged');
   const snap = clone(j); j[key] = [...j[key], d].sort();
-  if (!save()) { restore(snap); return; }
+  if (!save()) return rollback(snap);
   haptic(); render();
   toast(`${key === 'wears' ? 'Wear' : 'Wash'} added · ${fmt(d)}`, () => restore(snap));
 }
@@ -472,13 +579,15 @@ async function removeLast(id, key) {
   if (!j[key].length) return toast('Nothing to remove');
   const last = j[key].at(-1);
   if (!await showConfirm(`Remove ${fmt(last)} from ${key === 'wears' ? 'wear' : 'wash'} log?`)) return;
-  const snap = clone(j); j[key] = j[key].filter(d => d !== last); save(); render();
-  toast('Removed', () => restore(snap));
+  const snap = clone(j); j[key] = j[key].filter(d => d !== last);
+  if (!save()) return rollback(snap);
+  render(); toast('Removed', () => restore(snap));
 }
 async function delJeans(id) {
   if (!await showConfirm('Delete this pair? This cannot be undone.')) return;
-  DB.jeans = DB.jeans.filter(x => x.id !== id); save(); toast('Deleted');
-  delete scrollPos.col; go(PREV);
+  const prev = DB.jeans; DB.jeans = DB.jeans.filter(x => x.id !== id);
+  if (!save()) { DB.jeans = prev; return; }
+  toast('Deleted'); delete scrollPos.col; go(PREV);
 }
 
 function genDates(count, from, to) {
@@ -501,19 +610,22 @@ async function saveForm() {
 
   if (FS.editId) {
     const j = findJ(FS.editId); if (!j) return go('col');
+    const snap = clone(j);
     const n = int('editSince');
     if (Number.isNaN(n) || (n !== null && n < 0)) return toast('Wears since wash must be 0 or more');
     if (n !== null) {
-      const lastWash = j.washes.at(-1) || null;
+      // Regenerated wears end yesterday, or today if today is already logged, so the count never adds a wear for today.
+      const lastWash = j.washes.at(-1) || null, end = j.wears.includes(t) ? t : shift(t, -1);
       const start = lastWash ? shift(lastWash, 1) : (date || j.purchaseDate || shift(t, -HISTORY_DAYS));
-      const avail = Math.max(0, between(start, t) + 1);
+      const avail = Math.max(0, between(start, end) + 1);
       let final = n;
       if (n > avail) { if (!await showConfirm(`Only ${avail} days available. The count will be capped at ${avail}. Continue?`)) return; final = avail; }
       const before = lastWash ? j.wears.filter(d => d <= lastWash) : [];
-      j.wears = [...new Set([...before, ...genDates(final, start, t)])].sort();
+      j.wears = [...new Set([...before, ...genDates(final, start, end)])].sort();
     }
     Object.assign(j, { brand, model, purchaseDate: date || '', price: price || null });
-    save(); toast('Saved'); return go('detail', j.id);
+    if (!save()) return rollback(snap);
+    toast('Saved'); return go('detail', j.id);
   }
   const nW = int('bfWears') ?? 0, nA = int('bfWashes') ?? 0, nS = int('bfSince') ?? 0;
   if ([nW, nA, nS].some(x => Number.isNaN(x) || x < 0)) return toast('Backfill numbers must be 0 or more');
@@ -527,7 +639,9 @@ async function saveForm() {
     wears = [...genDates(nW - nS, from, shift(lw, -1)), ...genDates(nS, shift(lw, 1), yest)];
   } else { washes = genDates(nA, from, t); wears = genDates(nW, from, yest); }
   const j = { id: uid(), brand, model, purchaseDate: date || '', price: price || null, wears: [...new Set(wears)].sort(), washes, photos: [] };
-  DB.jeans.push(j); save(); go('detail', j.id);
+  DB.jeans.push(j);
+  if (!save()) { DB.jeans.pop(); return; }
+  go('detail', j.id);
   const short = [];
   if (j.wears.length < nW) short.push(`${j.wears.length} of ${nW} wears`);
   if (washes.length < nA) short.push(`${washes.length} of ${nA} washes`);
@@ -535,14 +649,14 @@ async function saveForm() {
 }
 
 // ── Photos (stored in the pair, resized to keep storage small) ──
-function resizeImage(file, max = 640) {
+function resizeImage(file, max = 640, quality = 0.7) {
   return new Promise((res, rej) => {
     const url = URL.createObjectURL(file), img = new Image();
     img.onload = () => {
       const sc = Math.min(1, max / Math.max(img.width, img.height)), c = document.createElement('canvas');
       c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
       c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', 0.7));
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', quality));
     };
     img.onerror = () => { URL.revokeObjectURL(url); rej(); };
     img.src = url;
@@ -551,18 +665,22 @@ function resizeImage(file, max = 640) {
 async function handlePhoto(input) {
   const file = input.files[0]; input.value = '';
   const j = findJ(CUR.id); if (!file || !j) return;
-  if (!/^image\//.test(file.type)) return toast('Choose an image file');
-  let src; try { src = await resizeImage(file); } catch (e) { return toast('Could not read that image'); }
-  const snap = clone(j), d = today();
-  j.photos = [...j.photos.filter(p => p.date !== d), { date: d, src }].sort((a, b) => a.date.localeCompare(b.date));
-  if (!save()) { const i = DB.jeans.findIndex(x => x.id === j.id); DB.jeans[i] = snap; return toast('Storage full — photo not saved', null, 4000); }
-  photoIdx = null; render(); toast('Photo added');
+  if (!/^image\//.test(file.type) && !/\.(heic|heif|jpe?g|png|webp)$/i.test(file.name)) return toast('Choose an image file');
+  // With IndexedDB there is room for sharper photos; the localStorage fallback keeps them small.
+  let src; try { src = pdb ? await resizeImage(file, 1440, 0.82) : await resizeImage(file); } catch (e) { return toast('Could not read that image'); }
+  const snap = clone(j), d = today(), key = pkey(j.id, d);
+  let entry = { date: d, src };
+  if (pdb) { try { await putPhotos([[key, src]]); PHOTOS.set(key, src); entry = { date: d }; } catch (e) { /* fall back to inline */ } }
+  j.photos = [...j.photos.filter(p => p.date !== d), entry].sort((a, b) => a.date.localeCompare(b.date));
+  if (!save()) return rollback(snap);
+  render(); toast('Photo added');
 }
 async function removePhoto(id, date) {
   const j = findJ(id); if (!j) return;
   if (!await showConfirm(`Remove the photo from ${fmt(date)}?`)) return;
-  const snap = clone(j); j.photos = j.photos.filter(p => p.date !== date); photoIdx = null; save(); render();
-  toast('Photo removed', () => restore(snap));
+  const snap = clone(j); j.photos = j.photos.filter(p => p.date !== date);
+  if (!save()) return rollback(snap);
+  render(); toast('Photo removed', () => restore(snap));
 }
 
 // ── Export / Import ──
@@ -580,16 +698,19 @@ async function deliver(name, text, type) {
   } catch (e) { if (e && e.name === 'AbortError') return false; }
   download(name, text, type); return true;
 }
-function exportJSON() { deliver('denim-tracker-backup-' + today() + '.json', JSON.stringify(DB, null, 2), 'application/json').then(ok => ok && toast('JSON exported')); }
+// Backups always embed the images, so they restore on any device.
+function exportData() { return { ...DB, jeans: DB.jeans.map(j => ({ ...j, photos: j.photos.map(p => ({ date: p.date, src: photoSrc(j, p) })).filter(p => p.src) })) }; }
+function exportJSON() { deliver('denim-tracker-backup-' + today() + '.json', JSON.stringify(exportData(), null, 2), 'application/json').then(ok => ok && toast('JSON exported')); }
 function exportCSV() {
-  const q = v => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  // Quote per RFC 4180; prefix formula-like cells so spreadsheets don't execute them.
+  const q = v => { let s = v == null ? '' : String(v); if (/^[=+\-@\t\r]/.test(s) && !/^-?\d/.test(s)) s = "'" + s; return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
   const rows = [['brand', 'model', 'purchase_date', 'price', 'currency', 'event', 'date']];
   DB.jeans.forEach(j => {
     const ev = [...j.wears.map(d => ['wear', d]), ...j.washes.map(d => ['wash', d])].sort((a, b) => a[1].localeCompare(b[1]));
     if (!ev.length) rows.push([j.brand, j.model, j.purchaseDate, j.price, currency, '', '']);
     ev.forEach(([e, d]) => rows.push([j.brand, j.model, j.purchaseDate, j.price, currency, e, d]));
   });
-  deliver('denim-tracker-' + today() + '.csv', rows.map(r => r.map(q).join(',')).join('\n'), 'text/csv').then(ok => ok && toast('CSV exported'));
+  deliver('denim-tracker-' + today() + '.csv', '\ufeff' + rows.map(r => r.map(q).join(',')).join('\r\n'), 'text/csv').then(ok => ok && toast('CSV exported'));
 }
 function handleImport(input) {
   const file = input.files[0]; input.value = ''; if (!file) return;
@@ -602,6 +723,8 @@ function handleImport(input) {
     const seen = new Set(); jeans.forEach(j => { if (seen.has(j.id)) j.id = uid(); seen.add(j.id); });
     if (DB.jeans.length && !await showConfirm(`Replace your ${plural(DB.jeans.length, 'pair')} with ${plural(jeans.length, 'pair')} from this backup?`)) return;
     const prev = DB; DB = { ...(Array.isArray(data) ? {} : data), jeans };
+    // Move images into IndexedDB first, so a photo-heavy backup doesn't overflow localStorage on save.
+    if (pdb) { try { await migratePhotos(false); } catch (e) { /* keep inline; save below decides */ } }
     if (!save()) { DB = prev; return; }
     toast('Backup restored'); delete scrollPos.col; go('col');
   }, () => toast('Could not read file'));
@@ -610,12 +733,22 @@ function handleImport(input) {
 if ('serviceWorker' in navigator) {
   // Reload once when a new version takes over, so the update shows without a second launch.
   const hadController = !!navigator.serviceWorker.controller; let reloaded = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController && !reloaded) { reloaded = true; location.reload(); } });
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
+  const reloadWhenSafe = () => { if (reloaded) return; if (CUR.view === 'form') return setTimeout(reloadWhenSafe, 2000); reloaded = true; location.reload(); };
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController) reloadWhenSafe(); });
+  navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => {
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); });
+  }).catch(() => {});
 }
 
-load();
-go('col');
+async function init() {
+  load(); go('col');
+  try { pdb = await openPDB(); await loadAllPhotos(); } catch (e) { pdb = null; return; }
+  // Migration failures leave photos inline (still visible); the store stays usable.
+  try { await migratePhotos(); gcPhotos(); } catch (e) {}
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+  render();
+}
+init();
 </script>
 </body>
 </html>

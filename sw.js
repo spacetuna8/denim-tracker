@@ -1,9 +1,9 @@
 // Bump CACHE whenever you deploy so iPhones drop the old app shell.
 // Clearing caches never touches localStorage, so your denim data is safe.
-const CACHE = 'denim-v3';
+const CACHE = 'denim-v23';
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './index.html'])));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './index.html', './apple-touch-icon.png'])));
   self.skipWaiting();
 });
 
@@ -19,11 +19,11 @@ self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
 
-  // App page: network first so updates arrive, cached copy when offline.
+  // App page: network first (revalidating past GitHub Pages' 10-min HTTP cache) so updates arrive; cached copy when offline.
   if (req.mode === 'navigate') {
     e.respondWith(
-      fetch(req)
-        .then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put('./index.html', copy)); return res; })
+      fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' })
+        .then(res => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put('./index.html', copy)); } return res; })
         .catch(() => caches.match('./index.html'))
     );
     return;
