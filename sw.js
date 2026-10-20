@@ -1,6 +1,6 @@
 // Bump CACHE whenever you deploy so iPhones drop the old app shell.
 // Clearing caches never touches localStorage, so your denim data is safe.
-const CACHE = 'denim-v29';
+const CACHE = 'denim-v33';
 
 self.addEventListener('install', e => {
   // The app page is required; icons/manifest are optional so a missing file can't block updates.

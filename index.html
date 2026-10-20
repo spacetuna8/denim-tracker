@@ -26,7 +26,7 @@
 .ph-fill{font-family:"Phosphor-Fill"!important;font-style:normal;font-weight:normal;line-height:1;-webkit-font-smoothing:antialiased;display:inline-block}
 .ph-fill.ph-stack:before{content:"\e466"}.ph-fill.ph-chart-bar:before{content:"\e150"}.ph-fill.ph-trash:before{content:"\e4a6"}.ph-fill.ph-caret-left:before{content:"\e138"}.ph-fill.ph-caret-right:before{content:"\e13a"}.ph-fill.ph-check-circle:before{content:"\e184"}.ph-fill.ph-check:before{content:"\e182"}.ph-fill.ph-drop:before{content:"\e210"}.ph-fill.ph-plus:before{content:"\e3d4"}.ph-fill.ph-coat-hanger:before{content:"\e7fe"}.ph-fill.ph-camera:before{content:"\e10e"}.ph-fill.ph-pencil-simple:before{content:"\e3b4"}.ph-fill.ph-caret-down:before{content:"\e136"}.ph-fill.ph-download-simple:before{content:"\e20c"}.ph-fill.ph-table:before{content:"\e476"}.ph-fill.ph-upload-simple:before{content:"\e4c0"}
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#1b2a4a;--card:#15213b;--nav:#121c33;--ink:#efe6d2;--muted:#cfc6b2;--sub:#b3ab99;--copper:#d9a441;--red:#c8372d;--line:rgba(239,230,210,.14);--fill:rgba(239,230,210,.1);--edge-lo:rgba(239,230,210,.22);--edge:rgba(239,230,210,.35);--edge-hi:rgba(239,230,210,.6);--amber:#ecc36f;--on-amber:#1a1f2e;--copper-edge:rgba(217,164,65,.6);--copper-fill:rgba(217,164,65,.2);--danger-ink:#f0a59c;--nav-ink:#a39b8a;--placeholder:#9a9382;--press:#d9cdb2;--t-xs:calc(11rem / 17);--t-sm:calc(12rem / 17);--t-md:calc(14rem / 17);--t-lg:calc(16rem / 17);--t-xl:min(calc(20rem / 17), 28px);--t-2xl:min(calc(26rem / 17), 34px);--t-3xl:min(calc(36rem / 17), 44px);--t-4xl:min(calc(46rem / 17), 54px);--grid:rgba(239,230,210,.42);--s-2xs:2px;--s-xs:4px;--s-sm:8px;--s-md:12px;--s-lg:16px;--s-xl:20px;--s-2xl:24px;--s-3xl:32px;--s-4xl:48px;--r-sm:3px;--r:4px;--r-lg:6px;--on-red:#fff;--scrim:rgba(8,12,24,.7);--scrim-hi:rgba(6,9,18,.96);--press-fill:rgba(239,230,210,.06);--weave:rgba(255,255,255,.025);--shadow:0 8px 20px rgba(0,0,0,.35);--mono:'JetBrains Mono',ui-monospace,Menlo,monospace;--cond:'Barlow Condensed','Arial Narrow',sans-serif}
+:root{--bg:#1b2a4a;--card:#15213b;--nav:#121c33;--ink:#efe6d2;--muted:#cfc6b2;--sub:#b3ab99;--copper:#d9a441;--red:#c8372d;--line:rgba(239,230,210,.14);--fill:rgba(239,230,210,.1);--edge-lo:rgba(239,230,210,.22);--edge:rgba(239,230,210,.35);--edge-hi:rgba(239,230,210,.6);--amber:#ecc36f;--on-amber:#1a1f2e;--copper-edge:rgba(217,164,65,.6);--copper-fill:rgba(217,164,65,.2);--danger-ink:#f0a59c;--nav-ink:#a39b8a;--placeholder:#9a9382;--press:#d9cdb2;--t-xs:calc(11rem / 17);--t-sm:calc(12rem / 17);--t-md:calc(14rem / 17);--t-lg:calc(16rem / 17);--t-xl:min(calc(20rem / 17), 28px);--t-2xl:min(calc(26rem / 17), 34px);--t-3xl:min(calc(36rem / 17), 44px);--t-4xl:min(calc(46rem / 17), 54px);--grid:rgba(239,230,210,.42);--s-2xs:2px;--s-xs:4px;--s-sm:8px;--s-md:12px;--s-lg:16px;--s-xl:20px;--s-2xl:24px;--s-3xl:32px;--s-4xl:48px;--r-sm:3px;--r:4px;--r-lg:6px;--on-red:#fff;--scrim:rgba(8,12,24,.7);--scrim-hi:rgba(6,9,18,.96);--press-fill:rgba(239,230,210,.06);--weave:rgba(255,255,255,.025);--shadow:0 8px 20px rgba(0,0,0,.35);--mono:'JetBrains Mono',ui-monospace,Menlo,monospace;--cond:'Barlow Condensed','Arial Narrow',sans-serif;--p1:#d9a441;--p2:#93c6a0;--p3:#82bfdc;--p4:#e597b8;--p5:#efe6d2;--p6:#e88f62;--p7:#a9a6e0;--p-other:rgba(239,230,210,.45);--p-hatch:repeating-linear-gradient(135deg,rgba(239,230,210,.55) 0 2px,rgba(239,230,210,.2) 2px 4px);--cal-empty:rgba(239,230,210,.06);--cal-dim:rgba(239,230,210,.14);--cal-future:rgba(239,230,210,.1);--dis:rgba(239,230,210,.3)}
 html{background:var(--bg);font-size:17px}
 /* iPhone: follow Settings → Display → Text Size. 17px is the default size, so the default look is unchanged. */
 @supports (font:-apple-system-body) and (-webkit-touch-callout:none){html{font:-apple-system-body}}
@@ -160,6 +160,47 @@ input[type=date]::-webkit-date-and-time-value{text-align:left}
 .fields{display:flex;flex-direction:column;gap:var(--s-lg)}
 .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-sm)}
 .grid3 .field{color:var(--muted);letter-spacing:.06em}
+/* Calendar (Ledger › Calendar) */
+.ctabs{display:flex;gap:var(--s-2xl);margin:0 0 var(--s-xl);border-bottom:1px solid var(--line)}
+.ctabs button{min-height:44px;font-family:var(--cond);font-size:var(--t-lg);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--nav-ink)}
+.ctabs button.on{color:var(--ink);box-shadow:inset 0 -2px 0 var(--copper)}
+.calnav{display:flex;align-items:center;justify-content:space-between;gap:var(--s-md)}
+.calnav .ct{text-align:center;min-width:0}
+.calnav h2{font-family:var(--cond);font-size:var(--t-2xl);font-weight:700;text-transform:uppercase;line-height:1}
+.calnav .ct div{font-size:var(--t-xs);color:var(--muted);margin-top:var(--s-xs);letter-spacing:.06em}
+.iconbtn:disabled{opacity:.3;cursor:default}
+.mgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:var(--s-xs)}
+.mgrid.dows{margin:var(--s-xl) 0 var(--s-sm);font-size:var(--t-xs);color:var(--sub);text-align:center}
+.mday{position:relative;min-height:46px;border-radius:var(--r-sm);padding:var(--s-xs) 5px;display:flex;align-items:flex-start;font-size:var(--t-xs);color:var(--sub)}
+.mday.worn{color:var(--on-amber)}
+.mday:disabled{color:var(--dis);cursor:default}
+.mday.sel{outline:2px solid var(--ink);outline-offset:2px}
+.mday.today::after{content:'';position:absolute;top:5px;right:5px;width:5px;height:5px;border-radius:1px;background:var(--copper)}
+.mday.worn.today::after{background:var(--on-amber)}
+.dpanel{margin-top:var(--s-xl);background:var(--card);border-radius:var(--r-lg);padding:var(--s-lg);display:flex;flex-direction:column;gap:var(--s-sm)}
+.dpanel .l{font-size:var(--t-xs);letter-spacing:.12em;text-transform:uppercase;color:var(--copper)}
+.dpair{display:flex;align-items:center;gap:var(--s-md);min-height:48px;width:100%;text-align:left;border-radius:var(--r-sm)}
+.dpair .grow>span{display:block}.dpair .model{font-size:var(--t-xl)}
+.dpair .c{color:var(--sub);font-size:var(--t-lg)}
+.csw{width:12px;height:12px;border-radius:2px;flex:none}
+.dwash{display:flex;align-items:center;gap:var(--s-md);font-size:var(--t-sm);color:var(--danger-ink)}
+.dwash i{color:var(--red);width:12px}
+.cleg{display:flex;align-items:center;gap:var(--s-md);min-height:44px;width:100%;border-bottom:1px solid var(--line);font-size:var(--t-sm);text-align:left}
+.cleg .nm{flex:1;min-width:0;overflow-wrap:anywhere}
+.cleg .nm span{color:var(--muted)}
+.cleg .pc{color:var(--muted)}
+.cleg b{font-family:var(--cond);font-size:var(--t-xl);font-weight:700;min-width:2ch;text-align:right}
+.cleg.dim{opacity:.45}
+.cleg .c{color:var(--sub);font-size:var(--t-lg)}
+.yrows{display:flex;flex-direction:column;gap:var(--s-xs);margin-top:var(--s-lg)}
+.yrow{display:flex;align-items:center;gap:6px;width:100%;min-height:32px}
+.yrow>.ml{width:28px;flex:none;text-align:left;font-size:min(var(--t-xs),11px);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.yrow:disabled{cursor:default}.yrow:disabled>.ml{color:var(--dis)}
+.yrow>.yc{flex:1;display:flex;gap:2px}
+.yrow i{flex:1;min-width:0;height:24px;border-radius:1px}
+.share{display:flex;gap:2px;height:14px;border-radius:2px;overflow:hidden}
+.more{min-height:44px;font-size:var(--t-sm);color:var(--copper);text-align:left}
+.calnote{font-size:var(--t-sm);color:var(--sub);margin-top:var(--s-lg)}
 nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--nav);display:flex;padding:var(--s-sm) var(--s-4xl) env(safe-area-inset-bottom);z-index:10}
 nav button{flex:1;min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s-2xs);font-family:var(--cond);font-size:var(--t-md);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--nav-ink)}
 nav button.active{color:var(--ink)}
@@ -216,6 +257,9 @@ const DAY = 86400000, HISTORY_DAYS = 365, HAPTIC_MS = 30;
 let DB = { jeans: [] }, CUR = { view: 'col', id: null }, PREV = 'col', FS = { editId: null };
 const currency = 'CHF';
 let sortMode = 'alpha', ovSort = 'alpha', ovBrand = '', BRANDS = [], photoIdx = null, viewerOpener = null;
+// Ledger › Calendar: calOff is months from the current month (≤ 0).
+let FOCUS_NEXT = null;
+let ovTab = 'pairs', calView = 'month', calOff = 0, calSel = null, calYear = new Date().getFullYear(), calFocus = null, calAll = false;
 let S = {}, scrollPos = {}, lastKey = null, UNDO = null, toastT = null, LOAD_OK = false;
 
 // ── Dates ──
@@ -271,6 +315,8 @@ function load() {
   const seen = new Set(); DB.jeans.forEach(j => { if (seen.has(j.id)) j.id = uid(); seen.add(j.id); });
   try {
     const s = localStorage.getItem('dt_sort'); if (['alpha', 'mostworn', 'lastworn'].includes(s)) sortMode = s;
+    const o = localStorage.getItem('dt_ovtab'); if (['pairs', 'cal'].includes(o)) ovTab = o;
+    const v = localStorage.getItem('dt_calview'); if (['month', 'year'].includes(v)) calView = v;
   } catch (e) {}
 }
 function save() {
@@ -408,7 +454,7 @@ function trapTab(e, root) {
   if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
   else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
 }
-const seg = (label, opts, cur, fn) => `<div class="seg" role="group" aria-label="${label}">${opts.map(([v, l]) => `<button class="${cur === v ? 'on' : ''}" aria-pressed="${cur === v}" onclick="${fn}('${v}')">${l}</button>`).join('')}</div>`;
+const seg = (label, opts, cur, fn) => `<div class="seg" role="group" aria-label="${label}">${opts.map(([v, l]) => `<button data-f="seg-${fn}-${v}" class="${cur === v ? 'on' : ''}" aria-pressed="${cur === v}" onclick="${fn}('${v}')">${l}</button>`).join('')}</div>`;
 const findJ = id => DB.jeans.find(x => x.id === id);
 function restore(snapshot) { const i = DB.jeans.findIndex(x => x.id === snapshot.id); const prev = DB.jeans.slice(); if (i >= 0) DB.jeans[i] = snapshot; else DB.jeans.push(snapshot); if (!save()) { DB.jeans = prev; return render(); } toast('Undone'); render(); }
 // After a failed save: storage still holds the previous state, so only revert memory.
@@ -439,7 +485,10 @@ function render() {
   if (lastKey !== null) scrollPos[lastKey] = window.scrollY;
   S = {}; DB.jeans.forEach(j => { S[j.id] = stats(j); });
   const c = document.getElementById('content');
+  // Re-rendering replaces the controls; put focus back on the same control (by data-f) so keyboard and VoiceOver users keep their place.
+  const fk = FOCUS_NEXT || document.activeElement?.dataset?.f; FOCUS_NEXT = null;
   c.innerHTML = CUR.view === 'ov' ? renderLedger() : CUR.view === 'detail' ? renderDetail() : CUR.view === 'form' ? renderForm() : renderRack();
+  if (fk) { const q = k => c.querySelector('[data-f="' + CSS.escape(k) + '"]'), el = q(fk), tgt = el && !el.disabled ? el : el?.dataset.fb ? q(el.dataset.fb) : null; tgt?.focus({ preventScroll: true }); }
   const y = lastKey === key ? scrollPos[key] || 0 : CUR.view === 'detail' || CUR.view === 'form' ? 0 : scrollPos[key] || 0;
   requestAnimationFrame(() => window.scrollTo(0, y));
   lastKey = key;
@@ -526,15 +575,17 @@ function renderLedger() {
   BRANDS = [...bmap.entries()].sort((a, b) => a[1].localeCompare(b[1]));
   if (ovBrand && !bmap.has(ovBrand)) ovBrand = '';
   const js = ovBrand ? DB.jeans.filter(j => bkey(j.brand) === ovBrand) : DB.jeans, totalW = js.reduce((a, j) => a + j.wears.length, 0), spent = js.reduce((a, j) => a + (j.price || 0), 0);
-  const brandSelect = BRANDS.length ? `<label class="bsel"><span>Brand</span><select aria-label="Filter by brand" onchange="setOvBrand(Number(this.value))"><option value="-1" ${ovBrand ? '' : 'selected'}>All brands</option>${BRANDS.map(([k, name], i) => `<option value="${i}" ${ovBrand === k ? 'selected' : ''}>${esc(name)}</option>`).join('')}</select><i class="ph ph-caret-down" aria-hidden="true"></i></label>` : '';
+  const brandSelect = BRANDS.length ? `<label class="bsel"><span>Brand</span><select data-f="brand" aria-label="Filter by brand" onchange="setOvBrand(Number(this.value))"><option value="-1" ${ovBrand ? '' : 'selected'}>All brands</option>${BRANDS.map(([k, name], i) => `<option value="${i}" ${ovBrand === k ? 'selected' : ''}>${esc(name)}</option>`).join('')}</select><i class="ph ph-caret-down" aria-hidden="true"></i></label>` : '';
   const spentTxt = spent ? num(spent) : '—';
   const list = [...js];
   if (ovSort === 'mostworn') list.sort((a, b) => b.wears.length - a.wears.length || byName(a, b));
   else if (ovSort === 'mostwashed') list.sort((a, b) => b.washes.length - a.washes.length || byName(a, b));
   else if (ovSort === 'since') list.sort((a, b) => S[b.id].since - S[a.id].since || byName(a, b));
   else list.sort(byName);
-  return `<h1 class="h1" tabindex="-1" style="margin-bottom:var(--s-xl)">Ledger</h1>
-    ${brandSelect}
+  const head = `<h1 class="h1" tabindex="-1" style="margin-bottom:var(--s-xl)">Ledger</h1>
+    ${brandSelect}${DB.jeans.length ? `<div style="margin-bottom:var(--s-lg)">${seg('Ledger view', [['pairs', 'Pairs'], ['cal', 'Calendar']], ovTab, 'setOvTab')}</div>` : ''}`;
+  if (ovTab === 'cal' && js.length) return head + renderCal(js);
+  return head + `
     <div class="tiles" style="margin-bottom:var(--s-2xl)">
       <div class="tile"><div class="v">${totalW}</div><div class="l">Wears</div></div>
       <div class="tile"><div class="v fit ${spentTxt.length > 8 ? 'xs' : spentTxt.length > 5 ? 'sm' : ''}">${spentTxt}</div><div class="l">Spent · ${currency}</div></div>
@@ -554,6 +605,95 @@ function renderLedger() {
       <button onclick="exportCSV()"><i class="ph ph-table i" aria-hidden="true"></i>Export CSV<i class="ph ph-caret-right c" aria-hidden="true"></i></button>
       <button onclick="document.getElementById('importInput').click()"><i class="ph ph-upload-simple i" aria-hidden="true"></i>Import JSON<i class="ph ph-caret-right c" aria-hidden="true"></i></button>
     </div>`;
+}
+
+// ── Calendar (Ledger › Calendar) ──
+// Pairs are ranked by total wears; the top 7 get a fixed colour used in every tab, the rest are hatched (large cells) or grey (small cells).
+const PAL = 7, mIdx = s => +s.slice(0, 4) * 12 + +s.slice(5, 7) - 1;
+const ringOf = parts => parts.filter(Boolean).join(',') || 'none';
+function calNav(title, sub, prevDis, nextDis, fn, unit) {
+  return `<div class="calnav">
+    <button class="iconbtn" data-f="${fn}-p" data-fb="${fn}-n" aria-label="Previous ${unit}" ${prevDis ? 'disabled' : ''} onclick="${fn}(-1)"><i class="ph ph-caret-left" aria-hidden="true"></i></button>
+    <div class="ct"><h2>${title}</h2><div>${sub}</div></div>
+    <button class="iconbtn" data-f="${fn}-n" data-fb="${fn}-p" aria-label="Next ${unit}" ${nextDis ? 'disabled' : ''} onclick="${fn}(1)"><i class="ph ph-caret-right" aria-hidden="true"></i></button></div>`;
+}
+function renderCal(js) {
+  const t = today(), now = new Date(), curY = now.getFullYear(), curIdx = curY * 12 + now.getMonth();
+  const order = [...js].sort((a, b) => b.wears.length - a.wears.length || byName(a, b));
+  const RK = new Map([...DB.jeans].sort((a, b) => b.wears.length - a.wears.length || byName(a, b)).map((j, k) => [j.id, k]));
+  const big = j => RK.get(j.id) < PAL ? `var(--p${RK.get(j.id) + 1})` : 'var(--p-hatch)';
+  const flat = j => RK.get(j.id) < PAL ? `var(--p${RK.get(j.id) + 1})` : 'var(--p-other)';
+  const days = new Map(); let first = t;
+  const at = d => { let e = days.get(d); if (!e) days.set(d, e = { w: [], a: [] }); if (d < first) first = d; return e; };
+  order.forEach(j => { j.wears.forEach(d => at(d).w.push(j)); j.washes.forEach(d => at(d).a.push(j)); });
+  const E = d => days.get(d), name = j => `${esc(j.brand)} <span>${esc(j.model)}</span>`;
+  const tabs = `<div class="ctabs" role="tablist" aria-label="Calendar view">${[['month', 'Month'], ['year', 'Year']].map(([v, l]) => `<button role="tab" data-f="tab-${v}" aria-selected="${calView === v}" class="${calView === v ? 'on' : ''}" onclick="setCalView('${v}')">${l}</button>`).join('')}</div>`;
+
+  if (calView === 'year') {
+    const firstY = +first.slice(0, 4);
+    calYear = Math.min(curY, Math.max(firstY, calYear));
+    const Y = calYear, yc = new Map(); let yW = 0, yDays = 0;
+    days.forEach((e, d) => { if (+d.slice(0, 4) !== Y || d > t) return; if (e.w.length) yDays++; e.w.forEach(j => { yc.set(j.id, (yc.get(j.id) || 0) + 1); yW++; }); });
+    if (calFocus && !yc.has(calFocus)) calFocus = null;
+    const hi = id => RK.get(id) < PAL ? `var(--p${RK.get(id) + 1})` : 'var(--ink)';
+    const rows = Array.from({ length: 12 }, (_, m) => {
+      const dim = new Date(Y, m + 1, 0).getDate(), past = Y < curY || m <= now.getMonth(), mn = new Date(Y, m, 1, 12).toLocaleDateString('en', { month: 'long' });
+      let worn = 0, cells = '';
+      for (let i = 1; i <= 31; i++) {
+        const d = iso(new Date(Y, m, i, 12)), e = E(d);
+        if (i > dim) { cells += '<i></i>'; continue; }
+        if (d > t) { cells += '<i style="box-shadow:inset 0 0 0 1px var(--cal-future)"></i>'; continue; }
+        if (e?.w.length) worn++;
+        const bg = !e?.w.length ? 'var(--cal-empty)' : calFocus ? (e.w.some(j => j.id === calFocus) ? hi(calFocus) : 'var(--cal-dim)') : flat(e.w[0]);
+        const wash = e?.a.length && (!calFocus || e.a.some(j => j.id === calFocus));
+        cells += `<i style="background:${bg}${wash ? ';box-shadow:inset 0 -3px 0 var(--red)' : ''}"></i>`;
+      }
+      return `<button class="yrow" ${past ? `onclick="calJump(${Y},${m})" aria-label="${mn}: ${plural(worn, 'day')} worn. Open month"` : `disabled aria-label="${mn}: not yet"`}><span class="ml" aria-hidden="true">${mn.slice(0, 3)}</span><span class="yc" aria-hidden="true">${cells}</span></button>`;
+    }).join('');
+    const yl = order.filter(j => yc.get(j.id)).sort((a, b) => yc.get(b.id) - yc.get(a.id) || byName(a, b));
+    const op = id => !calFocus || calFocus === id ? 1 : .2;
+    const colored = yl.filter(j => RK.get(j.id) < PAL), others = yl.filter(j => RK.get(j.id) >= PAL), otherN = others.reduce((a, j) => a + yc.get(j.id), 0);
+    const share = colored.map(j => `<i style="width:${(yc.get(j.id) / yW * 100).toFixed(1)}%;background:${flat(j)};opacity:${op(j.id)}"></i>`).join('')
+      + (otherN ? `<i style="width:${(otherN / yW * 100).toFixed(1)}%;background:var(--p-other);opacity:${!calFocus || others.some(j => j.id === calFocus) ? 1 : .2}"></i>` : '');
+    const shown = calAll ? yl : yl.slice(0, PAL), unworn = js.length - yl.length;
+    return tabs + calNav(String(Y), `${plural(yDays, 'day')} worn · ${plural(yW, 'wear')}`, Y <= firstY, Y >= curY, 'calYearStep', 'year')
+      + `<div class="yrows">${rows}</div>`
+      + (yl.length ? `<h2 class="sec mt"><span class="l">Share of wears</span><span class="r">${calFocus ? 'Tap again to clear' : 'Tap a pair to filter'}</span></h2>
+      <div class="share" aria-hidden="true">${share}</div>
+      <div style="margin-top:var(--s-sm)">${shown.map(j => `<button data-f="f-${j.id}" class="cleg ${calFocus && calFocus !== j.id ? 'dim' : ''}" aria-pressed="${calFocus === j.id}" onclick="setCalFocus('${j.id}')"><span class="csw" style="background:${flat(j)}"></span><span class="nm">${name(j)}</span><span class="pc">${Math.round(yc.get(j.id) / yW * 100)}%</span><b>${yc.get(j.id)}</b></button>`).join('')}</div>
+      ${yl.length > PAL ? `<button class="more" data-f="more" onclick="toggleCalAll()">${calAll ? 'Show top ' + PAL : `Show all ${yl.length} pairs · ${yl.length - PAL} more`}</button>` : ''}` : '<p class="calnote">No wears logged this year.</p>')
+      + (unworn && yl.length ? `<p class="calnote" style="margin-top:var(--s-xs)">${plural(unworn, 'pair')} not worn this year</p>` : '');
+  }
+
+  calOff = Math.min(0, Math.max(mIdx(first) - curIdx, calOff));
+  const f = new Date(curY, now.getMonth() + calOff, 1, 12), Y = f.getFullYear(), M = f.getMonth(), mName = f.toLocaleDateString('en', { month: 'long' });
+  const list = []; for (let i = 1, dim = new Date(Y, M + 1, 0).getDate(); i <= dim; i++) list.push(iso(new Date(Y, M, i, 12)));
+  const past = list.filter(d => d <= t), wornDays = past.filter(d => E(d)?.w.length).length, washN = past.reduce((a, d) => a + (E(d)?.a.length || 0), 0);
+  const cnt = new Map(), washed = new Set();
+  past.forEach(d => { const e = E(d); if (!e) return; e.w.forEach(j => cnt.set(j.id, (cnt.get(j.id) || 0) + 1)); e.a.forEach(j => washed.add(j.id)); });
+  const nav = calNav(`${mName} ${Y}`, `${wornDays} of ${plural(past.length, 'day')} worn · ${washN} ${word(washN, 'wash', 'washes')}`, calOff <= mIdx(first) - curIdx, calOff >= 0, 'calMonth', 'month');
+  const worn = order.filter(j => cnt.get(j.id)).sort((a, b) => cnt.get(b.id) - cnt.get(a.id) || byName(a, b));
+
+  const sel = calSel && calSel.slice(0, 7) === list[0].slice(0, 7) ? calSel : calOff === 0 ? t : null;
+  const lead = (f.getDay() + 6) % 7;
+  const grid = '<div aria-hidden="true"></div>'.repeat(lead) + list.map((d, i) => {
+    const e = E(d), fut = d > t, on = !!e?.w.length && !fut;
+    const bg = !on ? 'transparent' : e.w.length === 1 ? big(e.w[0]) : `linear-gradient(135deg,${flat(e.w[0])} 0 50%,${flat(e.w[1])} 50% 100%)`;
+    const ring = ringOf([e?.a.length && 'inset 0 -4px 0 var(--red)', !on && !fut && 'inset 0 0 0 1px var(--grid)']);
+    const label = `${i + 1} ${mName}: ${on ? e.w.map(j => j.brand + ' ' + j.model).join(' and ') : fut ? 'upcoming' : 'nothing worn'}${e?.a.length ? ', washed' : ''}`;
+    return `<button data-f="d-${d}" class="mday${on ? ' worn' : ''}${d === t ? ' today' : ''}${d === sel ? ' sel' : ''}" style="background:${bg};box-shadow:${ring}" aria-label="${esc(label)}" ${fut ? 'disabled' : `aria-pressed="${d === sel}" onclick="setCalSel('${d}')"`}>${i + 1}</button>`;
+  }).join('');
+  const se = sel && E(sel);
+  const panel = !sel ? '<p class="help" style="margin:0">Tap a day to see what was worn.</p>'
+    : `<div class="l">${noon(sel).toLocaleDateString('en', { weekday: 'long', day: 'numeric', month: 'short' })}</div>
+      ${se?.w.length ? se.w.map(j => `<button class="dpair" aria-label="Open ${esc(j.brand + ' ' + j.model)}" onclick="go('detail','${j.id}')"><span class="csw" style="background:${big(j)}"></span><span class="grow"><span class="brand">${esc(j.brand)}</span><span class="model">${esc(j.model)}</span></span><i class="ph ph-caret-right c" aria-hidden="true"></i></button>`).join('') : '<p class="help" style="margin:0">Nothing worn this day.</p>'}
+      ${(se?.a || []).map(j => `<div class="dwash"><i class="ph-fill ph-drop" aria-hidden="true"></i>Washed · ${esc(j.model)}</div>`).join('')}`;
+  return tabs + nav
+    + `<div class="mgrid dows" aria-hidden="true">${['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(d => `<span>${d}</span>`).join('')}</div>
+    <div class="mgrid">${grid}</div>
+    <div class="dpanel" aria-live="polite">${panel}</div>
+    <h2 class="sec mt"><span class="l">This month</span><span class="r">Wears</span></h2>`
+    + (worn.length ? worn.map(j => `<button class="cleg" data-f="m-${j.id}" aria-label="Open ${esc(j.brand + ' ' + j.model)}, ${plural(cnt.get(j.id), 'wear')} this month" onclick="go('detail','${j.id}')"><span class="csw" style="background:${big(j)}"></span><span class="nm">${name(j)}</span><b>${cnt.get(j.id)}</b><i class="ph ph-caret-right c" aria-hidden="true"></i></button>`).join('') : '<p class="help">No wears logged this month.</p>');
 }
 
 function renderForm() {
@@ -590,6 +730,16 @@ function renderForm() {
 function setSort(m) { sortMode = m; setPref('dt_sort', m); render(); }
 function setOvSort(m) { ovSort = m; render(); }
 function setOvBrand(i) { ovBrand = i < 0 ? '' : BRANDS[i]?.[0] || ''; render(); }
+// Switching Pairs/Calendar starts at the top instead of keeping the other tab's scroll position.
+function setOvTab(v) { ovTab = v; setPref('dt_ovtab', v); scrollPos.ov = 0; lastKey = null; render(); }
+function setCalView(v) { calView = v; setPref('dt_calview', v); render(); }
+// Month and Year follow each other: stepping one moves the other to the same period.
+function calMonth(d) { const n = new Date(); calOff = Math.min(0, calOff + d); calYear = new Date(n.getFullYear(), n.getMonth() + calOff, 1).getFullYear(); calSel = null; render(); }
+function calYearStep(d) { calYear += d; calOff = Math.min(0, calOff + 12 * d); calSel = null; render(); }
+function calJump(y, m) { const n = new Date(); calOff = y * 12 + m - (n.getFullYear() * 12 + n.getMonth()); calYear = y; calSel = null; calView = 'month'; setPref('dt_calview', 'month'); FOCUS_NEXT = 'tab-month'; render(); }
+function setCalSel(d) { calSel = d; render(); }
+function setCalFocus(id) { calFocus = calFocus === id ? null : id; render(); }
+function toggleCalAll() { calAll = !calAll; render(); }
 function openViewer(i) {
   const j = findJ(CUR.id); if (!j || !j.photos[i]) return;
   if (photoIdx !== i) resetZoom();
