@@ -777,7 +777,8 @@ function renderForm() {
 // ── Actions ──
 function setSort(m) { sortMode = m; setPref('dt_sort', m); render(); }
 function setOvSort(m) { ovSort = m; render(); }
-function setOvBrand(i) { ovBrand = i < 0 ? '' : BRANDS[i]?.[0] || ''; render(); }
+// iOS reopens a <select> picker when it gets focus, so drop focus before the re-render instead of restoring it.
+function setOvBrand(i) { ovBrand = i < 0 ? '' : BRANDS[i]?.[0] || ''; document.activeElement?.blur(); render(); }
 // Switching Pairs/Calendar starts at the top instead of keeping the other tab's scroll position.
 function setOvTab(v) { ovTab = v; setPref('dt_ovtab', v); scrollPos.ov = 0; lastKey = null; render(); }
 function setCalView(v) { calView = v; setPref('dt_calview', v); render(); }
