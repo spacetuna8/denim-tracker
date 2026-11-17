@@ -255,6 +255,10 @@ document.addEventListener('touchstart', () => {}, { passive: true });
 // Same storage key and {jeans:[…]} shape as the previous app, so existing data loads as-is.
 const LS_KEY = 'denim_tracker_v1';
 const LS_BACKUP = 'denim_tracker_v1_backup_pre_selvedge';
+// N2: marks that the one-time copy above was written, so it is never refilled with newer data.
+const LS_BACKUP_DONE = LS_BACKUP + '_written';
+// K10: exact copy of the stored data from just before the last import replaced it.
+const LS_BEFORE_IMPORT = 'denim_tracker_v1_before_import';
 const ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
 const ID_RE = /^[A-Za-z0-9_.-]{1,64}$/;
 const IMG_RE = /^data:image\/[a-z0-9.+-]+(?:;[a-z0-9=.-]+)*;base64,[A-Za-z0-9+/]+=*$/i;
@@ -268,11 +272,8 @@ let sortMode = 'alpha', ovSort = 'alpha', ovBrand = '', BRANDS = [], photoIdx = 
 let FOCUS_NEXT = null;
 let ovTab = 'pairs', calView = 'month', calOff = 0, calSel = null, calYear = new Date().getFullYear(), calFocus = null, calAll = false;
 let S = {}, scrollPos = {}, lastKey = null, UNDO = null, toastT = null, LOAD_OK = false;
-// Shown in Ledger › Data & backup. Keep equal to CACHE in sw.js.
-const APP_VERSION = 'denim-v41';
-// Photo add, export and import in flight; an update reload waits for them (see reloadWhenSafe).
-let BUSY = 0;
-const busy = fn => async (...a) => { BUSY++; try { return await fn(...a); } finally { BUSY--; } };
+// EXPIRE runs once the current toast's Undo is no longer possible. BUSY counts async writes an update reload must not cut off.
+let EXPIRE = null, BUSY = 0, APP_VER = '';
 
 // ── Dates ──
 const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -287,6 +288,8 @@ const noon = s => new Date(s + 'T12:00:00');
 const shift = (s, n) => { const d = noon(s); d.setDate(d.getDate() + n); return iso(d); };
 const between = (a, b) => Math.round((noon(b) - noon(a)) / DAY);
 const daysSince = s => s ? between(s, today()) : null;
+// True for a date that exists on the calendar ("2026-02-30" is false).
+const realDate = s => iso(noon(s)) === s;
 const fmt = s => noon(s).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' });
 const fmtShort = s => noon(s).toLocaleDateString('en', { month: 'short', year: '2-digit' });
 const plural = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
@@ -303,12 +306,20 @@ const clone = j => JSON.parse(JSON.stringify(j));
 // ── Storage ──
 // Lenient: never drops a pair from existing data; only normalises shape.
 // Ids and photo sources are interpolated into markup, so anything not matching a strict pattern is replaced or dropped.
-function normalize(p) {
-  if (!p || typeof p !== 'object') return null;
-  const dates = a => Array.isArray(a) ? [...new Set(a.filter(d => typeof d === 'string' && ISO_RE.test(d)))].sort() : [];
+// rep (imports only) turns on strict checks and counts what was skipped: impossible dates and dates after tomorrow
+// (one day of slack for time zones). Stored data is read without rep, so loading never drops more than before.
+function normalize(p, rep = null) {
+  if (!p || typeof p !== 'object') { if (rep) rep.pairs++; return null; }
+  const max = rep ? shift(today(), 1) : null, okDate = d => !rep || (realDate(d) && d <= max);
+  const dates = a => { if (!Array.isArray(a)) return []; const v = a.filter(d => typeof d === 'string' && ISO_RE.test(d) && okDate(d)); if (rep) rep.dates += a.length - v.length; return [...new Set(v)].sort(); };
   const price = Number(p.price);
   // A photo either carries its image inline (old data, imports) or only a date, with the image in IndexedDB.
-  const photos = Array.isArray(p.photos) ? p.photos.filter(x => x && ISO_RE.test(x.date || '') && (x.src === undefined || (typeof x.src === 'string' && IMG_RE.test(x.src)))).map(x => x.src ? { date: x.date, src: x.src } : { date: x.date }).sort((a, b) => a.date.localeCompare(b.date)) : [];
+  const list = Array.isArray(p.photos) ? p.photos.filter(x => x && ISO_RE.test(x.date || '') && okDate(x.date) && (x.src === undefined || (typeof x.src === 'string' && IMG_RE.test(x.src)))).map(x => x.src ? { date: x.date, src: x.src } : { date: x.date }) : [];
+  if (rep && Array.isArray(p.photos)) rep.photos += p.photos.length - list.length;
+  // N3: one photo per day. The last entry for a date wins, so no entry is left pointing at an image that was overwritten.
+  const byDate = new Map(); list.forEach(x => byDate.set(x.date, x));
+  if (rep) rep.dupes += list.length - byDate.size;
+  const photos = [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
   return { ...p, id: typeof p.id === 'string' && ID_RE.test(p.id) ? p.id : uid(),
     brand: String(p.brand ?? '').trim() || 'Unknown brand', model: String(p.model ?? '').trim() || 'Unnamed pair',
     purchaseDate: typeof p.purchaseDate === 'string' && ISO_RE.test(p.purchaseDate) ? p.purchaseDate : '',
@@ -328,12 +339,16 @@ function load() {
   let raw = null;
   try { raw = localStorage.getItem(LS_KEY); } catch (e) {}
   // One-time untouched copy of the old data before this version ever writes.
-  try { if (raw && !localStorage.getItem(LS_BACKUP)) localStorage.setItem(LS_BACKUP, raw); } catch (e) {}
+  // N2: written once, ever. If it was later removed to free space, it is not refilled with newer data.
+  try {
+    if (localStorage.getItem(LS_BACKUP)) { if (!localStorage.getItem(LS_BACKUP_DONE)) localStorage.setItem(LS_BACKUP_DONE, '1'); }
+    else if (raw && !localStorage.getItem(LS_BACKUP_DONE)) { localStorage.setItem(LS_BACKUP, raw); localStorage.setItem(LS_BACKUP_DONE, '1'); }
+  } catch (e) {}
   let data = null;
   try { data = JSON.parse(raw || '{"jeans":[]}'); LOAD_OK = raw !== null; }
   catch (e) { try { localStorage.setItem(LS_KEY + '_unreadable', raw); } catch (e2) {} } // keep it so the next save can't destroy it
   const arr = Array.isArray(data) ? data : data && Array.isArray(data.jeans) ? data.jeans : [];
-  DB = { ...(data && !Array.isArray(data) ? data : {}), jeans: arr.map(normalize).filter(Boolean) };
+  DB = { ...(data && !Array.isArray(data) ? data : {}), jeans: arr.map(p => normalize(p)).filter(Boolean) };
   const seen = new Set(); DB.jeans.forEach(j => { if (seen.has(j.id)) j.id = uid(); seen.add(j.id); });
   if (ensureColors() && LOAD_OK) save();
   try {
@@ -347,7 +362,8 @@ function save() {
   try { localStorage.setItem(LS_KEY, data); return true; }
   catch (e) {
     // Out of space: free the one-time pre-update backup and retry once.
-    try { if (localStorage.getItem(LS_BACKUP)) { localStorage.removeItem(LS_BACKUP); localStorage.setItem(LS_KEY, data); return true; } } catch (e2) {}
+    // N9: say so (after the action's own toast and its Undo window), instead of removing it silently.
+    try { if (localStorage.getItem(LS_BACKUP)) { localStorage.removeItem(LS_BACKUP); localStorage.setItem(LS_KEY, data); setTimeout(() => toast('Storage was full · removed the old pre-update backup', null, 4000), 5000); return true; } } catch (e2) {}
     toast('Storage full — export your data now', null, 4000); return false;
   }
 }
@@ -388,8 +404,6 @@ function ptx(mode, fn) {
     t.oncomplete = () => res(); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
   });
 }
-// iOS can drop the IndexedDB connection while the app sits in the background: reopen once and retry.
-async function pdbRetry(fn) { try { return await fn(); } catch (e) { pdb = await openPDB(); return fn(); } }
 const putPhotos = entries => ptx('readwrite', s => entries.forEach(([k, v]) => s.put(v, k)));
 const delPhotos = keys => ptx('readwrite', s => keys.forEach(k => s.delete(k)));
 function loadAllPhotos() {
@@ -414,11 +428,31 @@ async function migratePhotos(persist = true) {
   DB.jeans.forEach(j => j.photos.forEach(p => { if (done.has(pkey(j.id, p.date))) delete p.src; }));
   if (persist) save();
 }
-// Images whose pair or photo was deleted are removed on the next launch, so Undo keeps working during a session.
+// D4: image keys the pre-import copy points to. null if that copy can't be read, and then nothing is cleaned up.
+function protectedKeys() {
+  const s = new Set();
+  try {
+    const d = JSON.parse(localStorage.getItem(LS_BEFORE_IMPORT) || 'null'), arr = Array.isArray(d) ? d : d && Array.isArray(d.jeans) ? d.jeans : [];
+    arr.forEach(j => j && Array.isArray(j.photos) && j.photos.forEach(p => p && s.add(pkey(j.id, p.date))));
+  } catch (e) { return null; }
+  return s;
+}
+// Images whose photo was removed from a pair that still exists are removed on the next launch, so Undo keeps working during a session.
+// N1: an image whose pair id is unknown (unreadable or lost data) is never deleted here.
+// D4: images the pre-import copy points to stay until the next import replaces that copy.
 function gcPhotos() {
-  const live = new Set(); DB.jeans.forEach(j => j.photos.forEach(p => live.add(pkey(j.id, p.date))));
-  const dead = [...PHOTOS.keys()].filter(k => !live.has(k));
+  const prot = protectedKeys(); if (!prot) return;
+  const known = new Set(DB.jeans.map(j => j.id)), live = new Set(prot);
+  DB.jeans.forEach(j => j.photos.forEach(p => live.add(pkey(j.id, p.date))));
+  const dead = [...PHOTOS.keys()].filter(k => !live.has(k) && known.has(String(k).split('|')[0]));
   if (dead.length) delPhotos(dead).then(() => dead.forEach(k => PHOTOS.delete(k))).catch(() => {});
+}
+// D2: a deleted pair's images are removed once its Undo is no longer possible (unless the pair is back or the pre-import copy needs them).
+function dropPhotosOf(id) {
+  if (!pdb || findJ(id)) return;
+  const prot = protectedKeys(); if (!prot) return;
+  const ks = [...PHOTOS.keys()].filter(k => String(k).split('|')[0] === id && !prot.has(k));
+  if (ks.length) delPhotos(ks).then(() => ks.forEach(k => PHOTOS.delete(k))).catch(() => {});
 }
 
 // ── Stats ──
@@ -452,14 +486,16 @@ function calendar(s) {
 const cellsHTML = cells => cells.map(c => `<i style="background:${c.bg};box-shadow:${c.ring}"></i>`).join('');
 
 // ── UI helpers ──
-function toast(msg, undo = null, ms = 1800, label = 'UNDO') {
+// onExpire runs once Undo is no longer possible: when the toast times out or another toast replaces it, never after Undo.
+function toast(msg, undo = null, ms = 1800, label = 'UNDO', onExpire = null) {
+  const x = EXPIRE; EXPIRE = null; if (x) x();
   const el = document.getElementById('toast'), btn = document.getElementById('toast-undo');
   document.getElementById('toast-msg').textContent = msg;
   btn.style.display = undo ? '' : 'none'; btn.textContent = label;
-  UNDO = undo; el.classList.add('show');
-  clearTimeout(toastT); toastT = setTimeout(() => { el.classList.remove('show'); UNDO = null; }, undo ? Math.max(ms, 4500) : ms);
+  UNDO = undo; EXPIRE = onExpire; el.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => { el.classList.remove('show'); UNDO = null; const x = EXPIRE; EXPIRE = null; if (x) x(); }, undo ? Math.max(ms, 4500) : ms);
 }
-function doUndo() { const u = UNDO; UNDO = null; clearTimeout(toastT); document.getElementById('toast').classList.remove('show'); u && u(); }
+function doUndo() { const u = UNDO; UNDO = null; EXPIRE = null; clearTimeout(toastT); document.getElementById('toast').classList.remove('show'); u && u(); }
 function showConfirm(msg, okLabel = 'Confirm') {
   return new Promise(resolve => {
     const modal = document.getElementById('modal'), ok = document.getElementById('modal-ok'), cancel = document.getElementById('modal-cancel');
@@ -481,7 +517,8 @@ function trapTab(e, root) {
 }
 const seg = (label, opts, cur, fn) => `<div class="seg" role="group" aria-label="${label}">${opts.map(([v, l]) => `<button data-f="seg-${fn}-${v}" class="${cur === v ? 'on' : ''}" aria-pressed="${cur === v}" onclick="${fn}('${v}')">${l}</button>`).join('')}</div>`;
 const findJ = id => DB.jeans.find(x => x.id === id);
-function restore(snapshot) { const i = DB.jeans.findIndex(x => x.id === snapshot.id); const prev = DB.jeans.slice(); if (i >= 0) DB.jeans[i] = snapshot; else DB.jeans.push(snapshot); ensureColors(); if (!save()) { DB.jeans = prev; return render(); } toast('Undone'); render(); }
+// Takes one snapshot or several (an edit that swapped colours with another pair restores both).
+function restore(snapshot) { const prev = DB.jeans.slice(); [].concat(snapshot).forEach(s => { const i = DB.jeans.findIndex(x => x.id === s.id); if (i >= 0) DB.jeans[i] = s; else DB.jeans.push(s); }); ensureColors(); if (!save()) { DB.jeans = prev; return render(); } toast('Undone'); render(); }
 // After a failed save: storage still holds the previous state, so only revert memory.
 function rollback(snapshot) { const i = DB.jeans.findIndex(x => x.id === snapshot.id); if (i >= 0) DB.jeans[i] = snapshot; else DB.jeans.push(snapshot); render(); }
 
@@ -630,7 +667,7 @@ function renderLedger() {
       <button onclick="exportCSV()"><i class="ph ph-table i" aria-hidden="true"></i>Export CSV<i class="ph ph-caret-right c" aria-hidden="true"></i></button>
       <button onclick="document.getElementById('importInput').click()"><i class="ph ph-upload-simple i" aria-hidden="true"></i>Import JSON<i class="ph ph-caret-right c" aria-hidden="true"></i></button>
     </div>
-    <p class="help" style="margin-top:var(--s-sm)">Version ${APP_VERSION}</p>`;
+    <p class="calnote">Version ${APP_VER ? esc(APP_VER) : 'not installed'}</p>`;
 }
 
 // ── Calendar (Ledger › Calendar) ──
@@ -754,13 +791,7 @@ function pickLook(k) {
 function renderForm() {
   const j = FS.editId ? findJ(FS.editId) : null, t = today();
   const f = (id, label, type, ph, val, extra = '') => `<label class="field">${label}<input type="${type}" id="${id}" placeholder="${ph}" value="${esc(val)}" ${extra}></label>`;
-  let since = '';
-  if (j) {
-    const s = S[j.id];
-    since = `<h2 class="sec mt"><span class="l">Wears since last wash</span></h2>
-      <p class="help">${s.lastWash ? `Currently ${plural(s.since, 'wear')} since the wash on ${fmt(s.lastWash)}.` : `No washes logged, so all ${plural(s.total, 'wear')} count.`} Leave blank to keep unchanged.</p>
-      ${f('editSince', 'Set new count', 'number', 'e.g. 15', '', 'inputmode="numeric" min="0" step="1"')}`;
-  }
+  // K1: no "wears since last wash" count here any more. It rewrote real wear dates; use "Log another day" / "Remove last wear".
   return `<button class="back" onclick="goBack()"><i class="ph ph-caret-left" aria-hidden="true"></i>CANCEL</button>
     <h1 class="h1 sm" tabindex="-1" style="margin:var(--s-sm) 0 var(--s-2xl)">${j ? 'Edit pair' : 'Add a pair'}</h1>
     <form onsubmit="event.preventDefault();saveForm()" novalidate>
@@ -768,10 +799,10 @@ function renderForm() {
       ${f('fBrand', 'Brand', 'text', 'e.g. Oni Denim', j?.brand || '', 'autocomplete="off" autocapitalize="words" maxlength="60" enterkeyhint="next" onkeydown="if(event.key===\'Enter\'){event.preventDefault();document.getElementById(\'fModel\').focus()}"')}
       ${f('fModel', 'Model', 'text', 'e.g. Secret Denim 517', j?.model || '', 'autocomplete="off" autocapitalize="words" maxlength="80" enterkeyhint="next" onkeydown="if(event.key===\'Enter\'){event.preventDefault();document.getElementById(\'fPrice\').focus()}"')}
       ${f('fDate', 'Purchase date', 'date', '', j?.purchaseDate || '', `max="${t}"`)}
-      ${f('fPrice', `Price (${currency})`, 'text', 'e.g. 320', j?.price || '', 'inputmode="decimal" autocomplete="off" enterkeyhint="done"')}
+      ${f('fPrice', `Price (${currency})`, 'text', 'e.g. 320,50', j?.price ? String(j.price).replace('.', ',') : '', 'inputmode="decimal" autocomplete="off" maxlength="12" enterkeyhint="done"')}
     </div>
     ${lookPicker(j)}
-    ${j ? since : `<h2 class="sec mt"><span class="l">Backfill history · optional</span></h2>
+    ${j ? '' : `<h2 class="sec mt"><span class="l">Backfill history · optional</span></h2>
       <p class="help">Dates spread evenly from the purchase date (or 12 months ago) to yesterday. Max one entry per day.</p>
       <div class="grid3">
         ${f('bfWears', 'Past wears', 'number', 'e.g. 45', '', 'inputmode="numeric" min="0" step="1"')}
@@ -875,10 +906,11 @@ async function removeLast(id, key) {
   render(); toast('Removed', () => restore(snap));
 }
 async function delJeans(id) {
-  if (!await showConfirm('Delete this pair? This cannot be undone.', 'Delete')) return;
-  const prev = DB.jeans; DB.jeans = DB.jeans.filter(x => x.id !== id);
+  if (!await showConfirm('Delete this pair and its photos?', 'Delete')) return;
+  const prev = DB.jeans, snap = findJ(id); DB.jeans = DB.jeans.filter(x => x.id !== id);
   if (!save()) { DB.jeans = prev; return; }
-  toast('Deleted'); delete scrollPos.col; go(PREV);
+  // D2: Undo puts the pair back; its photos are only deleted once Undo is no longer possible.
+  toast('Deleted', snap ? () => restore(snap) : null, 4500, 'UNDO', () => dropPhotosOf(id)); delete scrollPos.col; go(PREV);
 }
 
 function genDates(count, from, to) {
@@ -889,42 +921,27 @@ function genDates(count, from, to) {
   return Array.from({ length: n }, (_, i) => shift(from, Math.round(i * (span - 1) / (n - 1))));
 }
 
-// Swiss input: "320,50", "320.50", "1'200", "1’200.50", "CHF 320". Blank → null (clears the price); anything else → NaN (form refuses to save).
-function parsePrice(s) {
-  s = String(s ?? '').replace(/^\s*CHF/i, '').replace(/[\s'’]/g, '');
-  if (s === '') return null;
-  return /^\d+(?:[.,]\d{0,2})?$/.test(s) ? Number(s.replace(',', '.')) : NaN;
-}
 async function saveForm() {
   const t = today(), val = id => document.getElementById(id)?.value ?? '';
   const brand = val('fBrand').trim(), model = val('fModel').trim(), date = val('fDate'), priceRaw = String(val('fPrice')).trim();
   if (!brand || !model) { document.getElementById(brand ? 'fModel' : 'fBrand')?.focus(); return toast('Brand and model are required'); }
   if (date && !ISO_RE.test(date)) return toast('Purchase date is invalid');
   if (date && date > t) return toast("Purchase date can't be in the future");
-  const price = parsePrice(priceRaw);
-  if (Number.isNaN(price)) { document.getElementById('fPrice')?.focus(); return toast('Price must be a number, e.g. 320.50'); }
+  // K2: accept the Swiss comma ("320,50") as well as "320.50" and "1'250". Anything else stops the save; an existing price is never cleared by it.
+  const pv = priceRaw.replace(/[\s'’]/g, ''), price = priceRaw === '' ? null : /^\d+(?:[.,]\d+)?$/.test(pv) ? Number(pv.replace(',', '.')) : NaN;
+  if (Number.isNaN(price)) { document.getElementById('fPrice')?.focus(); return toast('Price not recognised · use e.g. 320,50'); }
   const int = id => { const v = String(val(id)).trim(); if (v === '') return null; const n = parseInt(v, 10); return Number.isFinite(n) ? n : NaN; };
 
   if (FS.editId) {
     const j = findJ(FS.editId); if (!j) return go('col');
     const snap = clone(j);
-    const n = int('editSince');
-    if (Number.isNaN(n) || (n !== null && n < 0)) return toast('Wears since wash must be 0 or more');
-    if (n !== null) {
-      // Regenerated wears end yesterday, or today if today is already logged, so the count never adds a wear for today.
-      const lastWash = j.washes.at(-1) || null, end = j.wears.includes(t) ? t : shift(t, -1);
-      const start = lastWash ? shift(lastWash, 1) : (date || j.purchaseDate || shift(t, -HISTORY_DAYS));
-      const avail = Math.max(0, between(start, end) + 1);
-      let final = n;
-      if (n > avail) { if (!await showConfirm(`Only ${plural(avail, 'day')} available. The count will be capped at ${avail}. Continue?`, 'Continue')) return; final = avail; }
-      const before = lastWash ? j.wears.filter(d => d <= lastWash) : [];
-      j.wears = [...new Set([...before, ...genDates(final, start, end)])].sort();
-    }
+    // K1: editing never touches wear or wash dates.
     Object.assign(j, { brand, model, purchaseDate: date || '', price: price || null });
-    const o = FS.ci !== j.ci % NLOOK ? lookOwner(FS.ci, j) : null, oPrev = o?.ci;
+    const o = FS.ci !== j.ci % NLOOK ? lookOwner(FS.ci, j) : null, oPrev = o?.ci, oSnap = o ? clone(o) : null;
     if (FS.ci !== j.ci % NLOOK) { if (o) o.ci = j.ci; j.ci = FS.ci; }
     if (!save()) { if (o) o.ci = oPrev; return rollback(snap); }
-    toast('Saved'); return go('detail', j.id);
+    // K1: Undo on "Saved" (both pairs if colours were swapped).
+    toast('Saved', () => restore(oSnap ? [snap, oSnap] : snap)); return go('detail', j.id);
   }
   const nW = int('bfWears') ?? 0, nA = int('bfWashes') ?? 0, nS = int('bfSince') ?? 0;
   if ([nW, nA, nS].some(x => Number.isNaN(x) || x < 0)) return toast('Backfill numbers must be 0 or more');
@@ -933,7 +950,8 @@ async function saveForm() {
   const from = date || shift(t, -HISTORY_DAYS), yest = shift(t, -1);
   let washes, wears;
   if (nA > 0 && nS > 0) {
-    const mid = shift(from, Math.floor(between(from, t) / 2));
+    // N7: the last backfilled wash is never later than yesterday (backfill never logs today).
+    let mid = shift(from, Math.floor(between(from, t) / 2)); if (mid > yest) mid = yest;
     washes = genDates(nA, from, mid); const lw = washes.at(-1) || mid;
     wears = [...genDates(nW - nS, from, shift(lw, -1)), ...genDates(nS, shift(lw, 1), yest)];
   } else { washes = genDates(nA, from, yest); wears = genDates(nW, from, yest); } // backfill never logs today; the Wear/Wash buttons own today
@@ -969,21 +987,32 @@ async function handlePhoto(input) {
   const file = input.files[0]; input.value = '';
   const j = findJ(CUR.id); if (!file || !j) return;
   if (!/^image\//.test(file.type) && !/\.(heic|heif|jpe?g|png|webp)$/i.test(file.name)) return toast('Choose an image file');
-  // With IndexedDB there is room for sharper photos; the localStorage fallback keeps them small.
-  let img; try { img = pdb ? await resizeImage(file, 1440, 0.82, true) : await resizeImage(file); } catch (e) { return toast('Could not read that image'); }
-  const snap = clone(j), d = today(), key = pkey(j.id, d);
-  let entry = null, stored = false; const prevSrc = PHOTOS.get(key);
-  if (pdb) { try { await pdbRetry(() => putPhotos([[key, img]])); PHOTOS.set(key, img); entry = { date: d }; stored = true; } catch (e) { /* fall back to inline */ } }
-  // The inline fallback lives in localStorage (~5 MB for everything), so keep it as small as the no-IndexedDB path.
-  if (!entry) { try { entry = { date: d, src: pdb ? await resizeImage(file) : await asDataURL(img) }; } catch (e) { return toast('Could not read that image'); } }
-  const replaced = j.photos.some(p => p.date === d);
-  j.photos = [...j.photos.filter(p => p.date !== d), entry].sort((a, b) => a.date.localeCompare(b.date));
-  if (!save()) {
-    // Put back the image this one overwrote, so the restored entry still shows the old photo.
-    if (stored) { (prevSrc ? putPhotos([[key, prevSrc]]) : delPhotos([key])).catch(() => {}); if (prevSrc) PHOTOS.set(key, prevSrc); else PHOTOS.delete(key); }
-    return rollback(snap);
-  }
-  render(); toast(replaced ? 'Photo replaced · one per day' : 'Photo added');
+  BUSY++; // K7: an update reload waits until the photo is stored and saved
+  try {
+    // K8: replacing today's photo is confirmed first and can be undone.
+    if (j.photos.some(p => p.date === today()) && !await showConfirm(`Replace today's photo of ${j.model}? One photo per day.`, 'Replace')) return;
+    // With IndexedDB there is room for sharper photos; the localStorage fallback keeps them small.
+    let img; try { img = pdb ? await resizeImage(file, 1440, 0.82, true) : await resizeImage(file); } catch (e) { return toast('Could not read that image'); }
+    const snap = clone(j), d = today(), key = pkey(j.id, d);
+    let entry = null, stored = false; const prevSrc = PHOTOS.get(key);
+    // N8: if the photo store is full, stop here instead of putting a large image into localStorage (that would block daily logging).
+    if (pdb) { try { await putPhotos([[key, img]]); PHOTOS.set(key, img); entry = { date: d }; stored = true; } catch (e) { return toast('Photo storage is full · export a backup, then remove old photos', null, 4500); } }
+    if (!entry) { try { entry = { date: d, src: await asDataURL(img) }; } catch (e) { return toast('Could not read that image'); } }
+    const replaced = j.photos.some(p => p.date === d);
+    j.photos = [...j.photos.filter(p => p.date !== d), entry].sort((a, b) => a.date.localeCompare(b.date));
+    if (!save()) {
+      // Put back the image this one overwrote, so the restored entry still shows the old photo.
+      if (stored) { (prevSrc ? putPhotos([[key, prevSrc]]) : delPhotos([key])).catch(() => {}); if (prevSrc) PHOTOS.set(key, prevSrc); else PHOTOS.delete(key); }
+      return rollback(snap);
+    }
+    render();
+    if (!replaced) return toast('Photo added');
+    // K8: Undo writes the previous image back before restoring the entry.
+    toast('Photo replaced', async () => {
+      if (stored) { try { if (prevSrc) { await putPhotos([[key, prevSrc]]); PHOTOS.set(key, prevSrc); } else { await delPhotos([key]); PHOTOS.delete(key); } } catch (e) { return toast('Could not undo'); } }
+      restore(snap);
+    });
+  } finally { BUSY--; }
 }
 async function removePhoto(id, date) {
   const j = findJ(id); if (!j) return;
@@ -1012,21 +1041,36 @@ async function deliver(name, text, type, done = '') {
   }
   download(name, text, type); return true;
 }
-// Backups always embed the images, so they restore on any device. Same JSON as before, but assembled from Blob parts:
-// each image is encoded on its own and parked in a Blob, so 100 photos never sit in memory as one giant string.
-async function exportJSON() {
-  const imgs = new Map(); let missing = 0;
-  for (const j of DB.jeans) for (const p of j.photos) {
-    const k = pkey(j.id, p.date), v = photoData(j, p); let b = null;
-    if (v && !imgs.has(k)) { try { b = new Blob([JSON.stringify(await asDataURL(v))]); } catch (e) {} }
-    if (b) imgs.set(k, b); else if (!imgs.has(k)) missing++;
+// Backups always embed the images, so they restore on any device.
+// K4: same JSON as before ({...DB, jeans:[{...pair, photos:[{date,src}]}]}, now without indentation), built one photo at a time
+// as Blob parts, so the whole backup never sits in memory as one huge string.
+async function exportBlob() {
+  const TOK = '@@photos-' + uid() + '@@', TOKQ = JSON.stringify(TOK), parts = [], { jeans, ...rest } = DB, head = JSON.stringify(rest);
+  parts.push(head === '{}' ? '{"jeans":[' : head.slice(0, -1) + ',"jeans":[');
+  for (let i = 0; i < DB.jeans.length; i++) {
+    const j = DB.jeans[i], [a, b] = JSON.stringify({ ...j, photos: TOK }).split(TOKQ);
+    parts.push((i ? ',' : '') + a + '['); let n = 0;
+    for (const p of j.photos) {
+      const v = photoData(j, p); if (!v) continue;
+      let src; try { src = await asDataURL(v); } catch (e) { continue; }
+      parts.push(new Blob([(n++ ? ',' : '') + JSON.stringify({ date: p.date, src })]));
+    }
+    parts.push(']' + b);
   }
-  const tag = '\u0001' + uid() + ':', keys = [];
-  const data = { ...DB, jeans: DB.jeans.map(j => ({ ...j, photos: j.photos.filter(p => imgs.has(pkey(j.id, p.date))).map(p => ({ date: p.date, src: tag + (keys.push(pkey(j.id, p.date)) - 1) })) })) };
-  const marker = JSON.stringify(tag).slice(0, -1); // the tag as it appears inside the JSON text, without the closing quote
-  const parts = JSON.stringify(data, null, 2).split(new RegExp(marker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\d+)"')).map((s, i) => i % 2 ? imgs.get(keys[+s]) : s);
-  const msg = missing ? `JSON exported · ${plural(missing, 'photo')} unavailable` : 'JSON exported';
-  if (await deliver('denim-tracker-backup-' + today() + '.json', new Blob(parts, { type: 'application/json' }), 'application/json', msg)) toast(msg, null, missing ? 3600 : 1800);
+  parts.push(']}');
+  return new Blob(parts, { type: 'application/json' });
+}
+async function exportJSON() {
+  // N4: a backup never silently lacks photos. Wait until they are loaded; any photo without an image is confirmed first.
+  if (!PHOTOS_READY) return toast('Photos are still loading · try again in a moment');
+  const total = DB.jeans.reduce((a, j) => a + j.photos.length, 0), missing = DB.jeans.reduce((a, j) => a + j.photos.filter(p => !photoData(j, p)).length, 0);
+  // If the photo store can't be opened, the dates can still be backed up: ask instead of blocking.
+  if (missing && !await showConfirm(pdb ? `${missing} of ${plural(total, 'photo')} have no image on this phone and can't be included. Export without them?` : `Photo storage can't be opened right now, so ${missing} of ${plural(total, 'photo')} can't be included. Export your pairs, wears and washes without them?`, 'Export')) return;
+  BUSY++; // K7
+  try {
+    const msg = missing ? `JSON exported · ${plural(missing, 'photo')} without image` : 'JSON exported';
+    if (await deliver('denim-tracker-backup-' + today() + '.json', await exportBlob(), 'application/json', msg)) toast(msg, null, missing ? 3600 : 1800);
+  } finally { BUSY--; }
 }
 function exportCSV() {
   // Quote per RFC 4180; prefix formula-like cells so spreadsheets don't execute them.
@@ -1037,23 +1081,27 @@ function exportCSV() {
     if (!ev.length) rows.push([j.brand, j.model, j.purchaseDate, j.price, currency, '', '']);
     ev.forEach(([e, d]) => rows.push([j.brand, j.model, j.purchaseDate, j.price, currency, e, d]));
   });
-  return deliver('denim-tracker-' + today() + '.csv', '\ufeff' + rows.map(r => r.map(q).join(',')).join('\r\n'), 'text/csv').then(ok => ok && toast('CSV exported'));
+  deliver('denim-tracker-' + today() + '.csv', '\ufeff' + rows.map(r => r.map(q).join(',')).join('\r\n'), 'text/csv').then(ok => ok && toast('CSV exported'));
 }
 function handleImport(input) {
   const file = input.files[0]; input.value = ''; if (!file) return;
-  return file.text().then(async txt => {
+  file.text().then(async txt => { BUSY++; try { // K7: an update reload waits until the import is finished
     let data; try { data = JSON.parse(txt); } catch (e) { return toast('Not a valid JSON file'); }
     const arr = Array.isArray(data) ? data : data && Array.isArray(data.jeans) ? data.jeans : null;
     if (!arr) return toast('No pairs found in file');
-    const jeans = arr.map(normalize).filter(Boolean);
+    // N6/D5: strict checks for imports only; everything skipped is counted and reported.
+    const rep = { pairs: 0, dates: 0, photos: 0, dupes: 0 }, jeans = arr.map(p => normalize(p, rep)).filter(Boolean);
     if (!jeans.length) return toast('No valid pairs found in file');
     const seen = new Set(); jeans.forEach(j => { if (seen.has(j.id)) j.id = uid(); seen.add(j.id); });
-    if (DB.jeans.length && !await showConfirm(`Replace your ${plural(DB.jeans.length, 'pair')} with ${plural(jeans.length, 'pair')} from this backup?`, 'Replace')) return;
+    const skipped = [rep.dates && plural(rep.dates, 'invalid or future date'), rep.photos && plural(rep.photos, 'invalid photo'), rep.dupes && plural(rep.dupes, 'duplicate photo'), rep.pairs && plural(rep.pairs, 'invalid pair')].filter(Boolean).join(', ');
+    if (DB.jeans.length && !await showConfirm(`Replace your ${plural(DB.jeans.length, 'pair')} with ${plural(jeans.length, 'pair')} from this backup?${skipped ? ` Skipped from the file: ${skipped}.` : ''} A copy of your current data is kept on this phone.`, 'Replace')) return;
+    // K10/D4: keep an exact copy of the current data first. No room for it: no import.
+    if (DB.jeans.length) { try { localStorage.setItem(LS_BEFORE_IMPORT, localStorage.getItem(LS_KEY) ?? JSON.stringify(DB)); } catch (e) { return toast('No room to keep a copy of your current data · export a backup first', null, 4500); } }
     const prev = DB; DB = { ...(Array.isArray(data) ? {} : data), jeans }; ensureColors();
     const keys = []; jeans.forEach(j => j.photos.forEach(p => { if (p.src) keys.push(pkey(j.id, p.date)); }));
     const before = new Map(keys.filter(k => PHOTOS.has(k)).map(k => [k, PHOTOS.get(k)]));
     // Move images into IndexedDB first, so a photo-heavy backup doesn't overflow localStorage on save.
-    if (pdb) { try { await pdbRetry(() => migratePhotos(false)); } catch (e) { /* keep inline; save below decides */ } }
+    if (pdb) { try { await migratePhotos(false); } catch (e) { /* keep inline; save below decides */ } }
     if (!save()) {
       DB = prev;
       // Undo the image writes so existing pairs keep their own photos.
@@ -1064,25 +1112,35 @@ function handleImport(input) {
       }
       return render();
     }
-    toast('Backup restored'); delete scrollPos.col; go('col');
-  }, () => toast('Could not read file'));
+    const noImg = PHOTOS_READY && pdb ? DB.jeans.reduce((a, j) => a + j.photos.filter(p => !photoData(j, p)).length, 0) : 0;
+    const notes = [skipped && 'skipped ' + skipped, noImg && plural(noImg, 'photo') + ' without image'].filter(Boolean).join(' · ');
+    toast(notes ? 'Backup restored · ' + notes : 'Backup restored', null, notes ? 6000 : 1800); delete scrollPos.col; go('col');
+  } finally { BUSY--; } }, () => toast('Could not read file'));
 }
-handlePhoto = busy(handlePhoto); exportJSON = busy(exportJSON); exportCSV = busy(exportCSV); handleImport = busy(handleImport);
 
 if ('serviceWorker' in navigator) {
   // Reload once when a new version takes over, so the update shows without a second launch.
   const hadController = !!navigator.serviceWorker.controller; let reloaded = false;
-  // Wait while the form, photo viewer, a confirm dialog or an Undo/Save toast is open, or a photo/export/import is still running.
-  const unsafe = () => CUR.view === 'form' || BUSY > 0 || UNDO || photoIdx != null || document.getElementById('modal').classList.contains('open');
-  const reloadWhenSafe = () => { if (reloaded) return; if (unsafe()) return setTimeout(reloadWhenSafe, 2000); reloaded = true; location.reload(); };
+  // K7: also wait while a photo, import or export is in progress, a confirm or the photo viewer is open, or an Undo is still possible.
+  const reloadWhenSafe = () => { if (reloaded) return; if (CUR.view === 'form' || BUSY > 0 || UNDO || document.querySelector('#modal.open, #viewer.open')) return setTimeout(reloadWhenSafe, 2000); reloaded = true; location.reload(); };
   navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController) reloadWhenSafe(); });
   navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => {
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); });
   }).catch(() => {});
+  navigator.serviceWorker.ready.then(readVersion).catch(() => {});
+}
+// K6: the version label is the service worker's cache name, so it always matches CACHE in sw.js.
+function readVersion() {
+  try {
+    caches.keys().then(ks => {
+      const v = ks.filter(k => /^denim-v\d+$/.test(k)).sort((a, b) => b.slice(7) - a.slice(7))[0] || '';
+      if (v !== APP_VER) { APP_VER = v; if (CUR.view === 'ov') render(); }
+    }).catch(() => {});
+  } catch (e) {}
 }
 
 async function init() {
-  load(); go('col');
+  load(); go('col'); readVersion();
   try { pdb = await openPDB(); await loadAllPhotos(); } catch (e) { pdb = null; PHOTOS_READY = true; render(); return; }
   try { await upgradeStoredPhotos(); } catch (e) {}
   // Migration failures leave photos inline (still visible); the store stays usable.
