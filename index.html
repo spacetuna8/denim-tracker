@@ -268,6 +268,11 @@ let sortMode = 'alpha', ovSort = 'alpha', ovBrand = '', BRANDS = [], photoIdx = 
 let FOCUS_NEXT = null;
 let ovTab = 'pairs', calView = 'month', calOff = 0, calSel = null, calYear = new Date().getFullYear(), calFocus = null, calAll = false;
 let S = {}, scrollPos = {}, lastKey = null, UNDO = null, toastT = null, LOAD_OK = false;
+// Shown in Ledger › Data & backup. Keep equal to CACHE in sw.js.
+const APP_VERSION = 'denim-v41';
+// Photo add, export and import in flight; an update reload waits for them (see reloadWhenSafe).
+let BUSY = 0;
+const busy = fn => async (...a) => { BUSY++; try { return await fn(...a); } finally { BUSY--; } };
 
 // ── Dates ──
 const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -383,6 +388,8 @@ function ptx(mode, fn) {
     t.oncomplete = () => res(); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
   });
 }
+// iOS can drop the IndexedDB connection while the app sits in the background: reopen once and retry.
+async function pdbRetry(fn) { try { return await fn(); } catch (e) { pdb = await openPDB(); return fn(); } }
 const putPhotos = entries => ptx('readwrite', s => entries.forEach(([k, v]) => s.put(v, k)));
 const delPhotos = keys => ptx('readwrite', s => keys.forEach(k => s.delete(k)));
 function loadAllPhotos() {
@@ -622,7 +629,8 @@ function renderLedger() {
       <button onclick="exportJSON()"><i class="ph ph-download-simple i" aria-hidden="true"></i>Export JSON<i class="ph ph-caret-right c" aria-hidden="true"></i></button>
       <button onclick="exportCSV()"><i class="ph ph-table i" aria-hidden="true"></i>Export CSV<i class="ph ph-caret-right c" aria-hidden="true"></i></button>
       <button onclick="document.getElementById('importInput').click()"><i class="ph ph-upload-simple i" aria-hidden="true"></i>Import JSON<i class="ph ph-caret-right c" aria-hidden="true"></i></button>
-    </div>`;
+    </div>
+    <p class="help" style="margin-top:var(--s-sm)">Version ${APP_VERSION}</p>`;
 }
 
 // ── Calendar (Ledger › Calendar) ──
@@ -760,7 +768,7 @@ function renderForm() {
       ${f('fBrand', 'Brand', 'text', 'e.g. Oni Denim', j?.brand || '', 'autocomplete="off" autocapitalize="words" maxlength="60" enterkeyhint="next" onkeydown="if(event.key===\'Enter\'){event.preventDefault();document.getElementById(\'fModel\').focus()}"')}
       ${f('fModel', 'Model', 'text', 'e.g. Secret Denim 517', j?.model || '', 'autocomplete="off" autocapitalize="words" maxlength="80" enterkeyhint="next" onkeydown="if(event.key===\'Enter\'){event.preventDefault();document.getElementById(\'fPrice\').focus()}"')}
       ${f('fDate', 'Purchase date', 'date', '', j?.purchaseDate || '', `max="${t}"`)}
-      ${f('fPrice', `Price (${currency})`, 'number', 'e.g. 320', j?.price || '', 'inputmode="decimal" min="0" step="0.01" enterkeyhint="done"')}
+      ${f('fPrice', `Price (${currency})`, 'text', 'e.g. 320', j?.price || '', 'inputmode="decimal" autocomplete="off" enterkeyhint="done"')}
     </div>
     ${lookPicker(j)}
     ${j ? since : `<h2 class="sec mt"><span class="l">Backfill history · optional</span></h2>
@@ -881,14 +889,20 @@ function genDates(count, from, to) {
   return Array.from({ length: n }, (_, i) => shift(from, Math.round(i * (span - 1) / (n - 1))));
 }
 
+// Swiss input: "320,50", "320.50", "1'200", "1’200.50", "CHF 320". Blank → null (clears the price); anything else → NaN (form refuses to save).
+function parsePrice(s) {
+  s = String(s ?? '').replace(/^\s*CHF/i, '').replace(/[\s'’]/g, '');
+  if (s === '') return null;
+  return /^\d+(?:[.,]\d{0,2})?$/.test(s) ? Number(s.replace(',', '.')) : NaN;
+}
 async function saveForm() {
   const t = today(), val = id => document.getElementById(id)?.value ?? '';
   const brand = val('fBrand').trim(), model = val('fModel').trim(), date = val('fDate'), priceRaw = String(val('fPrice')).trim();
   if (!brand || !model) { document.getElementById(brand ? 'fModel' : 'fBrand')?.focus(); return toast('Brand and model are required'); }
   if (date && !ISO_RE.test(date)) return toast('Purchase date is invalid');
   if (date && date > t) return toast("Purchase date can't be in the future");
-  const price = priceRaw === '' ? null : Number(priceRaw);
-  if (price !== null && (!Number.isFinite(price) || price < 0)) return toast('Price must be 0 or more');
+  const price = parsePrice(priceRaw);
+  if (Number.isNaN(price)) { document.getElementById('fPrice')?.focus(); return toast('Price must be a number, e.g. 320.50'); }
   const int = id => { const v = String(val(id)).trim(); if (v === '') return null; const n = parseInt(v, 10); return Number.isFinite(n) ? n : NaN; };
 
   if (FS.editId) {
@@ -959,8 +973,9 @@ async function handlePhoto(input) {
   let img; try { img = pdb ? await resizeImage(file, 1440, 0.82, true) : await resizeImage(file); } catch (e) { return toast('Could not read that image'); }
   const snap = clone(j), d = today(), key = pkey(j.id, d);
   let entry = null, stored = false; const prevSrc = PHOTOS.get(key);
-  if (pdb) { try { await putPhotos([[key, img]]); PHOTOS.set(key, img); entry = { date: d }; stored = true; } catch (e) { /* fall back to inline */ } }
-  if (!entry) { try { entry = { date: d, src: await asDataURL(img) }; } catch (e) { return toast('Could not read that image'); } }
+  if (pdb) { try { await pdbRetry(() => putPhotos([[key, img]])); PHOTOS.set(key, img); entry = { date: d }; stored = true; } catch (e) { /* fall back to inline */ } }
+  // The inline fallback lives in localStorage (~5 MB for everything), so keep it as small as the no-IndexedDB path.
+  if (!entry) { try { entry = { date: d, src: pdb ? await resizeImage(file) : await asDataURL(img) }; } catch (e) { return toast('Could not read that image'); } }
   const replaced = j.photos.some(p => p.date === d);
   j.photos = [...j.photos.filter(p => p.date !== d), entry].sort((a, b) => a.date.localeCompare(b.date));
   if (!save()) {
@@ -997,16 +1012,21 @@ async function deliver(name, text, type, done = '') {
   }
   download(name, text, type); return true;
 }
-// Backups always embed the images, so they restore on any device.
-async function exportData() {
-  const one = async (j, p) => { const v = photoData(j, p); if (!v) return null; try { return { date: p.date, src: await asDataURL(v) }; } catch (e) { return null; } };
-  const jeans = await Promise.all(DB.jeans.map(async j => ({ ...j, photos: (await Promise.all(j.photos.map(p => one(j, p)))).filter(Boolean) })));
-  return { ...DB, jeans };
-}
+// Backups always embed the images, so they restore on any device. Same JSON as before, but assembled from Blob parts:
+// each image is encoded on its own and parked in a Blob, so 100 photos never sit in memory as one giant string.
 async function exportJSON() {
-  const data = await exportData(), count = list => list.reduce((a, j) => a + j.photos.length, 0), missing = count(DB.jeans) - count(data.jeans);
+  const imgs = new Map(); let missing = 0;
+  for (const j of DB.jeans) for (const p of j.photos) {
+    const k = pkey(j.id, p.date), v = photoData(j, p); let b = null;
+    if (v && !imgs.has(k)) { try { b = new Blob([JSON.stringify(await asDataURL(v))]); } catch (e) {} }
+    if (b) imgs.set(k, b); else if (!imgs.has(k)) missing++;
+  }
+  const tag = '\u0001' + uid() + ':', keys = [];
+  const data = { ...DB, jeans: DB.jeans.map(j => ({ ...j, photos: j.photos.filter(p => imgs.has(pkey(j.id, p.date))).map(p => ({ date: p.date, src: tag + (keys.push(pkey(j.id, p.date)) - 1) })) })) };
+  const marker = JSON.stringify(tag).slice(0, -1); // the tag as it appears inside the JSON text, without the closing quote
+  const parts = JSON.stringify(data, null, 2).split(new RegExp(marker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\d+)"')).map((s, i) => i % 2 ? imgs.get(keys[+s]) : s);
   const msg = missing ? `JSON exported · ${plural(missing, 'photo')} unavailable` : 'JSON exported';
-  if (await deliver('denim-tracker-backup-' + today() + '.json', JSON.stringify(data, null, 2), 'application/json', msg)) toast(msg, null, missing ? 3600 : 1800);
+  if (await deliver('denim-tracker-backup-' + today() + '.json', new Blob(parts, { type: 'application/json' }), 'application/json', msg)) toast(msg, null, missing ? 3600 : 1800);
 }
 function exportCSV() {
   // Quote per RFC 4180; prefix formula-like cells so spreadsheets don't execute them.
@@ -1017,11 +1037,11 @@ function exportCSV() {
     if (!ev.length) rows.push([j.brand, j.model, j.purchaseDate, j.price, currency, '', '']);
     ev.forEach(([e, d]) => rows.push([j.brand, j.model, j.purchaseDate, j.price, currency, e, d]));
   });
-  deliver('denim-tracker-' + today() + '.csv', '\ufeff' + rows.map(r => r.map(q).join(',')).join('\r\n'), 'text/csv').then(ok => ok && toast('CSV exported'));
+  return deliver('denim-tracker-' + today() + '.csv', '\ufeff' + rows.map(r => r.map(q).join(',')).join('\r\n'), 'text/csv').then(ok => ok && toast('CSV exported'));
 }
 function handleImport(input) {
   const file = input.files[0]; input.value = ''; if (!file) return;
-  file.text().then(async txt => {
+  return file.text().then(async txt => {
     let data; try { data = JSON.parse(txt); } catch (e) { return toast('Not a valid JSON file'); }
     const arr = Array.isArray(data) ? data : data && Array.isArray(data.jeans) ? data.jeans : null;
     if (!arr) return toast('No pairs found in file');
@@ -1033,7 +1053,7 @@ function handleImport(input) {
     const keys = []; jeans.forEach(j => j.photos.forEach(p => { if (p.src) keys.push(pkey(j.id, p.date)); }));
     const before = new Map(keys.filter(k => PHOTOS.has(k)).map(k => [k, PHOTOS.get(k)]));
     // Move images into IndexedDB first, so a photo-heavy backup doesn't overflow localStorage on save.
-    if (pdb) { try { await migratePhotos(false); } catch (e) { /* keep inline; save below decides */ } }
+    if (pdb) { try { await pdbRetry(() => migratePhotos(false)); } catch (e) { /* keep inline; save below decides */ } }
     if (!save()) {
       DB = prev;
       // Undo the image writes so existing pairs keep their own photos.
@@ -1047,11 +1067,14 @@ function handleImport(input) {
     toast('Backup restored'); delete scrollPos.col; go('col');
   }, () => toast('Could not read file'));
 }
+handlePhoto = busy(handlePhoto); exportJSON = busy(exportJSON); exportCSV = busy(exportCSV); handleImport = busy(handleImport);
 
 if ('serviceWorker' in navigator) {
   // Reload once when a new version takes over, so the update shows without a second launch.
   const hadController = !!navigator.serviceWorker.controller; let reloaded = false;
-  const reloadWhenSafe = () => { if (reloaded) return; if (CUR.view === 'form') return setTimeout(reloadWhenSafe, 2000); reloaded = true; location.reload(); };
+  // Wait while the form, photo viewer, a confirm dialog or an Undo/Save toast is open, or a photo/export/import is still running.
+  const unsafe = () => CUR.view === 'form' || BUSY > 0 || UNDO || photoIdx != null || document.getElementById('modal').classList.contains('open');
+  const reloadWhenSafe = () => { if (reloaded) return; if (unsafe()) return setTimeout(reloadWhenSafe, 2000); reloaded = true; location.reload(); };
   navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController) reloadWhenSafe(); });
   navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => {
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); });

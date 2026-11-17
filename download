@@ -1,0 +1,35 @@
+# ── Personal data: never commit ──
+# JSON / CSV backups exported from the app
+denim-tracker-backup-*.json
+denim-tracker-*.csv
+*.json
+!manifest.json
+# Photos and screenshots
+uploads/
+*.heic
+*.HEIC
+*.jpg
+*.jpeg
+*.JPG
+*.JPEG
+screenshots/
+Screenshot*
+
+# ── Design drafts and tooling (not part of the app) ──
+*.dc.html
+Denim Tracker Selvedge*
+Denim Tracker Options*
+Ledger Calendar Options*
+Denim App Icons*
+icon-preview-*.png
+ios-frame.jsx
+styles.css
+support.js
+demo-30-pairs.html
+
+# ── OS / editor noise ──
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+node_modules/
